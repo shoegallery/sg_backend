@@ -5,24 +5,25 @@ const createWallet = async (req, res) => {
     const { username } = req.body;
 
     const walletExists = await Wallets.findOne({ username });
+
     if (walletExists) {
-      return res.status(409).json({
-        status: false,
-        message: "Wallet already exists",
+      return res.status(200).json({
+        status: "bad",
+        message: "Хэтэвч аль хэдийн үүссэн",
       });
     }
 
     const result = await Wallets.create({ username });
     console.log(result);
-    return res.status(201).json({
-      status: true,
-      message: "Wallets created successfully",
+    return res.status(200).json({
+      status: "ok",
+      message: "Хэтэвч амжилттай үүслээ",
       data: result,
     });
   } catch (err) {
-    return res.status(500).json({
-      status: true,
-      message: `Unable to create wallet. Please try again. \n Error: ${err}`,
+    return res.status(200).json({
+      status: "ok",
+      message: `Ямар нэгэн зүйл дутуу байна. Жишээ нь: ${err}`,
     });
   }
 };

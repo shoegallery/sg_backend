@@ -65,7 +65,7 @@ const debitAccount = async ({
     return {
       status: false,
       statusCode: 404,
-      message: `User ${username} doesn\'t exist`,
+      message: `Хэрэглэгч ${username} байхгүй байна. Шалгана уу`,
     };
   }
 
@@ -73,7 +73,7 @@ const debitAccount = async ({
     return {
       status: false,
       statusCode: 400,
-      message: `User ${username} has insufficient balance`,
+      message: `Хэрэглэгч ${username} дансны үлдэгдэл хүрэлцэхгүй байна`,
     };
   }
 

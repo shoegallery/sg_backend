@@ -30,7 +30,7 @@ const walletSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      minlength: 4,
+      minlength: 6,
       required: [true, "Нууц үгээ оруулна уу"],
       select: false,
     },

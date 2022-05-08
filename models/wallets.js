@@ -38,6 +38,12 @@ const walletSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    role: {
+      type: String,
+      required: [true, "Хэрэглэгчийн эрхийг оруулна уу"],
+      enum: ["user", "operator", "admin"],
+      default: "admin",
+    },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
     email: {

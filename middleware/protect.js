@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const asyncHandler = require("./asyncHandle");
 const MyError = require("../utils/myError");
-const User = require("../models/User");
+const Wallets = require("../models/wallets");
 
 exports.protect = asyncHandler(async (req, res, next) => {
   // console.log(req.headers);
@@ -15,24 +15,24 @@ exports.protect = asyncHandler(async (req, res, next) => {
 
   if (!token) {
     throw new MyError(
-      "Энэ үйлдлийг хийхэд таны эрх хүрэхгүй байна. Та эхлээд логин хийнэ үү. Authorization header-ээр эсвэ Cookie ашиглан токеноо дамжуулна уу.",
+      "Энэ үйлдлийг хийхэд таны эрх хүрэхгүй байна. Та эхлээд логин хийнэ үү. Authorization header-ээр эсвэл Cookie ашиглан токеноо дамжуулна уу.",
       401
     );
   }
 
   const tokenObj = jwt.verify(token, process.env.JWT_SECRET);
-
-  req.userId = tokenObj.id;
-  req.userRole = tokenObj.role;
-
+  req.walletsId = tokenObj.id;
+  req.walletRole = tokenObj.role;
   next();
 });
 
 exports.authorize = (...roles) => {
   return (req, res, next) => {
-    if (!roles.includes(req.userRole)) {
+    if (!roles.includes(req.walletRole)) {
       throw new MyError(
-        "Таны эрх [" + req.userRole + "] энэ үйлдлийг гүйцэтгэхэд хүрэлцэхгүй!",
+        "Таны эрх [" +
+          req.walletRole +
+          "] энэ үйлдлийг гүйцэтгэхэд хүрэлцэхгүй!",
         403
       );
     }

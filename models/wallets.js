@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
+
 const walletSchema = new mongoose.Schema(
   {
     username: {
@@ -98,6 +99,4 @@ walletSchema.methods.generatePasswordChangeToken = function () {
   this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
   return resetToken;
 };
-
-const Wallets = mongoose.model("Wallets", walletSchema);
-module.exports = Wallets;
+module.exports = mongoose.model("Wallets", walletSchema);

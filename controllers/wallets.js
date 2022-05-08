@@ -5,7 +5,9 @@ const asyncHandler = require("express-async-handler");
 
 const createWallet = asyncHandler(async (req, res) => {
   try {
-    const { username, firstname, lastname, phone, email, password } = req.body;
+    const { username, firstname, lastname, phone, email, password, role } =
+      req.body;
+
     const walletExists = await Wallets.findOne({
       username,
       firstname,
@@ -13,6 +15,7 @@ const createWallet = asyncHandler(async (req, res) => {
       phone,
       email,
       password,
+      role,
     });
 
     if (walletExists) {
@@ -29,12 +32,15 @@ const createWallet = asyncHandler(async (req, res) => {
       phone,
       email,
       password,
+      role,
     });
     console.log(result);
+    const token = result.getJsonWebToken();
     return res.status(200).json({
       status: "ok",
       message: "Хэтэвч амжилттай үүслээ",
       data: result,
+      token,
     });
   } catch (err) {
     return res.status(200).json({
@@ -118,7 +124,7 @@ const logout = asyncHandler(async (req, res, next) => {
     httpOnly: true,
   };
 
-  res.status(200).cookie("amazon-token", null, cookieOption).json({
+  res.status(200).cookie("Cookie", null, cookieOption).json({
     success: true,
     data: "logged out...",
   });
@@ -126,7 +132,7 @@ const logout = asyncHandler(async (req, res, next) => {
 
 const getAllWallets = asyncHandler(async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
+  const limit = parseInt(req.query.limit) || 1000;
   const sort = req.query.sort;
   const select = req.query.select;
 

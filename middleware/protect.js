@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
 const asyncHandler = require("./asyncHandle");
 const MyError = require("../utils/myError");
-const Wallets = require("../models/wallets");
 
 exports.protect = asyncHandler(async (req, res, next) => {
   // console.log(req.headers);

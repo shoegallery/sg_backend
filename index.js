@@ -7,6 +7,7 @@ var rfs = require("rotating-file-stream");
 const colors = require("colors");
 var morgan = require("morgan");
 
+const cookieParser = require("cookie-parser");
 const xss = require("xss-clean");
 const cors = require("cors");
 const rateLimit = require("express-rate-limit");
@@ -57,7 +58,7 @@ const limiter = rateLimit({
 app.use(limiter);
 // http parameter pollution халдлагын эсрэг books?name=aaa&name=bbb  ---> name="bbb"
 app.use(hpp());
-
+app.use(cookieParser());
 app.use(logger);
 
 app.use(cors(corsOptions));

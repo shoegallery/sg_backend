@@ -116,11 +116,11 @@ const login = asyncHandler(async (req, res, next) => {
   const token = wallets.getJsonWebToken();
 
   const cookieOption = {
-    expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+    expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
     httpOnly: true,
   };
 
-  res.status(200).cookie("amazon-token", token, cookieOption).json({
+  res.status(200).cookie("Bearer", token, cookieOption).json({
     status: true,
     token,
     wallets: wallets,

@@ -157,12 +157,12 @@ const getUserAllTransfers = asyncHandler(async (req, res, next) => {
   const wallets = await Wallets.findById(req.params.id);
 
   if (!wallets) {
-    throw new MyError(req.params.id + " ID-тэй хэрэглэгч байхгүй!", 400);
+    throw new MyError(req.params.id + " ID-тэй хэтэвч байхгүй!", 400);
   }
-  console.log(wallets);
+
   const transactions = await Transactions.find({ phone: wallets.phone });
   if (!transactions) {
-    throw new MyError(req.body.phone + " ID-тэй хэтэвч байхгүй!", 400);
+    throw new MyError(req.body.phone + " Утасны дугаартай гүйлгээ алга!", 400);
   }
   res.status(200).json({
     success: true,

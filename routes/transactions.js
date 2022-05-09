@@ -23,6 +23,7 @@ router
 //   .get(authorize("admin", "operator"), Transactions.getwallets);
 
 router.route("/transfer").post(authorize("user"), Transactions.transfer); //ok
+
 router.route("/list").post(authorize("admin"), Transactions.getAllTransfer);
 router
   .route("/list/credit")

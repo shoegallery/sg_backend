@@ -23,7 +23,7 @@ const transfer = asyncHandler(async (req, res) => {
       const transferResult = await Promise.all([
         debitAccount({
           amount,
-          username: fromUsername,
+          phone: fromUsername,
           purpose: "transfer",
           reference,
           summary,
@@ -33,7 +33,7 @@ const transfer = asyncHandler(async (req, res) => {
         }),
         creditAccount({
           amount,
-          username: toUsername,
+          phone: toUsername,
           purpose: "transfer",
           reference,
           summary,

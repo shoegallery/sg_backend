@@ -3,24 +3,24 @@ const Transactions = require("../models/transactions");
 
 const creditAccount = async ({
   amount,
-  username,
+  phone,
   purpose,
   reference,
   summary,
   trnxSummary,
   session,
 }) => {
-  const wallet = await Wallets.findOne({ username });
+  const wallet = await Wallets.findOne({ phone });
   if (!wallet) {
     return {
       status: false,
       statusCode: 404,
-      message: `User ${username} doesn\'t exist`,
+      message: `User ${phone} doesn\'t exist`,
     };
   }
 
   const updatedWallet = await Wallets.findOneAndUpdate(
-    { username },
+    { phone },
     { $inc: { balance: amount } },
     { session }
   );
@@ -28,10 +28,11 @@ const creditAccount = async ({
   const transaction = await Transactions.create(
     [
       {
-        trnxType: "CR",
+        trnxType: "Орлого",
         purpose,
         amount,
-        username,
+
+        phone,
         reference,
         balanceBefore: Number(wallet.balance),
         balanceAfter: Number(wallet.balance) + Number(amount),
@@ -53,19 +54,20 @@ const creditAccount = async ({
 
 const debitAccount = async ({
   amount,
-  username,
+
+  phone,
   purpose,
   reference,
   summary,
   trnxSummary,
   session,
 }) => {
-  const wallet = await Wallets.findOne({ username });
+  const wallet = await Wallets.findOne({ phone });
   if (!wallet) {
     return {
       status: false,
       statusCode: 404,
-      message: `Хэрэглэгч ${username} байхгүй байна. Шалгана уу`,
+      message: `Хэрэглэгч ${phone} байхгүй байна. Шалгана уу`,
     };
   }
 
@@ -73,22 +75,23 @@ const debitAccount = async ({
     return {
       status: false,
       statusCode: 400,
-      message: `Хэрэглэгч ${username} дансны үлдэгдэл хүрэлцэхгүй байна`,
+      message: `Хэрэглэгч ${phone} дансны үлдэгдэл хүрэлцэхгүй байна`,
     };
   }
 
   const updatedWallet = await Wallets.findOneAndUpdate(
-    { username },
+    { phone },
     { $inc: { balance: -amount } },
     { session }
   );
   const transaction = await Transactions.create(
     [
       {
-        trnxType: "DR",
+        trnxType: "Зарлага",
         purpose,
         amount,
-        username,
+
+        phone,
         reference,
         balanceBefore: Number(wallet.balance),
         balanceAfter: Number(wallet.balance) - Number(amount),

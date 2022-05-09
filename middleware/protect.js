@@ -29,9 +29,7 @@ exports.authorize = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.walletRole)) {
       throw new MyError(
-        "Таны эрх [" +
-          req.walletRole +
-          "] энэ үйлдлийг гүйцэтгэхэд хүрэлцэхгүй!",
+        "Таны эрх [" + req.walletRole + "] энэ үйлдлийг хийх боломжгүй",
         403
       );
     }

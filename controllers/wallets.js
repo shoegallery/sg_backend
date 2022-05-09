@@ -5,8 +5,16 @@ const asyncHandler = require("express-async-handler");
 
 const createWallet = asyncHandler(async (req, res) => {
   try {
-    const { username, firstname, lastname, phone, email, password, role } =
-      req.body;
+    const {
+      username,
+      firstname,
+      lastname,
+      phone,
+      email,
+      password,
+      role,
+      pinCode,
+    } = req.body;
 
     const walletExists = await Wallets.findOne({
       username,
@@ -16,6 +24,7 @@ const createWallet = asyncHandler(async (req, res) => {
       email,
       password,
       role,
+      pinCode,
     });
 
     if (walletExists) {
@@ -33,6 +42,7 @@ const createWallet = asyncHandler(async (req, res) => {
       email,
       password,
       role,
+      pinCode,
     });
     console.log(result);
     const token = result.getJsonWebToken();
@@ -84,16 +94,16 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
 });
 
 const login = asyncHandler(async (req, res, next) => {
-  const { email, password } = req.body;
+  const { phone, password } = req.body;
 
   // Оролтыгоо шалгана
 
-  if (!email || !password) {
-    throw new MyError("Имэл болон нууц үгээ дамжуулна уу", 400);
+  if (!phone || !password) {
+    throw new MyError("Утасны дугаар болон нууц үгээ дамжуулна уу", 400);
   }
 
   // Тухайн хэрэглэгчийн хайна
-  const wallets = await Wallets.findOne({ email }).select("+password");
+  const wallets = await Wallets.findOne({ phone }).select("+password");
 
   if (!wallets) {
     throw new MyError("Имэйл болон нууц үгээ зөв оруулна уу", 401);

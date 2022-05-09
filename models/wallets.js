@@ -45,6 +45,19 @@ const walletSchema = new mongoose.Schema(
       enum: ["user", "operator", "admin"],
       default: "admin",
     },
+    walletType: {
+      type: String,
+      required: [true, "Хэтэвчний эрхийг оруулна уу"],
+      enum: ["basic", "vip", "gold"],
+      default: "basic",
+    },
+    pinCode: {
+      type: String,
+      minlength: 4,
+      maxlength: 4,
+      required: [true, "Пин кодоо оруулна уу"],
+      select: false,
+    },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
     email: {

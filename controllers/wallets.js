@@ -97,7 +97,6 @@ const login = asyncHandler(async (req, res, next) => {
   const { phone, password } = req.body;
 
   // Оролтыгоо шалгана
-
   if (!phone || !password) {
     throw new MyError("Утасны дугаар болон нууц үгээ дамжуулна уу", 400);
   }
@@ -164,7 +163,6 @@ const getAllWallets = asyncHandler(async (req, res, next) => {
 
 const getwallets = asyncHandler(async (req, res, next) => {
   const wallets = await Wallets.findById(req.params.id);
-
   if (!wallets) {
     throw new MyError(req.params.id + " ID-тэй хэрэглэгч байхгүй!", 400);
   }

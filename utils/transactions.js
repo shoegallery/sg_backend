@@ -65,7 +65,7 @@ const debitAccount = async ({
     return {
       status: false,
       statusCode: 404,
-      message: `Хэрэглэгч ${phone} байхгүй байна. Шалгана уу`,
+      message: `Хүлээн авагч ${phone} байхгүй байна. Шалгана уу`,
     };
   }
 
@@ -73,7 +73,7 @@ const debitAccount = async ({
     return {
       status: false,
       statusCode: 400,
-      message: `Хэрэглэгч ${phone} дансны үлдэгдэл хүрэлцэхгүй байна`,
+      message: `Илгээгч ${phone} дансны үлдэгдэл хүрэлцэхгүй байна`,
     };
   }
 

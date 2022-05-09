@@ -166,10 +166,17 @@ const getwallets = asyncHandler(async (req, res, next) => {
 });
 
 const updatewallets = asyncHandler(async (req, res, next) => {
-  const wallets = await Wallets.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
+  const wallets = await Wallets.findByIdAndUpdate(
+    req.params.id,
+    {
+      phone: req.body.phone,
+      name: req.body.name,
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
 
   if (!wallets) {
     throw new MyError(req.params.id + " ID-тэй хэрэглэгч байхгүйээээ.", 400);
@@ -233,7 +240,6 @@ module.exports = {
   updatewallets,
   getwallets,
   getAllWallets,
-
   createWallet,
   resetPassword,
   forgotPassword,

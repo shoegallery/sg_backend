@@ -163,6 +163,7 @@ const getAllWallets = asyncHandler(async (req, res, next) => {
 
 const getwallets = asyncHandler(async (req, res, next) => {
   const wallets = await Wallets.findById(req.params.id);
+
   if (!wallets) {
     throw new MyError(req.params.id + " ID-тэй хэрэглэгч байхгүй!", 400);
   }

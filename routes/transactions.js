@@ -23,7 +23,7 @@ router
 router
   .route("/wallet/:id/debit")
   .get(
-    authorize("user", "admin", "operator"),
+    authorize("user", "admin", "operator", "saler"),
     Transactions.getUserTransfersDebit
   );
 

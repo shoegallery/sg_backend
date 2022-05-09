@@ -88,7 +88,7 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
   });
   console.log("Message sent: %s", info.messageId);
   res.status(200).json({
-    success: true,
+    status: true,
     resetToken,
   });
 });
@@ -121,7 +121,7 @@ const login = asyncHandler(async (req, res, next) => {
   };
 
   res.status(200).cookie("amazon-token", token, cookieOption).json({
-    success: true,
+    status: true,
     token,
     wallets: wallets,
   });
@@ -134,7 +134,7 @@ const logout = asyncHandler(async (req, res, next) => {
   };
 
   res.status(200).cookie("Cookie", null, cookieOption).json({
-    success: true,
+    status: true,
     data: "logged out...",
   });
 });
@@ -155,7 +155,7 @@ const getAllWallets = asyncHandler(async (req, res, next) => {
     .limit(limit);
 
   res.status(200).json({
-    success: true,
+    status: true,
     data: allWallets,
     pagination,
   });
@@ -169,7 +169,7 @@ const getwallets = asyncHandler(async (req, res, next) => {
   }
 
   res.status(200).json({
-    success: true,
+    status: true,
     data: wallets,
   });
 });
@@ -192,7 +192,7 @@ const updatewallets = asyncHandler(async (req, res, next) => {
   }
 
   res.status(200).json({
-    success: true,
+    status: true,
     data: wallets,
   });
 });
@@ -207,7 +207,7 @@ const deletewallets = asyncHandler(async (req, res, next) => {
   Wallets.remove();
 
   res.status(200).json({
-    success: true,
+    status: true,
     data: wallets,
   });
 });
@@ -238,7 +238,7 @@ const resetPassword = asyncHandler(async (req, res, next) => {
   const token = Wallets.getJsonWebToken();
 
   res.status(200).json({
-    success: true,
+    status: true,
     token,
     wallets: wallets,
   });

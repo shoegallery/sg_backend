@@ -62,7 +62,7 @@ const transfer = asyncHandler(async (req, res) => {
         const errors = failedTxns.map((a) => a.message);
         await session.abortTransaction();
         return res.status(400).json({
-          status: false,
+          success: false,
           message: errors,
         });
       }
@@ -70,12 +70,12 @@ const transfer = asyncHandler(async (req, res) => {
       await session.commitTransaction();
       session.endSession();
       return res.status(201).json({
-        status: "ok",
+        success: true,
         message: "Шилжүүлэг амжилттай",
       });
     } else {
       return res.status(400).json({
-        status: "002",
+        success: true,
         message: `Утга эерэг байх ёстой`,
       });
     }
@@ -83,7 +83,7 @@ const transfer = asyncHandler(async (req, res) => {
     await session.abortTransaction();
     session.endSession();
     return res.status(500).json({
-      status: "002",
+      success: true,
       message: `Unable to find perform transfer. Please try again. \n Error: ${err}`,
     });
   }
@@ -170,10 +170,51 @@ const getUserAllTransfers = asyncHandler(async (req, res, next) => {
   });
 });
 
+const getUserAllTransfersProfit = asyncHandler(async (req, res, next) => {
+  const wallets = await Wallets.findById(req.params.id);
+
+  if (!wallets) {
+    throw new MyError(req.params.id + " ID-тэй хэтэвч байхгүй!", 400);
+  }
+
+  const transactions = await Transactions.find({
+    phone: wallets.phone,
+    trnxType: "Орлого",
+  });
+  if (!transactions) {
+    throw new MyError(req.body.phone + " Утасны дугаартай гүйлгээ алга!", 400);
+  }
+  res.status(200).json({
+    success: true,
+    data: transactions,
+  });
+});
+const getUserAllTransfersCredit = asyncHandler(async (req, res, next) => {
+  const wallets = await Wallets.findById(req.params.id);
+
+  if (!wallets) {
+    throw new MyError(req.params.id + " ID-тэй хэтэвч байхгүй!", 400);
+  }
+
+  const transactions = await Transactions.find({
+    phone: wallets.phone,
+    trnxType: "Зарлага",
+  });
+  if (!transactions) {
+    throw new MyError(req.body.phone + " Утасны дугаартай гүйлгээ алга!", 400);
+  }
+  res.status(200).json({
+    success: true,
+    data: transactions,
+  });
+});
+
 module.exports = {
   transfer,
   getAllTransfer,
   getAllTransferCredit,
   getAllTransferProfit,
   getUserAllTransfers,
+  getUserAllTransfersProfit,
+  getUserAllTransfersCredit,
 };

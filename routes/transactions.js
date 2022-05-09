@@ -9,6 +9,12 @@ router.use(protect);
 router
   .route("/wallet/:id")
   .get(authorize("user"), Transactions.getUserAllTransfers);
+router
+  .route("/wallet/:id/credit")
+  .get(authorize("user"), Transactions.getUserAllTransfersCredit);
+router
+  .route("/wallet/:id/profit")
+  .get(authorize("user"), Transactions.getUserAllTransfersProfit);
 // router
 //   .route("/wallet/:id/credit")
 //   .get(authorize("admin", "operator"), Transactions.getwallets);

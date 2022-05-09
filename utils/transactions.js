@@ -31,7 +31,6 @@ const creditAccount = async ({
         trnxType: "Орлого",
         purpose,
         amount,
-
         phone,
         reference,
         balanceBefore: Number(wallet.balance),
@@ -54,7 +53,6 @@ const creditAccount = async ({
 
 const debitAccount = async ({
   amount,
-
   phone,
   purpose,
   reference,
@@ -90,7 +88,6 @@ const debitAccount = async ({
         trnxType: "Зарлага",
         purpose,
         amount,
-
         phone,
         reference,
         balanceBefore: Number(wallet.balance),

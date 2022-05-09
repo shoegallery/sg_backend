@@ -1,4 +1,5 @@
 const Transactions = require("../models/transactions");
+const Wallets = require("../models/transactions");
 const mongoose = require("mongoose");
 const { v4 } = require("uuid");
 const { creditAccount, debitAccount } = require("../utils/transactions");
@@ -10,12 +11,12 @@ const transfer = asyncHandler(async (req, res) => {
   session.startTransaction();
 
   try {
-    const { toUsername, fromUsername, amount, summary } = req.body;
+    const { toPhone, fromPhone, amount, summary, id } = req.body;
     if (amount > 0) {
       const reference = v4();
-      if (!toUsername && !fromUsername && !amount && !summary) {
+      if (!toPhone && !fromPhone && !amount && !summary) {
         throw new MyError(
-          "Дараах утгуудыг оруулна уу: toUsername, fromUsername, amount, summary",
+          "Дараах утгуудыг оруулна уу: toPhone, fromPhone, amount, summary",
           400
         );
       }
@@ -23,21 +24,21 @@ const transfer = asyncHandler(async (req, res) => {
       const transferResult = await Promise.all([
         debitAccount({
           amount,
-          phone: fromUsername,
+          phone: fromPhone,
           purpose: "transfer",
           reference,
           summary,
-          trnxSummary: `TRFR TO: ${toUsername}. TRNX REF:${reference} `,
+          trnxSummary: `TRFR TO: ${toPhone}. TRNX REF:${reference} `,
           session,
           paidAt: `${new Date()}`,
         }),
         creditAccount({
           amount,
-          phone: toUsername,
+          phone: toPhone,
           purpose: "transfer",
           reference,
           summary,
-          trnxSummary: `TRFR FROM: ${fromUsername}. TRNX REF:${reference} `,
+          trnxSummary: `TRFR FROM: ${fromPhone}. TRNX REF:${reference} `,
           session,
           paidAt: `${new Date()}`,
         }),

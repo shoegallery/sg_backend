@@ -21,6 +21,7 @@ const transactionSchema = new mongoose.Schema(
       type: String,
       ref: "Wallets",
     },
+    phone: { type: Number, required: true },
     reference: { type: String, required: true },
     balanceBefore: {
       type: mongoose.Decimal128,

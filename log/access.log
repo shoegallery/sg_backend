@@ -800,3 +800,6 @@
 ::1 - - [09/May/2022:14:14:28 +0000] "GET /api/v1/transactions/wallet/6278b8daeff4fa58c6291a30 HTTP/1.1" 200 11430 "-" "PostmanRuntime/7.29.0"
 ::1 - - [09/May/2022:14:14:33 +0000] "GET /api/v1/transactions/wallet/6278b8daeff4fa58c6291a30/profit HTTP/1.1" 200 10973 "-" "PostmanRuntime/7.29.0"
 ::1 - - [09/May/2022:14:15:32 +0000] "GET /api/v1/transactions/wallet/6278b8daeff4fa58c6291a30/Credit HTTP/1.1" 200 11430 "-" "PostmanRuntime/7.29.0"
+::1 - - [09/May/2022:14:15:45 +0000] "GET /api/v1/transactions/wallet/6278b8daeff4fa58c6291a30/Credit HTTP/1.1" 200 482 "-" "PostmanRuntime/7.29.0"
+::1 - - [09/May/2022:14:15:47 +0000] "GET /api/v1/transactions/wallet/6278b8daeff4fa58c6291a30/Credit HTTP/1.1" 200 482 "-" "PostmanRuntime/7.29.0"
+::1 - - [09/May/2022:14:16:35 +0000] "GET /api/v1/transactions/wallet/6278b8daeff4fa58c6291a32/Credit HTTP/1.1" 400 119 "-" "PostmanRuntime/7.29.0"

@@ -10,12 +10,14 @@ router.get("/logout", Wallets.logout);
 router.post("/reset-password", Wallets.resetPassword);
 
 router.use(protect);
-router.route("/list").get(authorize("admin"), Wallets.getAllWallets); //ok
+router
+  .route("/list")
+  .get(authorize("admin", "operator"), Wallets.getAllWallets); //ok
 
 router
   .route("/:id")
   .get(authorize("admin", "operator"), Wallets.getwallets)
-  .put(authorize("admin", "user", "operator"), Wallets.updatewallets)
+  .put(authorize("admin", "user"), Wallets.updatewallets)
   .delete(authorize("admin"), Wallets.deletewallets);
 
 module.exports = router;

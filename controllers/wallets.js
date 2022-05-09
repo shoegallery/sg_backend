@@ -29,7 +29,7 @@ const createWallet = asyncHandler(async (req, res) => {
 
     if (walletExists) {
       return res.status(200).json({
-        status: "002",
+        success: false,
         message: "Хэтэвч аль хэдийн үүссэн",
       });
     }
@@ -47,14 +47,14 @@ const createWallet = asyncHandler(async (req, res) => {
     console.log(result);
     const token = result.getJsonWebToken();
     return res.status(200).json({
-      status: "ok",
+      success: true,
       message: "Хэтэвч амжилттай үүслээ",
       data: result,
       token,
     });
   } catch (err) {
     return res.status(200).json({
-      status: "ok",
+      success: false,
       message: `Ямар нэгэн зүйл буруу байна. Жишээ нь: ${err}`,
     });
   }
@@ -162,7 +162,7 @@ const getAllWallets = asyncHandler(async (req, res, next) => {
 });
 
 const getwallets = asyncHandler(async (req, res, next) => {
-  const wallets = await Wallets.findById(req.params.id);
+  const wallets = await Wallets.findById(req.params.id).sort({ createdAt: -1 });
 
   if (!wallets) {
     throw new MyError(req.params.id + " ID-тэй хэрэглэгч байхгүй!", 400);

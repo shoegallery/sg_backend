@@ -5,7 +5,6 @@ const { protect, authorize } = require("../middleware/protect");
 const Transactions = require("../controllers/transactions");
 
 router.use(protect);
-
 //Хэрэглэгчийн хийх шилжүүлэг
 router.route("/purchase").post(authorize("user"), Transactions.userPurchase);
 router.route("/cash-out").post(authorize("user"), Transactions.userCashOut);

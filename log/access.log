@@ -114,3 +114,4 @@
 ::1 - - [09/May/2022:19:01:54 +0000] "POST /api/v1/transactions/list/charge HTTP/1.1" 200 3177 "-" "PostmanRuntime/7.29.0"
 ::1 - - [09/May/2022:19:05:06 +0000] "POST /api/v1/transactions/list/charge HTTP/1.1" 200 3177 "-" "PostmanRuntime/7.29.0"
 ::1 - - [09/May/2022:19:05:07 +0000] "POST /api/v1/transactions/list/charge HTTP/1.1" 200 3177 "-" "PostmanRuntime/7.29.0"
+::1 - - [09/May/2022:19:21:39 +0000] "GET /api/v1/wallets/list HTTP/1.1" 200 1003 "-" "PostmanRuntime/7.29.0"

@@ -77,11 +77,8 @@ walletSchema.pre("save", async function (next) {
   if (!this.isModified("password")) next();
   // Нууц үг өөрчлөгдсөн
   console.time("salt");
-
   const salt = await bcrypt.genSalt(10);
-
   console.timeEnd("salt");
-
   console.time("hash");
   this.password = await bcrypt.hash(this.password, salt);
   console.timeEnd("hash");

@@ -4,6 +4,7 @@ const paginate = require("../utils/paginate");
 const asyncHandler = require("express-async-handler");
 const sendEmail = require("../utils/email");
 const crypto = require("crypto");
+const sendMessage = require("../utils/sendMessage");
 
 const createWallet = asyncHandler(async (req, res) => {
   try {
@@ -72,24 +73,24 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
   if (!wallets) {
     throw new MyError(req.body.email + " имэйлтэй хэрэглэгч олдсонгүй!", 400);
   }
-
   const resetToken = wallets.generatePasswordChangeToken();
-
   await wallets.save();
 
   // await Wallets.save({ validateBeforeSave: false });
 
   // Имэйл илгээнэ
-  const link = `https://shoegallery.mn/changepassword/${resetToken}`;
 
-  const message = `Сайн байна уу<br><br>Та нууц үгээ солих хүсэлт илгээлээ.<br> Нууц үгээ доорхи линк дээр дарж солино уу:<br><br><a target="_blank" href="${link}">${link}</a><br><br>Өдрийг сайхан өнгөрүүлээрэй!`;
+  const message = {
+    channel: "sms",
+    title: "SHOE GALLERY",
+    body: `Sain baina uu? Gift Cardny nuuts ug sergeeh kod: ${resetToken} www.shoegallery.mn`,
+    receivers: [`${wallets.phone}`],
+    shop_id: "2706",
+  };
 
-  const info = await sendEmail({
-    email: wallets.email,
-    subject: "Нууц үг өөрчлөх хүсэлт",
+  await sendMessage({
     message,
   });
-  console.log("Message sent: %s", info.messageId);
 
   res.status(200).json({
     status: true,

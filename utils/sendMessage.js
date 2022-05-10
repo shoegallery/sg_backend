@@ -1,31 +1,45 @@
-const nodemailer = require("nodemailer");
+var axios = require("axios");
 
 // async..await is not allowed in global scope, must use a wrapper
-const sendEmail = async (options) => {
+
+const sendMessage = async (options) => {
+  const smsData = [];
+  var zochil_data = {
+    phone: process.env.ZOCHIL_USERNAME,
+    password: process.env.ZOCHIL_PASSWORD,
+  };
   // create reusable transporter object using the default SMTP transport
-  let transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: process.env.SMTP_PORT,
-    secure: false, // true for 465, false for other ports
-    auth: {
-      user: process.env.SMTP_USERNAME, // generated ethereal user
-      pass: process.env.SMTP_PASSWORD, // generated ethereal password
-    },
-  });
-  // send mail with defined transport object
-  let info = await transporter.sendMail({
-    from: `${process.env.SMTP_FROM} <${process.env.SMTP_FROM_EMAIL}>`, // sender address
-    to: options.email, // list of receivers
-    subject: options.subject, // Subject line
-    html: options.message, // html body
-  });
-  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+  await axios({
+    method: "post",
+    url: `https://api.zochil.cloud/v2/user/users/login`,
 
-  // Preview only available when sending through an Ethereal account
-  console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
-  // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
-
-  return info;
+    data: zochil_data,
+  })
+    .then(function (login_response) {
+      if (login_response.data.status === "ok") {
+        axios({
+          method: "post",
+          url: `https://api.zochil.cloud/v2/merchant/broadcasts/send`,
+          headers: {
+            "merchant-id": process.env.ZOCHIL_MERCHANT_ID,
+            "Content-Type": "application/json",
+            "access-token": login_response.data.access_token,
+          },
+          data: options.message,
+        })
+          .then(function (send_sms) {
+            if (send_sms.data.status === "ok") {
+              console.log("Send Message");
+            }
+          })
+          .catch(function (error) {
+            console.log("Логин алдаа");
+          });
+      }
+    })
+    .catch(function (error) {
+      console.log("Логин алдаа");
+    });
 };
 
-module.exports = sendEmail;
+module.exports = sendMessage;

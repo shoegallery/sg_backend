@@ -5,6 +5,7 @@ const router = express.Router();
 
 router.post("/create", Wallets.createWallet); //ok
 router.post("/forgot-password", Wallets.forgotPassword);
+
 router.post("/login", Wallets.login); //ok
 router.get("/logout", Wallets.logout);
 router.post("/reset-password", Wallets.resetPassword);

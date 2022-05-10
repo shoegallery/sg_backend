@@ -13,7 +13,6 @@ const cors = require("cors");
 const rateLimit = require("express-rate-limit");
 const hpp = require("hpp");
 
-const logger = require("./middleware/logger");
 const walletRoutes = require("./routes/wallets");
 const transactionRoutes = require("./routes/transactions");
 
@@ -63,21 +62,19 @@ app.use(hpp());
 // Cookie байвал req.cookie рүү оруулж өгнө0
 app.use(cookieParser());
 // логгер
-app.use(logger);
+
 // Клиент вэб аппуудыг мөрдөх ёстой нууцлал хамгаалалтыг http header ашиглан зааж өгнө
 app.use(cors(corsOptions));
 // клиент сайтаас ирэх Cross site scripting халдлагаас хамгаална
 app.use(xss());
 // Клиент сайтаас дамжуулж буй MongoDB өгөгдлүүдийг халдлагаас цэвэрлэнэ
 app.use(mongoSanitize());
-
 // Morgan logger-ийн тохиргоо
 var accessLogStream = rfs.createStream("access.log", {
   interval: "1d", // rotate daily
   path: path.join(__dirname, "log"),
 });
 app.use(morgan("combined", { stream: accessLogStream }));
-
 app.use("/api/v1/wallets", walletRoutes);
 app.use("/api/v1/transactions", transactionRoutes);
 

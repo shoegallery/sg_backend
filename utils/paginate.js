@@ -9,6 +9,5 @@ module.exports = async function (page, limit, model) {
 
   if (page < pageCount) pagination.nextPage = page + 1;
   if (page > 1) pagination.prevPage = page - 1;
-
   return pagination;
 };

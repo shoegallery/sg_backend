@@ -13,10 +13,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
   }
 
   if (!token) {
-    throw new MyError(
-      "Энэ үйлдлийг хийхэд таны эрх хүрэхгүй байна. Та эхлээд логин хийнэ үү. Authorization header-ээр эсвэл Cookie ашиглан токеноо дамжуулна уу.",
-      401
-    );
+    throw new MyError("Энэ үйлдлийг хийхэд таны эрх хүрэхгүй байна.", 401);
   }
 
   const tokenObj = jwt.verify(token, process.env.JWT_SECRET);

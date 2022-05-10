@@ -1,6 +1,6 @@
 const Wallets = require("../models/wallets");
 const Transactions = require("../models/transactions");
-
+const reward = 1.2;
 const creditAccount = async ({
   amount,
   phone,
@@ -10,6 +10,10 @@ const creditAccount = async ({
   trnxSummary,
   session,
 }) => {
+  if (purpose === "charge") {
+    amount = amount * reward;
+  }
+
   const wallet = await Wallets.findOne({ phone });
   if (!wallet) {
     return {
@@ -60,6 +64,9 @@ const debitAccount = async ({
   trnxSummary,
   session,
 }) => {
+  if (purpose === "cashOut") {
+    amount = amount * reward;
+  }
   const wallet = await Wallets.findOne({ phone });
   if (!wallet) {
     return {

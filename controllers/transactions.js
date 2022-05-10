@@ -88,8 +88,9 @@ const userCharge = asyncHandler(async (req, res) => {
   try {
     const { toPhone, fromPhone, amount, summary, id } = req.body;
     const isUser = await Wallets.findById(id);
+
     if (amount > 0) {
-      if (isUser.phone !== fromPhone && req.userRole !== "admin") {
+      if (isUser.phone !== fromPhone) {
         throw new MyError(
           "Оператор та өөрийнхөө хэтэвчнээс шилжүүлэг хийх ёстой!!",
           403
@@ -102,6 +103,7 @@ const userCharge = asyncHandler(async (req, res) => {
           400
         );
       }
+
       const transferResult = await Promise.all([
         debitAccount({
           amount,

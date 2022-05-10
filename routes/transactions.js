@@ -6,7 +6,9 @@ const Transactions = require("../controllers/transactions");
 
 router.use(protect);
 //Хэрэглэгчийн хийх шилжүүлэг
-router.route("/purchase").post(authorize("user"), Transactions.userPurchase);
+router
+  .route("/purchase")
+  .post(authorize("user", "admin"), Transactions.userPurchase);
 router.route("/cash-out").post(authorize("user"), Transactions.userCashOut);
 
 //Хэрэглэгчийн хувьд авах дансны мэдээлэл
@@ -26,10 +28,15 @@ router
     Transactions.getUserTransfersDebit
   );
 
+router
+  .route("/giftcardcharge")
+  .post(authorize("admin", "operator"), Transactions.userGiftCardCharge);
+
 //Операторын хийх шилжүүлэг
 router
   .route("/charge")
   .post(authorize("admin", "operator"), Transactions.userCharge);
+
 router
   .route("/bonus")
   .post(authorize("admin", "operator"), Transactions.userChargeBonus);

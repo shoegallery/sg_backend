@@ -10,8 +10,14 @@ const creditAccount = async ({
   trnxSummary,
   session,
 }) => {
-  if (purpose === "charge") {
-    amount = amount * reward;
+  if (purpose === "giftcard") {
+    if (amount === 2000000) {
+      amount = 2500000;
+    } else if (amount === 3000000) {
+      amount = 4000000;
+    } else if (amount === 5000000) {
+      amount = 7000000;
+    }
   }
 
   const wallet = await Wallets.findOne({ phone });

@@ -168,12 +168,21 @@ const userCharge = asyncHandler(async (req, res) => {
 });
 const userGiftCardCharge = asyncHandler(async (req, res) => {
   const session = await mongoose.startSession();
+  var walletNewType;
   session.startTransaction();
   try {
     const { toPhone, fromPhone, amount, summary, id } = req.body;
     const isUser = await Wallets.findById(id);
-
+    const getWalletType = await Wallets.find({ phone: toPhone });
     if (amount > 0) {
+      if (amount === 2000000) {
+        walletNewType = "basic";
+      } else if (amount === 3000000) {
+        walletNewType = "gold";
+      } else if (amount === 5000000) {
+        walletNewType = "platnium";
+      }
+
       if (isUser.phone !== fromPhone) {
         throw new MyError(
           "Оператор та өөрийнхөө хэтэвчнээс шилжүүлэг хийх ёстой!!",
@@ -187,7 +196,8 @@ const userGiftCardCharge = asyncHandler(async (req, res) => {
           400
         );
       }
-      if (amount !== 2000000 || amount !== 3000000 || amount !== 5000000) {
+      console.log(amount);
+      if (amount !== 2000000 && amount !== 3000000 && amount !== 5000000) {
         throw new MyError("Дараах багцнаас л сонгоно  : 2сая , 3сая , 5сая");
       }
 
@@ -224,6 +234,18 @@ const userGiftCardCharge = asyncHandler(async (req, res) => {
           message: errors,
         });
       }
+
+      const receiver = await Wallets.findByIdAndUpdate(
+        getWalletType.id,
+        {
+          walletType: walletNewType,
+        },
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
+
       await session.commitTransaction();
       session.endSession();
       return res.status(201).json({

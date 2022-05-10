@@ -64,14 +64,14 @@ const createWallet = asyncHandler(async (req, res) => {
 });
 
 const forgotPassword = asyncHandler(async (req, res, next) => {
-  if (!req.body.email) {
-    throw new MyError("Та нууц үг сэргээх имэйл хаягаа дамжуулна уу", 400);
+  if (!req.body.phone) {
+    throw new MyError("Та нууц үг сэргээх утасны дугаараа дамжуулна уу", 400);
   }
 
-  const wallets = await Wallets.findOne({ email: req.body.email });
+  const wallets = await Wallets.findOne({ phone: req.body.phone });
 
   if (!wallets) {
-    throw new MyError(req.body.email + " имэйлтэй хэрэглэгч олдсонгүй!", 400);
+    throw new MyError(req.body.phone + " дугаартай  хэрэглэгч олдсонгүй!", 400);
   }
   const resetToken = wallets.generatePasswordChangeToken();
   await wallets.save();
@@ -83,7 +83,7 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
   const message = {
     channel: "sms",
     title: "SHOE GALLERY",
-    body: `Sain baina uu? Gift Cardny nuuts ug sergeeh kod: ${resetToken} www.shoegallery.mn`,
+    body: `Sain baina uu? Gift Cardny nuuts ug sergeeh kod: ${resetToken}. SHOE GALLERY`,
     receivers: [`${wallets.phone}`],
     shop_id: "2706",
   };
@@ -184,7 +184,6 @@ const updatewallets = asyncHandler(async (req, res, next) => {
     req.params.id,
     {
       phone: req.body.phone,
-      name: req.body.name,
     },
     {
       new: true,
@@ -195,7 +194,7 @@ const updatewallets = asyncHandler(async (req, res, next) => {
   if (!wallets) {
     throw new MyError(req.params.id + " ID-тэй хэрэглэгч байхгүйээээ.", 400);
   }
-
+  await wallets.save();
   res.status(200).json({
     status: true,
     data: wallets,
@@ -221,21 +220,15 @@ const resetPassword = asyncHandler(async (req, res, next) => {
   if (!req.body.resetToken || !req.body.password) {
     throw new MyError("Та токен болон нууц үгээ дамжуулна уу", 400);
   }
-
-  const encrypted = crypto
-    .createHash("sha256")
-    .update(req.body.resetToken)
-    .digest("hex");
-
-  const wallets = await wallets.findOne({
-    resetPasswordToken: encrypted,
+  console.log(req.body.resetToken);
+  const resetToken = `${req.body.resetToken}`;
+  const wallets = await Wallets.findOne({
+    resetPasswordToken: resetToken,
     resetPasswordExpire: { $gt: Date.now() },
   });
-
   if (!wallets) {
     throw new MyError("Токен хүчингүй байна!", 400);
   }
-
   wallets.password = req.body.password;
   wallets.resetPasswordToken = undefined;
   wallets.resetPasswordExpire = undefined;

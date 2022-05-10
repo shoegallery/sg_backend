@@ -30,7 +30,7 @@ const userPurchase = asyncHandler(async (req, res) => {
         );
       }
       const reference = v4();
-      if (!toPhone && !fromPhone && !amount && !summary) {
+      if (!toPhone && !fromPhone && !amount && !summary && !id) {
         throw new MyError(
           "Дараах утгуудыг оруулна уу: toPhone, fromPhone, amount, summary",
           400
@@ -105,7 +105,7 @@ const userCharge = asyncHandler(async (req, res) => {
         );
       }
       const reference = v4();
-      if (!toPhone && !fromPhone && !amount && !summary) {
+      if (!toPhone && !fromPhone && !amount && !summary && !id) {
         throw new MyError(
           "Дараах утгуудыг оруулна уу: toPhone, fromPhone, amount, summary",
           400
@@ -181,11 +181,14 @@ const userGiftCardCharge = asyncHandler(async (req, res) => {
         );
       }
       const reference = v4();
-      if (!toPhone && !fromPhone && !amount && !summary) {
+      if (!toPhone && !fromPhone && !amount && !summary && !id) {
         throw new MyError(
           "Дараах утгуудыг оруулна уу: toPhone, fromPhone, amount, summary",
           400
         );
+      }
+      if (amount !== 2000000 || amount !== 3000000 || amount !== 5000000) {
+        throw new MyError("Дараах багцнаас л сонгоно  : 2сая , 3сая , 5сая");
       }
 
       const transferResult = await Promise.all([
@@ -257,7 +260,7 @@ const userChargeBonus = asyncHandler(async (req, res) => {
         );
       }
       const reference = v4();
-      if (!toPhone && !fromPhone && !amount && !summary) {
+      if (!toPhone && !fromPhone && !amount && !summary && !id) {
         throw new MyError(
           "Дараах утгуудыг оруулна уу: toPhone, fromPhone, amount, summary",
           400
@@ -331,7 +334,7 @@ const userCashOut = asyncHandler(async (req, res) => {
         );
       }
       const reference = v4();
-      if (!toPhone && !fromPhone && !amount && !summary) {
+      if (!toPhone && !fromPhone && !amount && !summary && !id) {
         throw new MyError(
           "Дараах утгуудыг оруулна уу: toPhone, fromPhone, amount, summary",
           400

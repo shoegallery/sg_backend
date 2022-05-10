@@ -65,7 +65,7 @@ const debitAccount = async ({
   session,
 }) => {
   if (purpose === "cashOut") {
-    amount = amount * reward;
+    amount = amount * (reward - 1);
   }
   const wallet = await Wallets.findOne({ phone });
   if (!wallet) {

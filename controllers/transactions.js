@@ -342,80 +342,6 @@ const userChargeBonus = asyncHandler(async (req, res) => {
     });
   }
 });
-const userCashOut = asyncHandler(async (req, res) => {
-  const session = await mongoose.startSession();
-  session.startTransaction();
-  try {
-    const { toPhone, fromPhone, amount, summary, id } = req.body;
-    const isUser = await Wallets.findById(id);
-    if (amount > 0) {
-      if (isUser.phone !== fromPhone && req.userRole !== "admin") {
-        throw new MyError(
-          "Хэрэглэгч та өөрийнхөө хэтэвчнээсээ бэлэн мөнгөө хүлээн авах боломжтой",
-          403
-        );
-      }
-      const reference = v4();
-      if (!toPhone && !fromPhone && !amount && !summary && !id) {
-        throw new MyError(
-          "Дараах утгуудыг оруулна уу: toPhone, fromPhone, amount, summary",
-          400
-        );
-      }
-      const transferResult = await Promise.all([
-        debitAccount({
-          amount,
-          phone: fromPhone,
-          purpose: "cashOut",
-          reference,
-          summary: "Хэтэвчнээс бэлэн мөнгө хүлээн авах хүсэлт баталгаажлаа.",
-          trnxSummary: `TRFR TO: ${toPhone}. TRNX REF:${reference} `,
-          session,
-          paidAt: `${new Date()}`,
-        }),
-        creditAccount({
-          amount,
-          phone: toPhone,
-          purpose: "cashOut",
-          reference,
-          summary: "Хэрэглэгчийн бэлэн мөнгөний хүсэлт амжилттай.",
-          trnxSummary: `TRFR FROM: ${fromPhone}. TRNX REF:${reference} `,
-          session,
-          paidAt: `${new Date()}`,
-        }),
-      ]);
-      const failedTxns = transferResult.filter(
-        (result) => result.status !== true
-      );
-      if (failedTxns.length) {
-        const errors = failedTxns.map((a) => a.message);
-        await session.abortTransaction();
-        return res.status(400).json({
-          success: false,
-          message: errors,
-        });
-      }
-      await session.commitTransaction();
-      session.endSession();
-      return res.status(201).json({
-        success: true,
-        message: "Бэлэн мөнгөний хүсэлт амжилттай",
-      });
-    } else {
-      return res.status(400).json({
-        success: false,
-        message: `Утга эерэг байх ёстой`,
-      });
-    }
-  } catch (err) {
-    await session.abortTransaction();
-    session.endSession();
-    return res.status(500).json({
-      success: false,
-      message: `Unable to find perform transfer. Please try again. \n Error: ${err}`,
-    });
-  }
-});
 
 const getUserTransfers = asyncHandler(async (req, res, next) => {
   const wallets = await Wallets.findById(req.params.id);
@@ -669,11 +595,7 @@ const getAllGiftCardDebit = asyncHandler(async (req, res, next) => {
 });
 
 module.exports = {
-  userGiftCardCharge,
   userPurchase,
-  userCharge,
-  userCashOut,
-  userChargeBonus,
 
   getUserTransfers,
   getUserTransfersDebit,
@@ -683,14 +605,17 @@ module.exports = {
   getAllTransferCredit,
   getAllTransferDebit,
 
+  userCharge,
   getAllCharge,
   getAllChargeCredit,
   getAllChargeDebit,
 
+  userChargeBonus,
   getAllBonus,
   getAllBonusCredit,
   getAllBonusDebit,
 
+  userGiftCardCharge,
   getAllGiftCard,
   getAllGiftCardDebit,
   getAllGiftCardCredit,

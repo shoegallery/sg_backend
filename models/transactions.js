@@ -13,7 +13,6 @@ const transactionSchema = new mongoose.Schema(
         "deposit",
         "transfer",
         "reversal",
-        "cashOut",
         "purchase",
         "charge",
         "credit",

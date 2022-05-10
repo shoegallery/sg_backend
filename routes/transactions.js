@@ -7,7 +7,6 @@ const Transactions = require("../controllers/transactions");
 router.use(protect);
 //Хэрэглэгчийн хийх шилжүүлэг
 router.route("/purchase").post(authorize("user"), Transactions.userPurchase);
-router.route("/cash-out").post(authorize("user"), Transactions.userCashOut);
 
 //Хэрэглэгчийн хувьд авах дансны мэдээлэл
 router
@@ -26,15 +25,14 @@ router
     Transactions.getUserTransfersDebit
   );
 
+//Операторын хийх шилжүүлэг
+
 router
   .route("/giftcardcharge")
   .post(authorize("admin", "operator"), Transactions.userGiftCardCharge);
-
-//Операторын хийх шилжүүлэг
 router
   .route("/charge")
   .post(authorize("admin", "operator"), Transactions.userCharge);
-
 router
   .route("/bonus")
   .post(authorize("admin", "operator"), Transactions.userChargeBonus);
@@ -50,7 +48,9 @@ router
   .route("/list/debit")
   .post(authorize("admin", "operator"), Transactions.getAllTransferDebit);
 
-//Админы харах Charge шилжүүлгүүд
+/*
+Админы харах Charge шилжүүлгүүд
+
 router
   .route("/list/charge")
   .post(authorize("admin", "operator"), Transactions.getAllCharge);
@@ -60,8 +60,11 @@ router
 router
   .route("/list/charge/debit")
   .post(authorize("admin", "operator"), Transactions.getAllChargeDebit);
+*/
 
-//Админы харах GiftCard шилжүүлгүүд
+/*
+Админы харах GiftCard шилжүүлгүүд
+
 router
   .route("/list/giftcard")
   .post(authorize("admin", "operator"), Transactions.getAllGiftCard);
@@ -71,8 +74,10 @@ router
 router
   .route("/list/giftcard/debit")
   .post(authorize("admin", "operator"), Transactions.getAllGiftCardDebit);
+*/
 
-//Админы харах Bonus шилжүүлгүүд
+/*
+Админы харах Bonus шилжүүлгүүд
 router
   .route("/list/bonus")
   .post(authorize("admin", "operator"), Transactions.getAllBonus);
@@ -82,5 +87,5 @@ router
 router
   .route("/list/bonus/debit")
   .post(authorize("admin", "operator"), Transactions.getAllBonusDebit);
-
+*/
 module.exports = router;

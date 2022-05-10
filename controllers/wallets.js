@@ -2,8 +2,6 @@ const Wallets = require("../models/wallets");
 const MyError = require("../utils/myError");
 const paginate = require("../utils/paginate");
 const asyncHandler = require("express-async-handler");
-const sendEmail = require("../utils/email");
-const crypto = require("crypto");
 const sendMessage = require("../utils/sendMessage");
 
 const createWallet = asyncHandler(async (req, res) => {
@@ -121,7 +119,7 @@ const login = asyncHandler(async (req, res, next) => {
   const token = wallets.getJsonWebToken();
 
   const cookieOption = {
-    expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+    expires: new Date(Date.now() + 8 * 60 * 60 * 1000),
     httpOnly: true,
   };
 

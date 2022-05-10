@@ -14,10 +14,18 @@ const userPurchase = asyncHandler(async (req, res) => {
   try {
     const { toPhone, fromPhone, amount, summary, id } = req.body;
     const isUser = await Wallets.findById(id);
+    const isStore = await Wallets.find({ phone: toPhone });
+
     if (amount > 0) {
-      if (isUser.phone !== fromPhone && req.userRole !== "admin") {
+      if (isUser.phone !== fromPhone) {
         throw new MyError(
           "Худалдан авагч та өөрийнхөө хэтэвчнээс шилжүүлэг хийх ёстой!!",
+          403
+        );
+      }
+      if (isStore[0].role !== "saler") {
+        throw new MyError(
+          "Худалдан авагч та дэлгүүрийн данс руу шилжүүлэг хийнэ!!",
           403
         );
       }
@@ -77,7 +85,7 @@ const userPurchase = asyncHandler(async (req, res) => {
     await session.abortTransaction();
     session.endSession();
     return res.status(500).json({
-      success: true,
+      success: false,
       message: `Unable to find perform transfer. Please try again. \n Error: ${err}`,
     });
   }
@@ -153,7 +161,7 @@ const userCharge = asyncHandler(async (req, res) => {
     await session.abortTransaction();
     session.endSession();
     return res.status(500).json({
-      success: true,
+      success: false,
       message: `Unable to find perform transfer. Please try again. \n Error: ${err}`,
     });
   }
@@ -229,7 +237,7 @@ const userGiftCardCharge = asyncHandler(async (req, res) => {
     await session.abortTransaction();
     session.endSession();
     return res.status(500).json({
-      success: true,
+      success: false,
       message: `Unable to find perform transfer. Please try again. \n Error: ${err}`,
     });
   }
@@ -304,7 +312,7 @@ const userChargeBonus = asyncHandler(async (req, res) => {
     await session.abortTransaction();
     session.endSession();
     return res.status(500).json({
-      success: true,
+      success: false,
       message: `Unable to find perform transfer. Please try again. \n Error: ${err}`,
     });
   }
@@ -378,7 +386,7 @@ const userCashOut = asyncHandler(async (req, res) => {
     await session.abortTransaction();
     session.endSession();
     return res.status(500).json({
-      success: true,
+      success: false,
       message: `Unable to find perform transfer. Please try again. \n Error: ${err}`,
     });
   }
@@ -582,12 +590,13 @@ const getAllBonusDebit = asyncHandler(async (req, res, next) => {
     pagination,
   });
 });
-const getAllCashOut = asyncHandler(async (req, res, next) => {
+
+const getAllGiftCard = asyncHandler(async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 1000;
   ["select", "sort", "page", "limit"].forEach((el) => delete req.query[el]);
   const pagination = await paginate(page, limit, Wallets);
-  const allWallets = await Transactions.find({ purpose: "cashOut" })
+  const allWallets = await Transactions.find({ purpose: "giftcard" })
     .sort({ createdAt: -1 })
     .skip(pagination.start - 1)
     .limit(limit);
@@ -597,13 +606,13 @@ const getAllCashOut = asyncHandler(async (req, res, next) => {
     pagination,
   });
 });
-const getAllCashOutCredit = asyncHandler(async (req, res, next) => {
+const getAllGiftCardCredit = asyncHandler(async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 1000;
   ["select", "sort", "page", "limit"].forEach((el) => delete req.query[el]);
   const pagination = await paginate(page, limit, Wallets);
   const allWallets = await Transactions.find({
-    purpose: "cashOut",
+    purpose: "giftcard",
     trnxType: "Зарлага",
   })
     .sort({ createdAt: -1 })
@@ -615,13 +624,13 @@ const getAllCashOutCredit = asyncHandler(async (req, res, next) => {
     pagination,
   });
 });
-const getAllCashOutDebit = asyncHandler(async (req, res, next) => {
+const getAllGiftCardDebit = asyncHandler(async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 1000;
   ["select", "sort", "page", "limit"].forEach((el) => delete req.query[el]);
   const pagination = await paginate(page, limit, Wallets);
   const allWallets = await Transactions.find({
-    purpose: "cashOut",
+    purpose: "giftcard",
     trnxType: "Орлого",
   })
     .sort({ createdAt: -1 })
@@ -633,25 +642,31 @@ const getAllCashOutDebit = asyncHandler(async (req, res, next) => {
     pagination,
   });
 });
+
 module.exports = {
   userGiftCardCharge,
   userPurchase,
   userCharge,
   userCashOut,
   userChargeBonus,
-  getAllTransfer,
-  getAllTransferCredit,
-  getAllTransferDebit,
+
   getUserTransfers,
   getUserTransfersDebit,
   getUserTransfersCredit,
+
+  getAllTransfer,
+  getAllTransferCredit,
+  getAllTransferDebit,
+
   getAllCharge,
   getAllChargeCredit,
   getAllChargeDebit,
+
   getAllBonus,
   getAllBonusCredit,
   getAllBonusDebit,
-  getAllCashOut,
-  getAllCashOutCredit,
-  getAllCashOutDebit,
+
+  getAllGiftCard,
+  getAllGiftCardDebit,
+  getAllGiftCardCredit,
 };

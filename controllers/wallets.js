@@ -2,6 +2,8 @@ const Wallets = require("../models/wallets");
 const MyError = require("../utils/myError");
 const paginate = require("../utils/paginate");
 const asyncHandler = require("express-async-handler");
+const sendEmail = require("../utils/email");
+const crypto = require("crypto");
 
 const createWallet = asyncHandler(async (req, res) => {
   try {
@@ -71,8 +73,9 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
     throw new MyError(req.body.email + " имэйлтэй хэрэглэгч олдсонгүй!", 400);
   }
 
-  const resetToken = Wallets.generatePasswordChangeToken();
-  await Wallets.save();
+  const resetToken = wallets.generatePasswordChangeToken();
+
+  await wallets.save();
 
   // await Wallets.save({ validateBeforeSave: false });
 
@@ -82,11 +85,12 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
   const message = `Сайн байна уу<br><br>Та нууц үгээ солих хүсэлт илгээлээ.<br> Нууц үгээ доорхи линк дээр дарж солино уу:<br><br><a target="_blank" href="${link}">${link}</a><br><br>Өдрийг сайхан өнгөрүүлээрэй!`;
 
   const info = await sendEmail({
-    email: Wallets.email,
+    email: wallets.email,
     subject: "Нууц үг өөрчлөх хүсэлт",
     message,
   });
   console.log("Message sent: %s", info.messageId);
+
   res.status(200).json({
     status: true,
     resetToken,
@@ -204,7 +208,7 @@ const deletewallets = asyncHandler(async (req, res, next) => {
     throw new MyError(req.params.id + " ID-тэй хэрэглэгч байхгүйээээ.", 400);
   }
 
-  Wallets.remove();
+  wallets.remove();
 
   res.status(200).json({
     status: true,
@@ -222,7 +226,7 @@ const resetPassword = asyncHandler(async (req, res, next) => {
     .update(req.body.resetToken)
     .digest("hex");
 
-  const wallets = await Wallets.findOne({
+  const wallets = await wallets.findOne({
     resetPasswordToken: encrypted,
     resetPasswordExpire: { $gt: Date.now() },
   });
@@ -231,11 +235,11 @@ const resetPassword = asyncHandler(async (req, res, next) => {
     throw new MyError("Токен хүчингүй байна!", 400);
   }
 
-  Wallets.password = req.body.password;
-  Wallets.resetPasswordToken = undefined;
-  Wallets.resetPasswordExpire = undefined;
-  await Wallets.save();
-  const token = Wallets.getJsonWebToken();
+  wallets.password = req.body.password;
+  wallets.resetPasswordToken = undefined;
+  wallets.resetPasswordExpire = undefined;
+  await wallets.save();
+  const token = wallets.getJsonWebToken();
 
   res.status(200).json({
     status: true,

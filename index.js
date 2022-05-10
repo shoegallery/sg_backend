@@ -80,8 +80,6 @@ app.use("/api/v1/transactions", transactionRoutes);
 
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 4000;
-
 // express сэрвэрийг асаана.
 const server = app.listen(
   process.env.PORT,

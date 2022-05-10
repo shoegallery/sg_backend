@@ -10,6 +10,7 @@ router.get("/logout", Wallets.logout);
 router.post("/reset-password", Wallets.resetPassword);
 
 router.use(protect);
+
 router
   .route("/list")
   .get(authorize("admin", "operator"), Wallets.getAllWallets); //ok

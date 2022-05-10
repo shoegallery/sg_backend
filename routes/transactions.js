@@ -80,4 +80,5 @@ router
 router
   .route("/list/cash-out/debit")
   .post(authorize("admin", "operator"), Transactions.getAllCashOutDebit);
+
 module.exports = router;

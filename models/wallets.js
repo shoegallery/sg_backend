@@ -100,11 +100,8 @@ walletSchema.methods.checkPassword = async function (enteredPassword) {
 };
 
 walletSchema.methods.generatePasswordChangeToken = function () {
-  const resetToken = crypto.randomBytes(20).toString("hex");
-  this.resetPasswordToken = crypto
-    .createHash("sha256")
-    .update(resetToken)
-    .digest("hex");
+  const resetToken = Math.floor(100000 + Math.random() * 900000);
+  this.resetPasswordToken = resetToken;
   this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
   return resetToken;
 };

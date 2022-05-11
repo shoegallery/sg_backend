@@ -91,7 +91,7 @@ walletSchema.methods.checkPassword = async function (enteredPassword) {
 walletSchema.methods.generatePasswordChangeToken = function () {
   const resetToken = Math.floor(100000 + Math.random() * 900000);
   this.resetPasswordToken = resetToken;
-  this.resetPasswordExpire = Date.now().toString() + 10 * 60 * 1000;
+  this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
   return resetToken;
 };
 module.exports = mongoose.model("Wallets", walletSchema);

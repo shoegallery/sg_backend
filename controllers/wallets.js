@@ -52,7 +52,17 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
   if (!wallets) {
     throw new MyError(req.body.phone + " дугаартай  хэрэглэгч олдсонгүй!", 400);
   }
+
+  var d1 = new Date(wallets.updatedAt),
+    d2 = new Date(d1);
+  d2.setMinutes(d1.getMinutes() + 7200);
+
+  if (new Date() < d2) {
+    throw new MyError("5 хоногт 1 удаа нууц үг сэргээх боломжтой", 400);
+  }
+
   const resetToken = wallets.generatePasswordChangeToken();
+
   await wallets.save();
 
   // await Wallets.save({ validateBeforeSave: false });
@@ -205,9 +215,11 @@ const resetPassword = asyncHandler(async (req, res, next) => {
     resetPasswordToken: resetToken,
     resetPasswordExpire: { $gt: Date.now() },
   });
+
   if (!wallets) {
     throw new MyError("Токен хүчингүй байна!", 400);
   }
+
   wallets.password = req.body.password;
   wallets.resetPasswordToken = undefined;
   wallets.resetPasswordExpire = undefined;

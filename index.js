@@ -6,6 +6,7 @@ var path = require("path");
 var rfs = require("rotating-file-stream");
 const colors = require("colors");
 var morgan = require("morgan");
+const helmet = require("helmet");
 
 const cookieParser = require("cookie-parser");
 const xss = require("xss-clean");
@@ -26,6 +27,7 @@ const app = express();
 // MongoDB өгөгдлийн сантай холбогдох
 connectDB();
 
+app.disable("x-powered-by");
 app.use(express.json());
 
 // Манай рест апиг дуудах эрхтэй сайтуудын жагсаалт :
@@ -51,7 +53,7 @@ var corsOptions = {
   // Клиент тал authorization юмуу cookie мэдээллүүдээ илгээхийг зөвшөөрнө
   credentials: true,
 };
-
+app.use(helmet());
 // Express rate limit : Дуудалтын тоог хязгаарлав
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes

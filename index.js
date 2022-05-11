@@ -25,13 +25,14 @@ const connectDB = require("./config/db");
 // Express апп үүсгэх
 const app = express();
 // MongoDB өгөгдлийн сантай холбогдох
+
 connectDB();
 
 app.disable("x-powered-by");
 app.use(express.json());
 
 // Манай рест апиг дуудах эрхтэй сайтуудын жагсаалт :
-
+/*
 var whitelist = ["http:localhost:4000"];
 
 // Өөр домэйн дээр байрлах клиент вэб аппуудаас шаардах шаардлагуудыг энд тодорхойлно
@@ -53,6 +54,7 @@ var corsOptions = {
   // Клиент тал authorization юмуу cookie мэдээллүүдээ илгээхийг зөвшөөрнө
   credentials: true,
 };
+*/
 app.use(helmet());
 // Express rate limit : Дуудалтын тоог хязгаарлав
 const limiter = rateLimit({
@@ -68,7 +70,9 @@ app.use(cookieParser());
 // логгер
 
 // Клиент вэб аппуудыг мөрдөх ёстой нууцлал хамгаалалтыг http header ашиглан зааж өгнө
+/*
 app.use(cors(corsOptions));
+*/
 // клиент сайтаас ирэх Cross site scripting халдлагаас хамгаална
 app.use(xss());
 // Клиент сайтаас дамжуулж буй MongoDB өгөгдлүүдийг халдлагаас цэвэрлэнэ

@@ -29,7 +29,8 @@ connectDB();
 app.use(express.json());
 
 // Манай рест апиг дуудах эрхтэй сайтуудын жагсаалт :
-var whitelist = ["http://localhost:4000"];
+
+var whitelist = ["http:localhost:4000"];
 
 // Өөр домэйн дээр байрлах клиент вэб аппуудаас шаардах шаардлагуудыг энд тодорхойлно
 var corsOptions = {
@@ -50,6 +51,7 @@ var corsOptions = {
   // Клиент тал authorization юмуу cookie мэдээллүүдээ илгээхийг зөвшөөрнө
   credentials: true,
 };
+
 // Express rate limit : Дуудалтын тоог хязгаарлав
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes

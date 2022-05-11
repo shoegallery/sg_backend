@@ -6,26 +6,12 @@ const sendMessage = require("../utils/sendMessage");
 
 const createWallet = asyncHandler(async (req, res) => {
   try {
-    const {
-      username,
-      firstname,
-      lastname,
-      phone,
-      email,
-      password,
-      role,
-      pinCode,
-    } = req.body;
+    const { username, phone, password } = req.body;
 
     const walletExists = await Wallets.findOne({
       username,
-      firstname,
-      lastname,
       phone,
-      email,
       password,
-      role,
-      pinCode,
     });
 
     if (walletExists) {
@@ -37,13 +23,8 @@ const createWallet = asyncHandler(async (req, res) => {
 
     const result = await Wallets.create({
       username,
-      firstname,
-      lastname,
       phone,
-      email,
       password,
-      role,
-      pinCode,
     });
     console.log(result);
     const token = result.getJsonWebToken();

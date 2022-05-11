@@ -21,12 +21,10 @@ const walletSchema = new mongoose.Schema(
     firstname: {
       $toUpper: {},
       type: String,
-      required: true,
     },
     lastname: {
       $toUpper: {},
       type: String,
-      required: true,
     },
     password: {
       type: String,
@@ -49,25 +47,16 @@ const walletSchema = new mongoose.Schema(
       type: String,
       required: [true, "Хэтэвчний эрхийг оруулна уу"],
       enum: ["basic", "platnium", "gold"],
+      default: "basic",
     },
     pinCode: {
       type: String,
       minlength: 4,
       maxlength: 4,
-      required: [true, "Пин кодоо оруулна уу"],
       select: false,
     },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
-    email: {
-      type: String,
-      validate: {
-        validator: validator.isEmail,
-        message: "{VALUE} бол имэйл биш",
-        isAsync: false,
-      },
-      unique: true,
-    },
   },
   { timestamps: true }
 );

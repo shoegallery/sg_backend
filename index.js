@@ -25,7 +25,7 @@ const connectDB = require("./config/db");
 const app = express();
 // MongoDB өгөгдлийн сантай холбогдох
 connectDB();
-
+app.disable("x-powered-by");
 app.use(express.json());
 
 // Манай рест апиг дуудах эрхтэй сайтуудын жагсаалт :

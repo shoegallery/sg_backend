@@ -6,3 +6,4 @@
 ::ffff:192.168.1.26 - - [11/May/2022:16:49:03 +0000] "POST /api/v1/wallets/login HTTP/1.1" 200 606 "-" "okhttp/4.9.2"
 ::ffff:192.168.1.26 - - [11/May/2022:16:49:34 +0000] "POST /api/v1/wallets/login HTTP/1.1" 200 606 "-" "okhttp/4.9.2"
 ::ffff:192.168.1.26 - - [11/May/2022:16:50:22 +0000] "POST /api/v1/wallets/login HTTP/1.1" 200 606 "-" "okhttp/4.9.2"
+::1 - - [12/May/2022:05:52:12 +0000] "POST /api/v1/wallets/login HTTP/1.1" 200 606 "-" "-"

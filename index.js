@@ -1,6 +1,8 @@
 const express = require("express");
 const dotenv = require("dotenv");
-const mongoose = require("mongoose");
+
+const helmet = require("helmet");
+
 const mongoSanitize = require("express-mongo-sanitize");
 var path = require("path");
 var rfs = require("rotating-file-stream");
@@ -23,6 +25,8 @@ const errorHandler = require("./middleware/error");
 const connectDB = require("./config/db");
 // Express апп үүсгэх
 const app = express();
+app.use(helmet());
+
 // MongoDB өгөгдлийн сантай холбогдох
 connectDB();
 app.disable("x-powered-by");

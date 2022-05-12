@@ -46,8 +46,8 @@ const walletSchema = new mongoose.Schema(
     walletType: {
       type: String,
       required: [true, "Хэтэвчний эрхийг оруулна уу"],
-      enum: ["basic", "platnium", "gold"],
-      default: "basic",
+      enum: ["basic", "platnium", "gold", "membership"],
+      default: "membership",
     },
     pinCode: {
       type: String,

@@ -349,3 +349,4 @@
 ::1 - - [11/May/2022:15:26:12 +0000] "POST /api/v1/wallets/forgot-password HTTP/1.1" 400 134 "-" "PostmanRuntime/7.29.0"
 ::1 - - [11/May/2022:15:26:21 +0000] "POST /api/v1/wallets/forgot-password HTTP/1.1" 400 130 "-" "PostmanRuntime/7.29.0"
 ::1 - - [11/May/2022:15:26:36 +0000] "POST /api/v1/wallets/forgot-password HTTP/1.1" 400 130 "-" "PostmanRuntime/7.29.0"
+::1 - - [12/May/2022:06:20:14 +0000] "POST /api/v1/wallets/login HTTP/1.1" 200 606 "-" "-"

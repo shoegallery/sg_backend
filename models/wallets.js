@@ -46,8 +46,8 @@ const walletSchema = new mongoose.Schema(
     walletType: {
       type: String,
       required: [true, "Хэтэвчний эрхийг оруулна уу"],
-      enum: ["basic", "platnium", "gold", "membership"],
-      default: "membership",
+      enum: ["rosegold", "platnium", "golden", "member"],
+      default: "member",
     },
     pinCode: {
       type: String,
@@ -90,7 +90,12 @@ walletSchema.methods.checkPassword = async function (enteredPassword) {
 
 walletSchema.methods.generatePasswordChangeToken = function () {
   const resetToken = Math.floor(100000 + Math.random() * 900000);
-  this.resetPasswordToken = resetToken;
+
+  this.resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(JSON.stringify(resetToken))
+    .digest("hex");
+
   this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
   return resetToken;
 };

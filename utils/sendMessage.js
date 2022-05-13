@@ -16,24 +16,25 @@ const sendMessage = async (options) => {
   })
     .then(function (login_response) {
       if (login_response.data.status === "ok") {
-        // axios({
-        //   method: "post",
-        //   url: `https://api.zochil.cloud/v2/merchant/broadcasts/send`,
-        //   headers: {
-        //     "merchant-id": process.env.ZOCHIL_MERCHANT_ID,
-        //     "Content-Type": "application/json",
-        //     "access-token": login_response.data.access_token,
-        //   },
-        //   data: options.message,
-        // })
-        //   .then(function (send_sms) {
-        //     if (send_sms.data.status === "ok") {
-        //       console.log("Send Message");
-        //     }
-        //   })
-        //   .catch(function (error) {
-        //     console.log("Sent алдаа");
-        //   });
+        console.log(options.message);
+        axios({
+          method: "post",
+          url: `https://api.zochil.cloud/v2/merchant/broadcasts/send`,
+          headers: {
+            "merchant-id": process.env.ZOCHIL_MERCHANT_ID,
+            "Content-Type": "application/json",
+            "access-token": login_response.data.access_token,
+          },
+          data: options.message,
+        })
+          .then(function (send_sms) {
+            if (send_sms.data.status === "ok") {
+              console.log("Send Message");
+            }
+          })
+          .catch(function (error) {
+            console.log("Sent алдаа");
+          });
       }
     })
     .catch(function (error) {

@@ -3,7 +3,7 @@ const MyError = require("../utils/myError");
 const paginate = require("../utils/paginate");
 const asyncHandler = require("express-async-handler");
 const sendMessage = require("../utils/sendMessage");
-
+const crypto = require("crypto");
 const createWallet = asyncHandler(async (req, res) => {
   try {
     const { username, phone, password } = req.body;
@@ -50,15 +50,15 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
   const wallets = await Wallets.findOne({ phone: req.body.phone });
 
   if (!wallets) {
-    throw new MyError(req.body.phone + " дугаартай  хэрэглэгч олдсонгүй!", 400);
+    throw new MyError(req.body.phone + " дугаартай  хэрэглэгч олдсонгүй!", 401);
   }
 
   var d1 = new Date(wallets.updatedAt),
     d2 = new Date(d1);
-  d2.setMinutes(d1.getMinutes() + 7200);
+  d2.setMinutes(d1.getMinutes() + 4320);
 
   if (new Date() < d2) {
-    throw new MyError("5 хоногт 1 удаа нууц үг сэргээх боломжтой", 400);
+    throw new MyError("3 хоногт 1 удаа нууц үг сэргээх боломжтой", 402);
   }
 
   const resetToken = wallets.generatePasswordChangeToken();
@@ -206,18 +206,25 @@ const deletewallets = asyncHandler(async (req, res, next) => {
 });
 
 const resetPassword = asyncHandler(async (req, res, next) => {
-  if (!req.body.resetToken || !req.body.password) {
-    throw new MyError("Та токен болон нууц үгээ дамжуулна уу", 400);
+  if (!req.body.resetToken || !req.body.password || !req.body.phone) {
+    throw new MyError("Та токен болон нууsц үгээ дамжуулна уу", 400);
   }
+  console.log(req.body.resetToken);
+
+  const encrypted = crypto
+    .createHash("sha256")
+    .update(JSON.stringify(req.body.resetToken))
+    .digest("hex");
+
   console.log(req.body.resetToken);
   const resetToken = `${req.body.resetToken}`;
   const wallets = await Wallets.findOne({
-    resetPasswordToken: resetToken,
+    resetPasswordToken: encrypted,
     resetPasswordExpire: { $gt: Date.now() },
   });
 
   if (!wallets) {
-    throw new MyError("Токен хүчингүй байна!", 400);
+    throw new MyError("Токен хүчингүй байна!", 403);
   }
 
   wallets.password = req.body.password;

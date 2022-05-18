@@ -26,8 +26,9 @@ const createWallet = asyncHandler(async (req, res) => {
       phone,
       password,
     });
-    console.log(result);
+
     const token = result.getJsonWebToken();
+
     return res.status(200).json({
       success: true,
       message: "Хэтэвч амжилттай үүслээ",
@@ -35,6 +36,13 @@ const createWallet = asyncHandler(async (req, res) => {
       token,
     });
   } catch (err) {
+    if (err.code === 11000) {
+      return res.status(200).json({
+        success: false,
+        message: `Таны дугаар бүртгэлтэй байна`,
+      });
+    }
+
     return res.status(200).json({
       success: false,
       message: `Ямар нэгэн зүйл буруу байна. Жишээ нь: ${err}`,
@@ -57,9 +65,9 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
     d2 = new Date(d1);
   d2.setMinutes(d1.getMinutes() + 4320);
 
-  if (new Date() < d2) {
-    throw new MyError("3 хоногт 1 удаа нууц үг сэргээх боломжтой", 402);
-  }
+  // if (new Date() < d2) {
+  //   throw new MyError("3 хоногт 1 удаа нууц үг сэргээх боломжтой", 402);
+  // }
 
   const resetToken = wallets.generatePasswordChangeToken();
 
@@ -72,7 +80,7 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
   const message = {
     channel: "sms",
     title: "SHOE GALLERY",
-    body: `Sain baina uu? Gift Cardny nuuts ug sergeeh kod: ${resetToken}. SHOE GALLERY`,
+    body: `Sain baina uu? Gift Cardny nuuts ug sergeeh code ${resetToken}. SHOE GALLERY`,
     receivers: [`${wallets.phone}`],
     shop_id: "2706",
   };
@@ -84,6 +92,32 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     status: true,
     resetToken,
+  });
+});
+
+const getMyWallet = asyncHandler(async (req, res, next) => {
+  // Оролтыгоо шалгана
+  const { walletSuperId } = req.body;
+
+  if (!walletSuperId) {
+    throw new MyError("Хэтэвчний ID" + walletSuperId, 400);
+  }
+  // Тухайн хэрэглэгчийн хайна
+  const wallets = await Wallets.findOne({ walletSuperId: walletSuperId });
+
+  if (!wallets) {
+    throw new MyError("Хэтэвчний ID" + walletSuperId, 401);
+  }
+
+  res.status(200).json({
+    status: true,
+    wallets: {
+      _id: wallets._id,
+      walletSuperId: wallets.walletSuperId,
+      balance: wallets.balance,
+      phone: wallets.phone,
+      walletType: wallets.walletType,
+    },
   });
 });
 
@@ -114,11 +148,20 @@ const login = asyncHandler(async (req, res, next) => {
     httpOnly: true,
   };
 
-  res.status(200).cookie("Bearer", token, cookieOption).json({
-    status: true,
-    token,
-    wallets: wallets,
-  });
+  res
+    .status(200)
+    .cookie("Bearer", token, cookieOption)
+    .json({
+      status: true,
+      token,
+      wallets: {
+        _id: wallets._id,
+        walletSuperId: wallets.walletSuperId,
+        balance: wallets.balance,
+        phone: wallets.phone,
+        walletType: wallets.walletType,
+      },
+    });
 });
 
 const logout = asyncHandler(async (req, res, next) => {
@@ -186,7 +229,12 @@ const updatewallets = asyncHandler(async (req, res, next) => {
   await wallets.save();
   res.status(200).json({
     status: true,
-    data: wallets,
+    data: {
+      _id: wallets._id,
+      balance: wallets.balance,
+      phone: wallets.phone,
+      walletType: wallets.walletType,
+    },
   });
 });
 
@@ -207,9 +255,8 @@ const deletewallets = asyncHandler(async (req, res, next) => {
 
 const resetPassword = asyncHandler(async (req, res, next) => {
   if (!req.body.resetToken || !req.body.password || !req.body.phone) {
-    throw new MyError("Та токен болон нууsц үгээ дамжуулна уу", 400);
+    throw new MyError("Та токен болон нууц үгээ дамжуулна уу", 400);
   }
-  console.log(req.body.resetToken);
 
   const encrypted = crypto
     .createHash("sha256")
@@ -224,9 +271,9 @@ const resetPassword = asyncHandler(async (req, res, next) => {
   });
 
   if (!wallets) {
-    throw new MyError("Токен хүчингүй байна!", 403);
+    throw new MyError("Сэргээх код хүчингүй байна!", 403);
   }
-
+  console.log(resetToken);
   wallets.password = req.body.password;
   wallets.resetPasswordToken = undefined;
   wallets.resetPasswordExpire = undefined;
@@ -235,11 +282,17 @@ const resetPassword = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     status: true,
     token,
-    wallets: wallets,
+    wallets: {
+      _id: wallets._id,
+      balance: wallets.balance,
+      phone: wallets.phone,
+      walletType: wallets.walletType,
+    },
   });
 });
 
 module.exports = {
+  getMyWallet,
   deletewallets,
   updatewallets,
   getwallets,

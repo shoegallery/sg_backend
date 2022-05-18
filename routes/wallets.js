@@ -8,9 +8,15 @@ router.post("/forgot-password", Wallets.forgotPassword);
 router.post("/reset-password", Wallets.resetPassword);
 
 router.post("/login", Wallets.login); //ok
-router.get("/logout", Wallets.logout);
 
 router.use(protect);
+router
+  .route("/logout")
+  .post(authorize("admin", "operator", "user", "saler"), Wallets.logout);
+
+router
+  .route("/my/:id")
+  .post(authorize("user", "admin", "operator", "saler"), Wallets.getMyWallet);
 
 router
   .route("/list")

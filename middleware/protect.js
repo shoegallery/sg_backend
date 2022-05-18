@@ -15,8 +15,9 @@ exports.protect = asyncHandler(async (req, res, next) => {
   if (!token) {
     throw new MyError("Энэ үйлдлийг хийхэд таны эрх хүрэхгүй байна.", 401);
   }
-
+  console.log(token);
   const tokenObj = jwt.verify(token, process.env.JWT_SECRET);
+
   req.walletsId = tokenObj.id;
   req.walletRole = tokenObj.role;
   next();
@@ -25,12 +26,8 @@ exports.protect = asyncHandler(async (req, res, next) => {
 exports.authorize = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.walletRole)) {
-      throw new MyError(
-        "Таны эрх [" + req.walletRole + "] энэ үйлдлийг хийх боломжгүй",
-        403
-      );
+      throw new MyError("Энэ үйлдлийг хийхэд таны эрх хүрэхгүй байна.", 403);
     }
-
     next();
   };
 };

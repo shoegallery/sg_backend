@@ -8,19 +8,22 @@ router.use(protect);
 //Хэрэглэгчийн хийх шилжүүлэг
 router.route("/purchase").post(authorize("user"), Transactions.userPurchase);
 
-//Хэрэглэгчийн хувьд авах дансны мэдээлэл
+// Хэрэглэгчийн хувьд авах дансны мэдээлэл
 router
   .route("/wallet/:id")
-  .get(authorize("user", "admin", "operator"), Transactions.getUserTransfers);
+  .post(
+    authorize("user", "admin", "operator", "saler"),
+    Transactions.getUserTransfers
+  );
 router
   .route("/wallet/:id/credit")
-  .get(
+  .post(
     authorize("user", "admin", "operator"),
     Transactions.getUserTransfersCredit
   );
 router
   .route("/wallet/:id/debit")
-  .get(
+  .post(
     authorize("user", "admin", "operator", "saler"),
     Transactions.getUserTransfersDebit
   );
@@ -30,6 +33,7 @@ router
 router
   .route("/giftcardcharge")
   .post(authorize("admin", "operator"), Transactions.userGiftCardCharge);
+
 router
   .route("/charge")
   .post(authorize("admin", "operator"), Transactions.userCharge);

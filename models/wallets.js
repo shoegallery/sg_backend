@@ -3,6 +3,10 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
+var randtoken = require("rand-token").generator({
+  chars: "default",
+  source: crypto.randomBytes,
+});
 
 const walletSchema = new mongoose.Schema(
   {
@@ -26,6 +30,12 @@ const walletSchema = new mongoose.Schema(
       $toUpper: {},
       type: String,
     },
+    walletSuperId: {
+      type: String,
+      default: function () {
+        return randtoken.generate(64);
+      },
+    },
     password: {
       type: String,
       minlength: 6,
@@ -37,6 +47,7 @@ const walletSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+
     role: {
       type: String,
       required: [true, "Хэрэглэгчийн эрхийг оруулна уу"],
@@ -70,6 +81,7 @@ walletSchema.pre("save", async function (next) {
   console.timeEnd("salt");
   console.time("hash");
   this.password = await bcrypt.hash(this.password, salt);
+
   console.timeEnd("hash");
 });
 
@@ -99,4 +111,5 @@ walletSchema.methods.generatePasswordChangeToken = function () {
   this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
   return resetToken;
 };
+
 module.exports = mongoose.model("Wallets", walletSchema);

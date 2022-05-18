@@ -3,7 +3,6 @@ const asyncHandler = require("./asyncHandle");
 const MyError = require("../utils/myError");
 
 exports.protect = asyncHandler(async (req, res, next) => {
-  // console.log(req.headers);
   let token = null;
 
   if (req.headers.authorization) {
@@ -15,11 +14,17 @@ exports.protect = asyncHandler(async (req, res, next) => {
   if (!token) {
     throw new MyError("Энэ үйлдлийг хийхэд таны эрх хүрэхгүй байна.", 401);
   }
-  console.log(token);
+
   const tokenObj = jwt.verify(token, process.env.JWT_SECRET);
 
   req.walletsId = tokenObj.id;
   req.walletRole = tokenObj.role;
+  req.exp = tokenObj.exp;
+
+  if (parseInt(Date.now() / 1000) > req.exp) {
+    throw new MyError("Энэ үйлдлийг хийхэд таны эрх хүрэхгүй байна.", 400);
+  }
+
   next();
 });
 

@@ -69,7 +69,8 @@ const userPurchase = asyncHandler(async (req, res) => {
       );
       if (failedTxns.length) {
         const errors = failedTxns.map((a) => a.message);
-
+        await session.abortTransaction();
+        session.endSession();
         return res.status(406).json({
           success: false,
           message: errors,
@@ -82,6 +83,8 @@ const userPurchase = asyncHandler(async (req, res) => {
         message: "Худалдан авалт амжилттай",
       });
     } else {
+      await session.abortTransaction();
+      session.endSession();
       return res.status(400).json({
         success: false,
         message: `Боломжгүй`,
@@ -161,7 +164,8 @@ const userCharge = asyncHandler(async (req, res) => {
       );
       if (failedTxns.length) {
         const errors = failedTxns.map((a) => a.message);
-
+        await session.abortTransaction();
+        session.endSession();
         return res.status(400).json({
           success: false,
           message: errors,
@@ -174,6 +178,8 @@ const userCharge = asyncHandler(async (req, res) => {
         message: "Цэнэглэлт амжилттай",
       });
     } else {
+      await session.abortTransaction();
+      session.endSession();
       return res.status(400).json({
         success: false,
         message: `Боломжгүй`,
@@ -262,7 +268,8 @@ const userGiftCardCharge = asyncHandler(async (req, res) => {
       );
       if (failedTxns.length) {
         const errors = failedTxns.map((a) => a.message);
-
+        await session.abortTransaction();
+        session.endSession();
         return res.status(400).json({
           success: false,
           message: errors,
@@ -297,6 +304,8 @@ const userGiftCardCharge = asyncHandler(async (req, res) => {
         message: "Giftcart цэнэглэлт амжилттай",
       });
     } else {
+      await session.abortTransaction();
+      session.endSession();
       return res.status(400).json({
         success: false,
         message: `Боломжгүй`,
@@ -380,7 +389,8 @@ const userChargeBonus = asyncHandler(async (req, res) => {
       );
       if (failedTxns.length) {
         const errors = failedTxns.map((a) => a.message);
-
+        await session.abortTransaction();
+        session.endSession();
         return res.status(400).json({
           success: false,
           message: errors,
@@ -388,12 +398,13 @@ const userChargeBonus = asyncHandler(async (req, res) => {
       }
       await session.commitTransaction();
       session.endSession();
-
       return res.status(201).json({
         success: true,
         message: "Бонус цэнэглэлт амжилттай",
       });
     } else {
+      await session.abortTransaction();
+      session.endSession();
       return res.status(400).json({
         success: false,
         message: `Боломжгүй`,

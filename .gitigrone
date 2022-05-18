@@ -1,3 +1,6 @@
-node_modules
-log
-.gitigrone
+node_modules;
+log.gitigrone;
+const isReceiver = await Wallets.find({ phone: toPhone });
+if (isReceiver[0].role !== "user") {
+  throw new MyError("Та зөвхөн хэрэглэгчийн данс руу шилжүүлэг хийнэ!!", 403);
+}

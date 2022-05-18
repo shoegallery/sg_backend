@@ -16,8 +16,6 @@ const sendMessage = async (options) => {
   })
     .then(function (login_response) {
       if (login_response.data.status === "ok") {
-        console.log(options.message);
-        /*
         axios({
           method: "post",
           url: `https://api.zochil.cloud/v2/merchant/broadcasts/send`,
@@ -30,12 +28,11 @@ const sendMessage = async (options) => {
         })
           .then(function (send_sms) {
             if (send_sms.data.status === "ok") {
-              console.log("Send Message");
             }
           })
           .catch(function (error) {
             console.log("Sent алдаа");
-          });*/
+          });
       }
     })
     .catch(function (error) {

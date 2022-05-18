@@ -81,7 +81,6 @@ walletSchema.pre("save", async function (next) {
   console.timeEnd("salt");
   console.time("hash");
   this.password = await bcrypt.hash(this.password, salt);
-
   console.timeEnd("hash");
 });
 

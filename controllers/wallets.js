@@ -63,11 +63,11 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
 
   var d1 = new Date(wallets.updatedAt),
     d2 = new Date(d1);
-  d2.setMinutes(d1.getMinutes() + 4320);
+  d2.setMinutes(d1.getMinutes() + 2880);
 
-  // if (new Date() < d2) {
-  //   throw new MyError("3 хоногт 1 удаа нууц үг сэргээх боломжтой", 402);
-  // }
+  if (new Date() < d2) {
+    throw new MyError("3 хоногт 1 удаа нууц үг сэргээх боломжтой", 402);
+  }
 
   const resetToken = wallets.generatePasswordChangeToken();
 
@@ -133,18 +133,18 @@ const login = asyncHandler(async (req, res, next) => {
   const wallets = await Wallets.findOne({ phone }).select("+password");
 
   if (!wallets) {
-    throw new MyError("Имэйл болон нууц үгээ зөв оруулна уу", 401);
+    throw new MyError("Утас болон нууц үгээ зөв оруулна уу", 401);
   }
   const ok = await wallets.checkPassword(password);
 
   if (!ok) {
-    throw new MyError("Имэйл болон нууц үгээ зөв оруулна уу", 401);
+    throw new MyError("Утас болон нууц үгээ зөв оруулна уу", 401);
   }
 
   const token = wallets.getJsonWebToken();
 
   const cookieOption = {
-    expires: new Date(Date.now() + 8 * 60 * 60 * 1000),
+    expires: new Date(Date.now() + 20 * 60 * 1000),
     httpOnly: true,
   };
 
@@ -166,12 +166,13 @@ const login = asyncHandler(async (req, res, next) => {
 
 const logout = asyncHandler(async (req, res, next) => {
   const cookieOption = {
-    expires: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000),
+    expires: new Date(Date.now()),
     httpOnly: true,
   };
 
-  res.status(200).cookie("Cookie", null, cookieOption).json({
+  res.status(200).cookie("Bearar", null, cookieOption).json({
     status: true,
+
     data: "logged out...",
   });
 });
@@ -263,7 +264,6 @@ const resetPassword = asyncHandler(async (req, res, next) => {
     .update(JSON.stringify(req.body.resetToken))
     .digest("hex");
 
-  console.log(req.body.resetToken);
   const resetToken = `${req.body.resetToken}`;
   const wallets = await Wallets.findOne({
     resetPasswordToken: encrypted,
@@ -273,7 +273,7 @@ const resetPassword = asyncHandler(async (req, res, next) => {
   if (!wallets) {
     throw new MyError("Сэргээх код хүчингүй байна!", 403);
   }
-  console.log(resetToken);
+
   wallets.password = req.body.password;
   wallets.resetPasswordToken = undefined;
   wallets.resetPasswordExpire = undefined;

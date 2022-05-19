@@ -10,7 +10,16 @@ const asyncHandler = require("express-async-handler");
 const userPurchase = asyncHandler(async (req, res) => {
   const session = await mongoose.startSession();
   session.startTransaction();
-  const { toPhone, fromPhone, amount, summary, id, walletSuperId } = req.body;
+  const {
+    toPhone,
+    fromPhone,
+    amount,
+    summary,
+    id,
+    walletSuperId,
+    OrderNumber,
+  } = req.body;
+
   const isUser = await Wallets.findById(id);
   const isStore = await Wallets.find({ phone: toPhone });
   try {
@@ -21,14 +30,20 @@ const userPurchase = asyncHandler(async (req, res) => {
         !amount &&
         !summary &&
         !id &&
-        !walletSuperId
+        !walletSuperId &&
+        !OrderNumber
       ) {
         throw new MyError(
-          "Дараах утгуудыг оруулна уу: toPhone, fromPhone, amount, summary, walletSuperId",
+          "Дараах утгуудыг оруулна уу: toPhone, fromPhone, amount, summary, walletSuperId, OrderNumber",
           400
         );
       }
-
+      if (OrderNumber == undefined) {
+        throw new MyError(
+          "Дараах утгуудыг оруулна уу: toPhone, fromPhone, amount, summary, walletSuperId, OrderNumber",
+          400
+        );
+      }
       if (isUser.phone !== fromPhone) {
         throw new MyError(
           "Худалдан авагч та өөрийнхөө хэтэвчнээс шилжүүлэг хийх ёстой!!",
@@ -49,7 +64,7 @@ const userPurchase = asyncHandler(async (req, res) => {
           purpose: "purchase",
           reference,
           summary: "Хэтэвчнээс худалдан авалтын төлбөр амжилттай төлөгдлөө.",
-          trnxSummary: `TRFR TO: ${toPhone}. TRNX REF:${reference} `,
+          trnxSummary: `Илгээгч: ${toPhone}. Шалгах дугаар:${reference} `,
           session,
           paidAt: `${new Date()}`,
         }),
@@ -58,8 +73,8 @@ const userPurchase = asyncHandler(async (req, res) => {
           phone: toPhone,
           purpose: "purchase",
           reference,
-          summary: "Худалдан авагчаас худалдан авалтын төлбөр баталгаажсан.",
-          trnxSummary: `TRFR FROM: ${fromPhone}. TRNX REF:${reference} `,
+          summary: `${fromPhone} утасны дугаартай  худалдан авагчаас худалдан авалтын төлбөр баталгаажсан.`,
+          trnxSummary: `Хүлээн авагч: ${fromPhone}. Шалгах дугаар:${reference} `,
           session,
           paidAt: `${new Date()}`,
         }),
@@ -95,28 +110,29 @@ const userPurchase = asyncHandler(async (req, res) => {
     session.endSession();
     return res.status(405).json({
       success: false,
-      message: `Хүлээн авах хэрэглэгч олдсонгүй. Хүлээн авагч хэрэглэгчийн утасны дугаарыг шалгана уу`,
+      message: `Ямар нэгэн зүйл буруу байна`,
     });
   }
 });
+
 const userCharge = asyncHandler(async (req, res) => {
   const { toPhone, fromPhone, amount, summary, walletSuperId, id } = req.body;
-  const isReceiver = await Wallets.find({ phone: toPhone });
-  const isUser = await Wallets.findById(id);
+  const isUser = await Wallets.find({ phone: toPhone });
+  const isStore = await Wallets.findById(id);
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
-    if (amount > 0 && isUser.walletSuperId === walletSuperId) {
+    if (amount > 0 && isStore.walletSuperId === walletSuperId) {
       if (
-        (isUser.phone !== fromPhone && isUser.role !== "admin") ||
-        isUser.role !== "operator"
+        (isStore.phone !== fromPhone && isStore.role !== "admin") ||
+        isStore.role !== "operator"
       ) {
         throw new MyError(
           "Та өөрийнхөө хэтэвчнээс шилжүүлэг хийх ёстой!!",
           403
         );
       }
-      if (isReceiver[0].role !== "user") {
+      if (isUser[0].role !== "user") {
         throw new MyError(
           "Та зөвхөн хэрэглэгчийн данс руу шилжүүлэг хийнэ!!",
           403
@@ -144,7 +160,7 @@ const userCharge = asyncHandler(async (req, res) => {
           purpose: "charge",
           reference,
           summary: "Хэтэвчийг амжилттай цэнэглэв.",
-          trnxSummary: `TRFR TO: ${toPhone}. TRNX REF:${reference} `,
+          trnxSummary: `Илгээгч: ${toPhone}. Шалгах дугаар:${reference} `,
           session,
           paidAt: `${new Date()}`,
         }),
@@ -154,7 +170,7 @@ const userCharge = asyncHandler(async (req, res) => {
           purpose: "charge",
           reference,
           summary: "Дэлгүүрээс хэрэглэгчийн хэтэвчийг цэнэглэв.",
-          trnxSummary: `TRFR FROM: ${fromPhone}. TRNX REF:${reference} `,
+          trnxSummary: `Хүлээн авагч: ${fromPhone}. Шалгах дугаар:${reference} `,
           session,
           paidAt: `${new Date()}`,
         }),
@@ -190,7 +206,7 @@ const userCharge = asyncHandler(async (req, res) => {
     session.endSession();
     return res.status(500).json({
       success: false,
-      message: `Unable to find perform transfer. Please try again. \n Error: ${err}`,
+      message: `Ямар нэгэн зүйл буруу байна.`,
     });
   }
 });
@@ -200,22 +216,22 @@ const userGiftCardCharge = asyncHandler(async (req, res) => {
   session.startTransaction();
   try {
     const { toPhone, fromPhone, amount, summary, id, walletSuperId } = req.body;
-    const isUser = await Wallets.findById(id);
+    const isStore = await Wallets.findById(id);
 
     var walletNewType;
-    if (amount > 0 && isUser.walletSuperId === walletSuperId) {
-      const getWalletType = await Wallets.find({ phone: toPhone });
+    if (amount > 0 && isStore.walletSuperId === walletSuperId) {
+      const isUser = await Wallets.find({ phone: toPhone });
 
       if (
-        (isUser.phone !== fromPhone && isUser.role !== "admin") ||
-        isUser.role !== "operator"
+        (isStore.phone !== fromPhone && isStore.role !== "admin") ||
+        isStore.role !== "operator"
       ) {
         throw new MyError(
           "Та өөрийнхөө хэтэвчнээс шилжүүлэг хийх ёстой!!",
           403
         );
       }
-      if (getWalletType[0].role !== "user") {
+      if (isUser[0].role !== "user") {
         throw new MyError(
           "Та зөвхөн хэрэглэгчийн данс руу шилжүүлэг хийнэ!!",
           403
@@ -248,7 +264,7 @@ const userGiftCardCharge = asyncHandler(async (req, res) => {
           purpose: "giftcard",
           reference,
           summary: `Хэтэвчийг амжилттай ${amount}  Giftcartaar цэнэглэв.`,
-          trnxSummary: `TRFR TO: ${toPhone}. TRNX REF:${reference} `,
+          trnxSummary: `Илгээгч: ${toPhone}. Шалгах дугаар:${reference} `,
           session,
           paidAt: `${new Date()}`,
         }),
@@ -258,7 +274,7 @@ const userGiftCardCharge = asyncHandler(async (req, res) => {
           purpose: "giftcard",
           reference,
           summary: `Дэлгүүрээс хэрэглэгчийн хэтэвчийг ${amount} Giftcartaar цэнэглэв.`,
-          trnxSummary: `TRFR FROM: ${fromPhone}. TRNX REF:${reference} `,
+          trnxSummary: `Хүлээн авагч: ${fromPhone}. Шалгах дугаар:${reference} `,
           session,
           paidAt: `${new Date()}`,
         }),
@@ -290,7 +306,7 @@ const userGiftCardCharge = asyncHandler(async (req, res) => {
       }
 
       await Wallets.findByIdAndUpdate(
-        getWalletType[0].id,
+        isUser[0].id,
         {
           walletType: walletNewType,
         },
@@ -316,7 +332,7 @@ const userGiftCardCharge = asyncHandler(async (req, res) => {
     session.endSession();
     return res.status(400).json({
       success: false,
-      message: `Unable to find perform transfer. Please try again. \n Error: ${err}`,
+      message: `Ямар нэгэн зүйл буруу байна.`,
     });
   }
 });
@@ -327,13 +343,13 @@ const userChargeBonus = asyncHandler(async (req, res) => {
   try {
     const { toPhone, fromPhone, amount, summary, id, walletSuperId } = req.body;
 
-    const isUser = await Wallets.findById(id);
-    const isReceiver = await Wallets.find({ phone: toPhone });
+    const isStore = await Wallets.findById(id);
+    const isUser = await Wallets.find({ phone: toPhone });
 
-    if (amount > 0 && isUser.walletSuperId === walletSuperId) {
+    if (amount > 0 && isStore.walletSuperId === walletSuperId) {
       if (
-        (isUser.phone !== fromPhone && isUser.role !== "admin") ||
-        isUser.role !== "operator"
+        (isStore.phone !== fromPhone && isStore.role !== "admin") ||
+        isStore.role !== "operator"
       ) {
         throw new MyError(
           "Та өөрийнхөө хэтэвчнээс шилжүүлэг хийх ёстой!!",
@@ -341,7 +357,7 @@ const userChargeBonus = asyncHandler(async (req, res) => {
         );
       }
 
-      if (isReceiver[0].role !== "user") {
+      if (isUser[0].role !== "user") {
         throw new MyError(
           "Та зөвхөн хэрэглэгчийн данс руу шилжүүлэг хийнэ!!",
           403
@@ -369,7 +385,7 @@ const userChargeBonus = asyncHandler(async (req, res) => {
           purpose: "bonus",
           reference,
           summary: "Таны хэтэвчийг бонусаар амжилттай цэнэглэгдлээ.",
-          trnxSummary: `TRFR TO: ${toPhone}. TRNX REF:${reference} `,
+          trnxSummary: `Илгээгч: ${toPhone}. Шалгах дугаар:${reference} `,
           session,
           paidAt: `${new Date()}`,
         }),
@@ -379,7 +395,7 @@ const userChargeBonus = asyncHandler(async (req, res) => {
           purpose: "bonus",
           reference,
           summary: "Дэлгүүрээс хэрэглэгчийн хэтэвчийг бонусаар цэнэглэв.",
-          trnxSummary: `TRFR FROM: ${fromPhone}. TRNX REF:${reference} `,
+          trnxSummary: `Хүлээн авагч: ${fromPhone}. Шалгах дугаар:${reference} `,
           session,
           paidAt: `${new Date()}`,
         }),
@@ -415,7 +431,7 @@ const userChargeBonus = asyncHandler(async (req, res) => {
     session.endSession();
     return res.status(500).json({
       success: false,
-      message: `Unable to find perform transfer. Please try again. \n Error: ${err}`,
+      message: `Ямар нэгэн зүйл буруу байна.`,
     });
   }
 });

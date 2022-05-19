@@ -106,7 +106,7 @@ const getMyWallet = asyncHandler(async (req, res, next) => {
   const wallets = await Wallets.findOne({ walletSuperId: walletSuperId });
 
   if (!wallets) {
-    throw new MyError("Хэтэвчний ID" + walletSuperId, 401);
+    throw new MyError("Хэтэвчний ID " + walletSuperId + " алга", 401);
   }
 
   res.status(200).json({

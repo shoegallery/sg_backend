@@ -47,7 +47,11 @@ const walletSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-
+    isStore: {
+      type: String,
+      unique: true,
+    },
+    gender: { type: String, enum: ["male", "female"] },
     role: {
       type: String,
       required: [true, "Хэрэглэгчийн эрхийг оруулна уу"],

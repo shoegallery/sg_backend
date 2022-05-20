@@ -212,12 +212,10 @@ const userCharge = asyncHandler(async (req, res) => {
 });
 const userGiftCardCharge = asyncHandler(async (req, res) => {
   const session = await mongoose.startSession();
-
   session.startTransaction();
+  const { toPhone, fromPhone, amount, summary, id, walletSuperId } = req.body;
   try {
-    const { toPhone, fromPhone, amount, summary, id, walletSuperId } = req.body;
     const isStore = await Wallets.findById(id);
-
     var walletNewType;
     if (amount > 0 && isStore.walletSuperId === walletSuperId) {
       const isUser = await Wallets.find({ phone: toPhone });
@@ -296,7 +294,7 @@ const userGiftCardCharge = asyncHandler(async (req, res) => {
       session.endSession();
 
       if (amount === 2000000) {
-        walletNewType = "rosegoldd";
+        walletNewType = "rosegold";
       } else if (amount === 3000000) {
         walletNewType = "golden";
       } else if (amount === 5000000) {

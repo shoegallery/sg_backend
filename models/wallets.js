@@ -49,7 +49,6 @@ const walletSchema = new mongoose.Schema(
     },
     isStore: {
       type: String,
-      unique: true,
     },
     gender: { type: String, enum: ["male", "female"] },
     role: {

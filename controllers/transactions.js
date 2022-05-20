@@ -2,7 +2,11 @@ const Transactions = require("../models/transactions");
 const Wallets = require("../models/wallets");
 const mongoose = require("mongoose");
 const { v4 } = require("uuid");
-const { creditAccount, debitAccount } = require("../utils/transactions");
+const {
+  creditAccount,
+  debitAccount,
+  varianceAccount,
+} = require("../utils/transactions");
 const MyError = require("../utils/myError");
 const paginate = require("../utils/paginate");
 const asyncHandler = require("express-async-handler");
@@ -262,7 +266,7 @@ const userGiftCardCharge = asyncHandler(async (req, res) => {
           purpose: "giftcard",
           reference,
           summary: `Хэтэвчийг амжилттай ${amount}  Giftcartaar цэнэглэв.`,
-          trnxSummary: `Илгээгч: ${toPhone}. Шалгах дугаар:${reference} `,
+          trnxSummary: `Илгээгч: ${fromPhone}. Шалгах дугаар:${reference} `,
           session,
           paidAt: `${new Date()}`,
         }),
@@ -272,6 +276,16 @@ const userGiftCardCharge = asyncHandler(async (req, res) => {
           purpose: "giftcard",
           reference,
           summary: `Дэлгүүрээс хэрэглэгчийн хэтэвчийг ${amount} Giftcartaar цэнэглэв.`,
+          trnxSummary: `Хүлээн авагч: ${toPhone}. Шалгах дугаар:${reference} `,
+          session,
+          paidAt: `${new Date()}`,
+        }),
+        varianceAccount({
+          amount,
+          phone: toPhone,
+          purpose: "giftcard",
+          reference,
+          summary: `${toPhone} дугаартай хэрэглэгчийн ${amount} Giftcart-ын бонус дүн зах зээлд нийлүүлэгдэв.`,
           trnxSummary: `Хүлээн авагч: ${fromPhone}. Шалгах дугаар:${reference} `,
           session,
           paidAt: `${new Date()}`,
@@ -326,11 +340,13 @@ const userGiftCardCharge = asyncHandler(async (req, res) => {
       });
     }
   } catch (err) {
+    console.log(err);
     await session.abortTransaction();
     session.endSession();
     return res.status(400).json({
       success: false,
       message: `Ямар нэгэн зүйл буруу байна.`,
+      err,
     });
   }
 });

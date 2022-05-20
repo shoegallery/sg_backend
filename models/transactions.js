@@ -5,7 +5,7 @@ const transactionSchema = new mongoose.Schema(
     trnxType: {
       type: String,
       required: true,
-      enum: ["Орлого", "Зарлага"],
+      enum: ["Орлого", "Зарлага", "Илүү"],
     },
     purpose: {
       type: String,

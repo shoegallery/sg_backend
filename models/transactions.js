@@ -5,7 +5,7 @@ const transactionSchema = new mongoose.Schema(
     trnxType: {
       type: String,
       required: true,
-      enum: ["Орлого", "Зарлага", "Илүү"],
+      enum: ["Орлого", "Зарлага", "Урамшуулал"],
     },
     purpose: {
       type: String,
@@ -44,7 +44,7 @@ const transactionSchema = new mongoose.Schema(
     },
     summary: { type: String, required: true },
     trnxSummary: { type: String, required: true },
-    who: { type: String },
+    whoSelledCard: { type: Number, required: true, default: 80409000 },
   },
   { timestamps: true }
 );

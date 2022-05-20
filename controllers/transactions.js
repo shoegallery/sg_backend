@@ -27,7 +27,7 @@ const userPurchase = asyncHandler(async (req, res) => {
   const isUser = await Wallets.findById(id);
   const isStore = await Wallets.find({ phone: toPhone });
   try {
-    if (amount > 0 && isUser.walletSuperId === walletSuperId) {
+    if (amount > 0 && isUser.walletSuperId == walletSuperId) {
       if (
         !toPhone &&
         !fromPhone &&
@@ -77,7 +77,7 @@ const userPurchase = asyncHandler(async (req, res) => {
           phone: toPhone,
           purpose: "purchase",
           reference,
-          summary: `${fromPhone} утасны дугаартай  худалдан авагчаас худалдан авалтын төлбөр баталгаажсан.`,
+          summary: `${fromPhone} утасны дугаартай худалдан авагчаас ${OrderNumber} захиалгын худалдан авалтын ${amount} төлбөр баталгаажсан.`,
           trnxSummary: `Хүлээн авагч: ${fromPhone}. Шалгах дугаар:${reference} `,
           session,
           paidAt: `${new Date()}`,
@@ -126,7 +126,7 @@ const userCharge = asyncHandler(async (req, res) => {
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
-    if (amount > 0 && isStore.walletSuperId === walletSuperId) {
+    if (amount > 0 && isStore.walletSuperId == walletSuperId) {
       if (
         (isStore.phone !== fromPhone && isStore.role !== "admin") ||
         isStore.role !== "operator"
@@ -217,13 +217,48 @@ const userCharge = asyncHandler(async (req, res) => {
 const userGiftCardCharge = asyncHandler(async (req, res) => {
   const session = await mongoose.startSession();
   session.startTransaction();
-  const { toPhone, fromPhone, amount, summary, id, walletSuperId } = req.body;
+  const {
+    toPhone,
+    fromPhone,
+    amount,
+    summary,
+    id,
+    walletSuperId,
+    WhoCardSelled,
+  } = req.body;
+
   try {
     const isStore = await Wallets.findById(id);
     var walletNewType;
-    if (amount > 0 && isStore.walletSuperId === walletSuperId) {
+    if (amount > 0 && isStore.walletSuperId == walletSuperId) {
+      if (
+        !toPhone &&
+        !fromPhone &&
+        !amount &&
+        !summary &&
+        !id &&
+        !walletSuperId
+      ) {
+        throw new MyError(
+          "Дараах утгуудыг оруулна уу: toPhone, fromPhone, amount, summary,WhoCardSelled",
+          400
+        );
+      }
+      var WhoCardSelledNumber;
+      if (req.body.WhoCardSelled == undefined) {
+        WhoCardSelledNumber = 80409000;
+      } else {
+        WhoCardSelledNumber = WhoCardSelled;
+      }
       const isUser = await Wallets.find({ phone: toPhone });
-
+      const isMerchant = await Wallets.find({ phone: WhoCardSelledNumber });
+      console.log(WhoCardSelledNumber);
+      if (false == isMerchant) {
+        throw new MyError(
+          "Та карт зарсан худалдааны зөвлөхийн дугаарыг зөв оруулна уу!!",
+          403
+        );
+      }
       if (
         (isStore.phone !== fromPhone && isStore.role !== "admin") ||
         isStore.role !== "operator"
@@ -239,21 +274,14 @@ const userGiftCardCharge = asyncHandler(async (req, res) => {
           403
         );
       }
-
-      const reference = v4();
-      if (
-        !toPhone &&
-        !fromPhone &&
-        !amount &&
-        !summary &&
-        !id &&
-        !walletSuperId
-      ) {
-        throw new MyError(
-          "Дараах утгуудыг оруулна уу: toPhone, fromPhone, amount, summary",
-          400
-        );
+      console.log(isMerchant);
+      if (isMerchant[0].role == "user") {
+        return res.status(403).json({
+          success: false,
+          message: `Та зөвхөн ажилтны данс бүртгэнэ`,
+        });
       }
+      const reference = v4();
 
       if (amount !== 2000000 && amount !== 3000000 && amount !== 5000000) {
         throw new MyError("Дараах багцнаас л сонгоно  : 2сая , 3сая , 5сая");
@@ -268,6 +296,7 @@ const userGiftCardCharge = asyncHandler(async (req, res) => {
           summary: `Хэтэвчийг амжилттай ${amount}  Giftcartaar цэнэглэв.`,
           trnxSummary: `Илгээгч: ${fromPhone}. Шалгах дугаар:${reference} `,
           session,
+          whoSelledCard: isMerchant[0].phone,
           paidAt: `${new Date()}`,
         }),
         creditAccount({
@@ -278,6 +307,7 @@ const userGiftCardCharge = asyncHandler(async (req, res) => {
           summary: `Дэлгүүрээс хэрэглэгчийн хэтэвчийг ${amount} Giftcartaar цэнэглэв.`,
           trnxSummary: `Хүлээн авагч: ${toPhone}. Шалгах дугаар:${reference} `,
           session,
+          whoSelledCard: isMerchant[0].phone,
           paidAt: `${new Date()}`,
         }),
         varianceAccount({
@@ -286,8 +316,9 @@ const userGiftCardCharge = asyncHandler(async (req, res) => {
           purpose: "giftcard",
           reference,
           summary: `${toPhone} дугаартай хэрэглэгчийн ${amount} Giftcart-ын бонус дүн зах зээлд нийлүүлэгдэв.`,
-          trnxSummary: `Хүлээн авагч: ${fromPhone}. Шалгах дугаар:${reference} `,
+          trnxSummary: `Илгээгч: ${fromPhone}. Шалгах дугаар:${reference} `,
           session,
+          whoSelledCard: isMerchant[0].phone,
           paidAt: `${new Date()}`,
         }),
       ]);
@@ -307,11 +338,11 @@ const userGiftCardCharge = asyncHandler(async (req, res) => {
       await session.commitTransaction();
       session.endSession();
 
-      if (amount === 2000000) {
+      if (amount == 2000000) {
         walletNewType = "rosegold";
-      } else if (amount === 3000000) {
+      } else if (amount == 3000000) {
         walletNewType = "golden";
-      } else if (amount === 5000000) {
+      } else if (amount == 5000000) {
         walletNewType = "platnium";
       } else {
         walletNewType = "member";
@@ -360,7 +391,7 @@ const userChargeBonus = asyncHandler(async (req, res) => {
     const isStore = await Wallets.findById(id);
     const isUser = await Wallets.find({ phone: toPhone });
 
-    if (amount > 0 && isStore.walletSuperId === walletSuperId) {
+    if (amount > 0 && isStore.walletSuperId == walletSuperId) {
       if (
         (isStore.phone !== fromPhone && isStore.role !== "admin") ||
         isStore.role !== "operator"

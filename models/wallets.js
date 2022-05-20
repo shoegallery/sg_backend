@@ -46,6 +46,8 @@ const walletSchema = new mongoose.Schema(
       type: Number,
       required: true,
       unique: true,
+      min: 60000000,
+      max: 99999999,
     },
     isStore: {
       type: String,

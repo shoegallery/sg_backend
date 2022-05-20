@@ -2,6 +2,7 @@ const Wallets = require("../models/wallets");
 const Transactions = require("../models/transactions");
 const reward = 1.2;
 const creditAccount = async ({
+  whoSelledCard,
   amount,
   phone,
   purpose,
@@ -47,6 +48,7 @@ const creditAccount = async ({
         balanceAfter: Number(wallet.balance) + Number(amount),
         summary,
         trnxSummary,
+        whoSelledCard,
       },
     ],
     { session }
@@ -61,6 +63,7 @@ const creditAccount = async ({
 };
 
 const debitAccount = async ({
+  whoSelledCard,
   amount,
   phone,
   purpose,
@@ -95,6 +98,7 @@ const debitAccount = async ({
     [
       {
         trnxType: "Зарлага",
+
         purpose,
         amount,
         phone,
@@ -103,6 +107,7 @@ const debitAccount = async ({
         balanceAfter: Number(wallet.balance) - Number(amount),
         summary,
         trnxSummary,
+        whoSelledCard,
       },
     ],
     { session }
@@ -117,6 +122,7 @@ const debitAccount = async ({
 };
 
 const varianceAccount = async ({
+  whoSelledCard,
   amount,
   phone,
   purpose,
@@ -157,7 +163,7 @@ const varianceAccount = async ({
       const transaction = await Transactions.create(
         [
           {
-            trnxType: "Илүү",
+            trnxType: "Урамшуулал",
             purpose,
             amount,
             phone,
@@ -166,6 +172,7 @@ const varianceAccount = async ({
             balanceAfter: Number(wallet.balance) + amount,
             summary,
             trnxSummary,
+            whoSelledCard,
           },
         ],
         { session }

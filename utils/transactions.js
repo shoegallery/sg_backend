@@ -131,7 +131,6 @@ const varianceAccount = async ({
   trnxSummary,
   session,
 }) => {
-  console.log(purpose);
   try {
     let mainAmount = amount;
     if (purpose === "giftcard" || purpose === "bonus") {

@@ -147,6 +147,10 @@ const login = asyncHandler(async (req, res, next) => {
     expires: new Date(Date.now() + 20 * 60 * 1000),
     httpOnly: true,
   };
+  var usePanel;
+  if (wallets.role === "admin" || wallets.role === "operator") {
+    usePanel = "officeWorker";
+  }
 
   res
     .status(200)
@@ -160,6 +164,7 @@ const login = asyncHandler(async (req, res, next) => {
         balance: wallets.balance,
         phone: wallets.phone,
         walletType: wallets.walletType,
+        isPanel: usePanel,
       },
     });
 });

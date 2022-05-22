@@ -34,7 +34,7 @@ app.use(express.json());
 
 // Манай рест апиг дуудах эрхтэй сайтуудын жагсаалт :
 
-var whitelist = ["http:localhost:4000"];
+var whitelist = ["http:localhost:4000", "http://localhost:19006"];
 
 // Өөр домэйн дээр байрлах клиент вэб аппуудаас шаардах шаардлагуудыг энд тодорхойлно
 var corsOptions = {

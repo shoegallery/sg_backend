@@ -17,7 +17,7 @@ const hpp = require("hpp");
 
 const walletRoutes = require("./routes/wallets");
 const transactionRoutes = require("./routes/transactions");
-
+const adminPanelRoutes = require("./routes/adminPanel");
 // Аппын тохиргоог process.env рүү ачаалах
 dotenv.config({ path: "./config/config.env" });
 
@@ -83,6 +83,7 @@ var accessLogStream = rfs.createStream("access.log", {
 app.use(morgan("combined", { stream: accessLogStream }));
 app.use("/api/v1/wallets", walletRoutes);
 app.use("/api/v1/transactions", transactionRoutes);
+app.use("/api/v1/adminPanel", adminPanelRoutes);
 
 app.use(errorHandler);
 

@@ -3,10 +3,13 @@ const router = express.Router();
 const { protect, authorize } = require("../middleware/protect");
 
 const Transactions = require("../controllers/transactions");
+//Авах
+router.post("/total", Transactions.totalTransaction);
 
 router.use(protect);
 //Хэрэглэгчийн хийх шилжүүлэг
 router.route("/purchase").post(authorize("user"), Transactions.userPurchase);
+//Test
 
 // Хэрэглэгчийн хувьд авах дансны мэдээлэл
 router
@@ -40,6 +43,11 @@ router
 router
   .route("/bonus")
   .post(authorize("admin", "operator"), Transactions.userChargeBonus);
+
+//Админы хийх шилжүүлэг
+router
+  .route("/operatorcharge")
+  .post(authorize("admin"), Transactions.operatorCharge);
 
 //Админы харах бүх шилжүүлгүүд
 router

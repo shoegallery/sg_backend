@@ -214,6 +214,97 @@ const userCharge = asyncHandler(async (req, res) => {
     });
   }
 });
+
+const operatorCharge = asyncHandler(async (req, res) => {
+  const { toPhone, fromPhone, amount, summary, walletSuperId, id } = req.body;
+  const isUser = await Wallets.find({ phone: toPhone });
+  const isStore = await Wallets.findById(id);
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    if (amount > 0 && isStore.walletSuperId == walletSuperId) {
+      if (isStore.phone !== fromPhone && isStore.role !== "admin") {
+        throw new MyError(
+          "Та өөрийнхөө хэтэвчнээс шилжүүлэг хийх ёстой!!",
+          403
+        );
+      }
+      if (isUser[0].role !== "operator") {
+        throw new MyError("Та зөвхөн operator данс руу шилжүүлэг хийнэ!!", 403);
+      }
+      const reference = v4();
+      if (
+        !toPhone &&
+        !fromPhone &&
+        !amount &&
+        !summary &&
+        !id &&
+        !walletSuperId
+      ) {
+        throw new MyError(
+          "Дараах утгуудыг оруулна уу: toPhone, fromPhone, amount, summary, walletSuperId",
+          400
+        );
+      }
+
+      const transferResult = await Promise.all([
+        debitAccount({
+          amount,
+          phone: fromPhone,
+          purpose: "operatorCharge",
+          reference,
+          summary: "Operator Хэтэвчийг амжилттай цэнэглэв.",
+          trnxSummary: `Хүлээн авагч: ${toPhone}. Шалгах дугаар:${reference} `,
+          session,
+          paidAt: `${new Date()}`,
+        }),
+        creditAccount({
+          amount,
+          phone: toPhone,
+          purpose: "operatorCharge",
+          reference,
+          summary: "Admin Operator-ийн хэтэвчийг цэнэглэв.",
+          trnxSummary: `Илгээгч: ${fromPhone}. Шалгах дугаар:${reference} `,
+          session,
+          paidAt: `${new Date()}`,
+        }),
+      ]);
+      const failedTxns = transferResult.filter(
+        (result) => result.status !== true
+      );
+      if (failedTxns.length) {
+        const errors = failedTxns.map((a) => a.message);
+        await session.abortTransaction();
+        session.endSession();
+        return res.status(400).json({
+          success: false,
+          message: errors,
+        });
+      }
+      await session.commitTransaction();
+      session.endSession();
+      return res.status(201).json({
+        success: true,
+        message: "Оператор цэнэглэлт амжилттай",
+      });
+    } else {
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(400).json({
+        success: false,
+        message: `Боломжгүй`,
+      });
+    }
+  } catch (err) {
+    await session.abortTransaction();
+    session.endSession();
+    return res.status(500).json({
+      success: false,
+      message: `Ямар нэгэн зүйл буруу байна.`,
+    });
+  }
+});
+
 const userGiftCardCharge = asyncHandler(async (req, res) => {
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -758,10 +849,40 @@ const getAllGiftCardDebit = asyncHandler(async (req, res, next) => {
     pagination,
   });
 });
+//Test
+const totalTransaction = asyncHandler(async (req, res, next) => {
+  const { walletSuperId, id } = req.body;
+
+  const isStore = await Wallets.findById(id);
+
+  if (!walletSuperId) {
+    throw new MyError("Дараах утгa оруулна уу: walletSuperId", 400);
+  }
+  console.log(isStore.role);
+  if (isStore.role !== "operator" && isStore.role !== "admin") {
+    throw new MyError("Эрхгүй", 403);
+  }
+
+  const allWallets = await Transactions.aggregate([
+    {
+      $group: {
+        _id: ["$purpose", "$trnxType"],
+        count: { $sum: "$amount" },
+      },
+    },
+  ]);
+
+  res.status(200).json({
+    success: true,
+    data: allWallets,
+  });
+});
 
 module.exports = {
+  totalTransaction,
   userPurchase,
 
+  operatorCharge,
   getUserTransfers,
   getUserTransfersDebit,
   getUserTransfersCredit,

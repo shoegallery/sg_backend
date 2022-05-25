@@ -18,6 +18,7 @@ const transactionSchema = new mongoose.Schema(
         "credit",
         "bonus",
         "giftcard",
+        "operatorCharge",
       ],
       required: true,
     },

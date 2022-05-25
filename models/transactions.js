@@ -15,7 +15,6 @@ const transactionSchema = new mongoose.Schema(
         "reversal",
         "purchase",
         "charge",
-        "credit",
         "bonus",
         "giftcard",
         "operatorCharge",

@@ -83,7 +83,7 @@ var accessLogStream = rfs.createStream("access.log", {
 app.use(morgan("combined", { stream: accessLogStream }));
 app.use("/api/v1/wallets", walletRoutes);
 app.use("/api/v1/transactions", transactionRoutes);
-app.use("/api/v1/adminPanel", adminPanelRoutes);
+app.use("/api/v1/adminpanel", adminPanelRoutes);
 
 app.use(errorHandler);
 

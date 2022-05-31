@@ -345,7 +345,7 @@ const userGiftCardCharge = asyncHandler(async (req, res) => {
       }
       const isUser = await Wallets.find({ phone: toPhone });
       const isMerchant = await Wallets.find({ phone: WhoCardSelledNumber });
-      console.log(WhoCardSelledNumber);
+
       if (false == isMerchant) {
         throw new MyError(
           "Та карт зарсан худалдааны зөвлөхийн дугаарыг зөв оруулна уу!!",
@@ -367,7 +367,7 @@ const userGiftCardCharge = asyncHandler(async (req, res) => {
           403
         );
       }
-      console.log(isMerchant);
+
       if (isMerchant[0].role == "user") {
         return res.status(403).json({
           success: false,
@@ -824,7 +824,7 @@ const getAllUniversalStatement = asyncHandler(async (req, res, next) => {
 
 
   const { beginDate, endDate, Type } = req.body;
-  console.log(Type.purpose)
+
 
   const allWallets = await Transactions.find({
     purpose: Type.purpose,

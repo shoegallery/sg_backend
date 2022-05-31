@@ -108,6 +108,13 @@ const getMyWallet = asyncHandler(async (req, res, next) => {
   if (!wallets) {
     throw new MyError("Хэтэвчний ID " + walletSuperId + " алга", 401);
   }
+  var usePanel;
+  var useRole;
+  if (wallets.role === "admin" || wallets.role === "operator") {
+    usePanel = "officeWorker";
+    useRole = wallets.role
+  }
+
 
   res.status(200).json({
     status: true,
@@ -117,6 +124,8 @@ const getMyWallet = asyncHandler(async (req, res, next) => {
       balance: wallets.balance,
       phone: wallets.phone,
       walletType: wallets.walletType,
+      isPanel: usePanel,
+      useRole: useRole
     },
   });
 });
@@ -148,8 +157,10 @@ const login = asyncHandler(async (req, res, next) => {
     httpOnly: true,
   };
   var usePanel;
+  var useRole;
   if (wallets.role === "admin" || wallets.role === "operator") {
     usePanel = "officeWorker";
+    useRole = wallets.role
   }
 
   res
@@ -158,6 +169,7 @@ const login = asyncHandler(async (req, res, next) => {
     .json({
       status: true,
       token,
+      message: "Амжилттай",
       wallets: {
         _id: wallets._id,
         walletSuperId: wallets.walletSuperId,
@@ -165,6 +177,7 @@ const login = asyncHandler(async (req, res, next) => {
         phone: wallets.phone,
         walletType: wallets.walletType,
         isPanel: usePanel,
+        useRole: useRole
       },
     });
 });
@@ -183,27 +196,75 @@ const logout = asyncHandler(async (req, res, next) => {
 });
 
 const getAllWallets = asyncHandler(async (req, res, next) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 1000;
-  const sort = req.query.sort;
-  const select = req.query.select;
 
+  const select = req.query.select;
   ["select", "sort", "page", "limit"].forEach((el) => delete req.query[el]);
 
-  const pagination = await paginate(page, limit, Wallets);
-
   const allWallets = await Wallets.find(req.query, select)
-    .sort(sort)
-    .skip(pagination.start - 1)
-    .limit(limit);
+    .sort({ updatedAt: -1 })
 
   res.status(200).json({
     status: true,
     data: allWallets,
-    pagination,
+
+  });
+});
+const getAllWalletsUser = asyncHandler(async (req, res, next) => {
+
+  const select = req.query.select;
+  ["select", "sort", "page", "limit"].forEach((el) => delete req.query[el]);
+
+  const allWallets = await Wallets.find({ role: "user" })
+    .sort({ updatedAt: -1 })
+
+  res.status(200).json({
+    status: true,
+    data: allWallets,
+
+  });
+});
+const getAllWalletsStore = asyncHandler(async (req, res, next) => {
+
+  const select = req.query.select;
+  ["select", "sort", "page", "limit"].forEach((el) => delete req.query[el]);
+
+  const allWallets = await Wallets.find({ role: "store" })
+    .sort({ updatedAt: -1 })
+
+  res.status(200).json({
+    status: true,
+    data: allWallets,
+
   });
 });
 
+const getAllWalletsOperator = asyncHandler(async (req, res, next) => {
+
+  const select = req.query.select;
+  ["select", "sort", "page", "limit"].forEach((el) => delete req.query[el]);
+
+  const allWallets = await Wallets.find({ role: "operator" })
+    .sort({ updatedAt: -1 })
+
+  res.status(200).json({
+    status: true,
+    data: allWallets,
+  });
+});
+const getAllWalletsVariance = asyncHandler(async (req, res, next) => {
+
+  const select = req.query.select;
+  ["select", "sort", "page", "limit"].forEach((el) => delete req.query[el]);
+
+  const allWallets = await Wallets.find({ role: "variance" })
+    .sort({ updatedAt: -1 })
+
+  res.status(200).json({
+    status: true,
+    data: allWallets,
+
+  });
+});
 const getwallets = asyncHandler(async (req, res, next) => {
   const wallets = await Wallets.findById(req.params.id).sort({ createdAt: -1 });
 
@@ -307,4 +368,8 @@ module.exports = {
   forgotPassword,
   logout,
   login,
+  getAllWalletsOperator,
+  getAllWalletsVariance,
+  getAllWalletsStore,
+  getAllWalletsUser
 };

@@ -71,6 +71,7 @@ const userPurchase = asyncHandler(async (req, res) => {
           trnxSummary: `Илгээгч: ${toPhone}. Шалгах дугаар:${reference} `,
           session,
           paidAt: `${new Date()}`,
+
         }),
         creditAccount({
           amount,
@@ -81,6 +82,7 @@ const userPurchase = asyncHandler(async (req, res) => {
           trnxSummary: `Хүлээн авагч: ${fromPhone}. Шалгах дугаар:${reference} `,
           session,
           paidAt: `${new Date()}`,
+
         }),
       ]);
       const failedTxns = transferResult.filter(
@@ -384,7 +386,7 @@ const userGiftCardCharge = asyncHandler(async (req, res) => {
           phone: fromPhone,
           purpose: "giftcard",
           reference,
-          summary: `Хэтэвчийг амжилттай ${amount}  Giftcartaar цэнэглэв.`,
+          summary: `${toPhone} Хэтэвчийг амжилттай ${amount}  Giftcartaar цэнэглэв.`,
           trnxSummary: `Илгээгч: ${fromPhone}. Шалгах дугаар:${reference} `,
           session,
           whoSelledCard: isMerchant[0].phone,
@@ -520,7 +522,7 @@ const userChargeBonus = asyncHandler(async (req, res) => {
           phone: fromPhone,
           purpose: "bonus",
           reference,
-          summary: "Таны хэтэвчийг бонусаар амжилттай цэнэглэгдлээ.",
+          summary: summary,
           trnxSummary: `Илгээгч: ${toPhone}. Шалгах дугаар:${reference} `,
           session,
           paidAt: `${new Date()}`,
@@ -530,7 +532,7 @@ const userChargeBonus = asyncHandler(async (req, res) => {
           phone: toPhone,
           purpose: "bonus",
           reference,
-          summary: "Дэлгүүрээс хэрэглэгчийн хэтэвчийг бонусаар цэнэглэв.",
+          summary: "Таны хэтэвчийг бонусаар амжилттай цэнэглэгдлээ.",
           trnxSummary: `Хүлээн авагч: ${fromPhone}. Шалгах дугаар:${reference} `,
           session,
           paidAt: `${new Date()}`,
@@ -596,8 +598,7 @@ const getUserTransfers = asyncHandler(async (req, res, next) => {
   });
 });
 const getUserTransfersDebit = asyncHandler(async (req, res, next) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 1000;
+
 
   const { walletSuperId } = req.body;
   const wallets = await Wallets.find({ walletSuperId: walletSuperId });
@@ -605,14 +606,13 @@ const getUserTransfersDebit = asyncHandler(async (req, res, next) => {
   if (!wallets) {
     throw new MyError(req.params.id + " ID-тэй хэтэвч байхгүй!", 400);
   }
-  const pagination = await paginate(page, limit, Wallets);
+
   const transactions = await Transactions.find({
     phone: wallets[0].phone,
     trnxType: "Орлого",
   })
     .sort({ createdAt: -1 })
-    .skip(pagination.start - 1)
-    .limit(limit);
+
   if (!transactions) {
     throw new MyError(req.body.phone + " Утасны дугаартай гүйлгээ алга!", 400);
   }
@@ -622,22 +622,20 @@ const getUserTransfersDebit = asyncHandler(async (req, res, next) => {
   });
 });
 const getUserTransfersCredit = asyncHandler(async (req, res, next) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 1000;
+
   const { walletSuperId } = req.body;
   const wallets = await Wallets.find({ walletSuperId: walletSuperId });
 
   if (!wallets) {
     throw new MyError(req.params.id + " ID-тэй хэтэвч байхгүй!", 400);
   }
-  const pagination = await paginate(page, limit, Wallets);
+
   const transactions = await Transactions.find({
     phone: wallets[0].phone,
     trnxType: "Зарлага",
   })
     .sort({ createdAt: -1 })
-    .skip(pagination.start - 1)
-    .limit(limit);
+
 
   if (!transactions) {
     throw new MyError(req.body.phone + " Утасны дугаартай гүйлгээ алга!", 400);
@@ -649,204 +647,199 @@ const getUserTransfersCredit = asyncHandler(async (req, res, next) => {
 });
 
 const getAllTransfer = asyncHandler(async (req, res, next) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 1000;
+
   const select = req.query.select;
-  ["select", "sort", "page", "limit"].forEach((el) => delete req.query[el]);
-  const pagination = await paginate(page, limit, Wallets);
+
+
   const allWallets = await Transactions.find(req.query, select)
     .sort({ createdAt: -1 })
-    .skip(pagination.start - 1)
-    .limit(limit);
+
   res.status(200).json({
     success: true,
     data: allWallets,
-    pagination,
+
   });
 });
 const getAllTransferCredit = asyncHandler(async (req, res, next) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 1000;
-  ["select", "sort", "page", "limit"].forEach((el) => delete req.query[el]);
-  const pagination = await paginate(page, limit, Wallets);
+
+
+
   const allWallets = await Transactions.find({ trnxType: "Зарлага" })
     .sort({ createdAt: -1 })
-    .skip(pagination.start - 1)
-    .limit(limit);
+
   res.status(200).json({
     success: true,
     data: allWallets,
-    pagination,
+
   });
 });
 const getAllTransferDebit = asyncHandler(async (req, res, next) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 1000;
-  ["select", "sort", "page", "limit"].forEach((el) => delete req.query[el]);
-  const pagination = await paginate(page, limit, Wallets);
+
+
+
   const allWallets = await Transactions.find({ trnxType: "Орлого" })
     .sort({ createdAt: -1 })
-    .skip(pagination.start - 1)
-    .limit(limit);
+
   res.status(200).json({
     success: true,
     data: allWallets,
-    pagination,
+
   });
 });
 const getAllCharge = asyncHandler(async (req, res, next) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 1000;
-  ["select", "sort", "page", "limit"].forEach((el) => delete req.query[el]);
-  const pagination = await paginate(page, limit, Wallets);
+
+
+
   const allWallets = await Transactions.find({ purpose: "charge" })
     .sort({ createdAt: -1 })
-    .skip(pagination.start - 1)
-    .limit(limit);
+
   res.status(200).json({
     success: true,
     data: allWallets,
-    pagination,
+
   });
 });
 const getAllChargeCredit = asyncHandler(async (req, res, next) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 1000;
-  ["select", "sort", "page", "limit"].forEach((el) => delete req.query[el]);
-  const pagination = await paginate(page, limit, Wallets);
+
+
+
   const allWallets = await Transactions.find({
     purpose: "charge",
     trnxType: "Зарлага",
   })
     .sort({ createdAt: -1 })
-    .skip(pagination.start - 1)
-    .limit(limit);
+
   res.status(200).json({
     success: true,
     data: allWallets,
-    pagination,
+
   });
 });
 const getAllChargeDebit = asyncHandler(async (req, res, next) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 1000;
-  ["select", "sort", "page", "limit"].forEach((el) => delete req.query[el]);
-  const pagination = await paginate(page, limit, Wallets);
+
+
+
   const allWallets = await Transactions.find({
     purpose: "charge",
     trnxType: "Орлого",
   })
     .sort({ createdAt: -1 })
-    .skip(pagination.start - 1)
-    .limit(limit);
+
   res.status(200).json({
     success: true,
     data: allWallets,
-    pagination,
+
   });
 });
 
 const getAllBonus = asyncHandler(async (req, res, next) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 1000;
-  ["select", "sort", "page", "limit"].forEach((el) => delete req.query[el]);
-  const pagination = await paginate(page, limit, Wallets);
+
+
+
   const allWallets = await Transactions.find({ purpose: "bonus" })
     .sort({ createdAt: -1 })
-    .skip(pagination.start - 1)
-    .limit(limit);
+
   res.status(200).json({
     success: true,
     data: allWallets,
-    pagination,
+
   });
 });
 const getAllBonusCredit = asyncHandler(async (req, res, next) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 1000;
-  ["select", "sort", "page", "limit"].forEach((el) => delete req.query[el]);
-  const pagination = await paginate(page, limit, Wallets);
+
+
+
   const allWallets = await Transactions.find({
     purpose: "bonus",
     trnxType: "Зарлага",
   })
     .sort({ createdAt: -1 })
-    .skip(pagination.start - 1)
-    .limit(limit);
+
   res.status(200).json({
     success: true,
     data: allWallets,
-    pagination,
+
   });
 });
 const getAllBonusDebit = asyncHandler(async (req, res, next) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 1000;
-  ["select", "sort", "page", "limit"].forEach((el) => delete req.query[el]);
-  const pagination = await paginate(page, limit, Wallets);
+
+
+
   const allWallets = await Transactions.find({
     purpose: "bonus",
     trnxType: "Орлого",
   })
     .sort({ createdAt: -1 })
-    .skip(pagination.start - 1)
-    .limit(limit);
+
   res.status(200).json({
     success: true,
     data: allWallets,
-    pagination,
+
   });
 });
 
 const getAllGiftCard = asyncHandler(async (req, res, next) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 1000;
-  ["select", "sort", "page", "limit"].forEach((el) => delete req.query[el]);
-  const pagination = await paginate(page, limit, Wallets);
   const allWallets = await Transactions.find({ purpose: "giftcard" })
     .sort({ createdAt: -1 })
-    .skip(pagination.start - 1)
-    .limit(limit);
   res.status(200).json({
     success: true,
     data: allWallets,
-    pagination,
+
   });
 });
 const getAllGiftCardCredit = asyncHandler(async (req, res, next) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 1000;
-  ["select", "sort", "page", "limit"].forEach((el) => delete req.query[el]);
-  const pagination = await paginate(page, limit, Wallets);
+
+
+
+
   const allWallets = await Transactions.find({
     purpose: "giftcard",
     trnxType: "Зарлага",
+
   })
     .sort({ createdAt: -1 })
-    .skip(pagination.start - 1)
-    .limit(limit);
+
   res.status(200).json({
     success: true,
     data: allWallets,
-    pagination,
+
   });
 });
 const getAllGiftCardDebit = asyncHandler(async (req, res, next) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 1000;
-  ["select", "sort", "page", "limit"].forEach((el) => delete req.query[el]);
-  const pagination = await paginate(page, limit, Wallets);
   const allWallets = await Transactions.find({
     purpose: "giftcard",
     trnxType: "Орлого",
+
   })
     .sort({ createdAt: -1 })
-    .skip(pagination.start - 1)
-    .limit(limit);
+
   res.status(200).json({
     success: true,
     data: allWallets,
-    pagination,
+
+  });
+});
+
+const getAllUniversalStatement = asyncHandler(async (req, res, next) => {
+
+
+  const { beginDate, endDate, Type } = req.body;
+  console.log(Type.purpose)
+
+  const allWallets = await Transactions.find({
+    purpose: Type.purpose,
+    trnxType: Type.trnxType,
+    createdAt: {
+      $gte: new Date(beginDate),
+      $lt: new Date(endDate + "T23:59:59.999Z")
+    }
+  })
+    .sort({ createdAt: -1 })
+
+  res.status(200).json({
+    success: true,
+    data: allWallets,
+
   });
 });
 //Test
@@ -881,8 +874,9 @@ const totalTransaction = asyncHandler(async (req, res, next) => {
 module.exports = {
   totalTransaction,
   userPurchase,
-
+  getAllUniversalStatement,
   operatorCharge,
+
   getUserTransfers,
   getUserTransfersDebit,
   getUserTransfersCredit,

@@ -43,6 +43,7 @@ const transactionSchema = new mongoose.Schema(
       type: mongoose.Decimal128,
       required: true,
     },
+
     summary: { type: String, required: true },
     trnxSummary: { type: String, required: true },
     whoSelledCard: { type: Number, required: true, default: 80409000 },

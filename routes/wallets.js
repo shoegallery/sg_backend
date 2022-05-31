@@ -20,7 +20,19 @@ router
 
 router
   .route("/list")
-  .get(authorize("admin", "operator"), Wallets.getAllWallets); //ok
+  .get(authorize("admin", "operator"), Wallets.getAllWallets);
+router
+  .route("/list-operator")
+  .get(authorize("admin", "operator"), Wallets.getAllWalletsOperator);
+router
+  .route("/list-variance")
+  .get(authorize("admin", "operator"), Wallets.getAllWalletsVariance);
+router
+  .route("/list-store")
+  .get(authorize("admin", "operator"), Wallets.getAllWalletsStore);
+router
+  .route("/list-users")
+  .get(authorize("admin", "operator"), Wallets.getAllWalletsUser);//ok
 
 router
   .route("/:id")

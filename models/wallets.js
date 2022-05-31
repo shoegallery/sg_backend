@@ -56,7 +56,7 @@ const walletSchema = new mongoose.Schema(
     role: {
       type: String,
       required: [true, "Хэрэглэгчийн эрхийг оруулна уу"],
-      enum: ["user", "operator", "admin", "saler"],
+      enum: ["user", "operator", "admin", "saler", "variance"],
       default: "user",
     },
     walletType: {

@@ -49,6 +49,8 @@ const creditAccount = async ({
         summary,
         trnxSummary,
         whoSelledCard,
+        fromPhone,
+        toPhone
       },
     ],
     { session }
@@ -71,6 +73,9 @@ const debitAccount = async ({
   summary,
   trnxSummary,
   session,
+  fromPhone,
+  toPhone
+
 }) => {
   const wallet = await Wallets.findOne({ phone });
   if (!wallet) {
@@ -98,7 +103,6 @@ const debitAccount = async ({
     [
       {
         trnxType: "Зарлага",
-
         purpose,
         amount,
         phone,

@@ -74,8 +74,8 @@ router
   .post(authorize("admin", "operator"), Transactions.getAllChargeDebit);
 */
 
-/*
-Админы харах GiftCard шилжүүлгүүд
+
+/*Админы харах GiftCard шилжүүлгүүд*/
 
 router
   .route("/list/giftcard")
@@ -86,10 +86,12 @@ router
 router
   .route("/list/giftcard/debit")
   .post(authorize("admin", "operator"), Transactions.getAllGiftCardDebit);
-*/
 
-/*
-Админы харах Bonus шилжүүлгүүд
+
+router
+  .route("/list/universal")
+  .post(authorize("admin", "operator"), Transactions.getAllUniversalStatement);
+//Админы харах Bonus шилжүүлгүүд
 router
   .route("/list/bonus")
   .post(authorize("admin", "operator"), Transactions.getAllBonus);
@@ -99,5 +101,5 @@ router
 router
   .route("/list/bonus/debit")
   .post(authorize("admin", "operator"), Transactions.getAllBonusDebit);
-*/
+
 module.exports = router;

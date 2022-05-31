@@ -842,7 +842,7 @@ const getAllUniversalStatement = asyncHandler(async (req, res, next) => {
 
   });
 });
-//Test
+
 const totalTransaction = asyncHandler(async (req, res, next) => {
   const { walletSuperId, id } = req.body;
 
@@ -859,8 +859,9 @@ const totalTransaction = asyncHandler(async (req, res, next) => {
   const allWallets = await Transactions.aggregate([
     {
       $group: {
-        _id: ["$purpose", "$trnxType"],
-        count: { $sum: "$amount" },
+        _id: "$trnxType",
+
+        total: { $sum: "$amount" },
       },
     },
   ]);
@@ -870,6 +871,166 @@ const totalTransaction = asyncHandler(async (req, res, next) => {
     data: allWallets,
   });
 });
+
+// const totalTransaction = asyncHandler(async (req, res, next) => {
+//   const { walletSuperId, id } = req.body;
+
+//   const isStore = await Wallets.findById(id);
+
+//   if (!walletSuperId) {
+//     throw new MyError("Дараах утгa оруулна уу: walletSuperId", 400);
+//   }
+//   console.log(isStore.role);
+//   if (isStore.role !== "operator" && isStore.role !== "admin") {
+//     throw new MyError("Эрхгүй", 403);
+//   }
+//   const totalGifcardDebit = await Transactions.find(
+//     {
+//       purpose: "giftcard",
+//       trnxType: "Орлого",
+//     },
+//     {
+//       $group: {
+//         total: { $sum: "$amount" },
+//       },
+//     }
+//   );
+//   const totalBonusDebit = await Transactions.find(
+//     {
+//       purpose: "bonus",
+//       trnxType: "Орлого",
+//     },
+//     {
+//       $group: {
+//         total: { $sum: "$amount" },
+//       },
+//     }
+//   );
+//   const totalChargeDebit = await Transactions.find(
+//     {
+//       purpose: "charge",
+//       trnxType: "Орлого",
+//     },
+//     {
+//       $group: {
+//         total: { $sum: "$amount" },
+//       },
+//     }
+//   );
+
+//   const totalPurchaseDebit = await Transactions.find(
+//     {
+//       purpose: "purchase",
+//       trnxType: "Орлого",
+//     },
+//     {
+//       $group: {
+//         total: { $sum: "$amount" },
+//       },
+//     }
+//   );
+//   const totalVarianceDebit = await Transactions.find(
+//     {
+//       purpose: "giftcard",
+//       trnxType: "Урамшуулал",
+//     },
+//     {
+//       $group: {
+//         total: { $sum: "$amount" },
+//       },
+//     }
+//   );
+//   console.log(totalPurchaseDebit);
+//   const totalOperatorChargeDebit = await Transactions.find(
+//     {
+//       purpose: "operatorCharge",
+//       trnxType: "Зарлага",
+//     },
+//     {
+//       $group: {
+//         total: { $sum: "$amount" },
+//       },
+//     }
+//   );
+
+//   const totalGifcardCredit = await Transactions.find(
+//     {
+//       purpose: "giftcard",
+//       trnxType: "Зарлага",
+//     },
+//     {
+//       $group: {
+//         total: { $sum: "$amount" },
+//       },
+//     }
+//   );
+//   const totalPurchaseCredit = await Transactions.find(
+//     {
+//       purpose: "purchase",
+//       trnxType: "Зарлага",
+//     },
+//     {
+//       $group: {
+//         total: { $sum: "$amount" },
+//       },
+//     }
+//   );
+
+//   const totalOperatorChargeCredit = await Transactions.find(
+//     {
+//       purpose: "operatorCharge",
+//       trnxType: "Зарлага",
+//     },
+//     {
+//       $group: {
+//         total: { $sum: "$amount" },
+//       },
+//     }
+//   );
+
+//   const totalBonusCredit = await Transactions.find(
+//     {
+//       purpose: "bonus",
+//       trnxType: "Зарлага",
+//     },
+//     {
+//       $group: {
+//         total: { $sum: "$amount" },
+//       },
+//     }
+//   );
+//   const totalChargeCredit = await Transactions.find(
+//     {
+//       purpose: "charge",
+//       trnxType: "Зарлага",
+//     },
+//     {
+//       $group: {
+//         total: { $sum: "$amount" },
+//       },
+//     }
+//   );
+//   res.status(200).json({
+//     success: true,
+//     data: {
+//       totalGifcardDebit: totalGifcardDebit,
+//       totalGifcardCredit: totalGifcardCredit,
+//       totalVarianceDebit: totalVarianceDebit,
+
+//       totalBonusDebit: totalBonusDebit,
+//       totalBonusCredit: totalBonusCredit,
+
+//       totalChargeDebit: totalChargeDebit,
+//       totalChargeCredit: totalChargeCredit,
+
+//       totalPurchaseDebit: totalPurchaseDebit,
+//       totalPurchaseCredit: totalPurchaseCredit,
+
+//       totalOperatorChargeDebit: totalOperatorChargeDebit,
+//       totalOperatorChargeCredit: totalOperatorChargeCredit,
+//     },
+//   });
+// });
 
 module.exports = {
   totalTransaction,

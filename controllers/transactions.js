@@ -10,7 +10,7 @@ const {
 const MyError = require("../utils/myError");
 const paginate = require("../utils/paginate");
 const asyncHandler = require("express-async-handler");
-
+const sendMessage = require("../utils/sendMessage");
 const userPurchase = asyncHandler(async (req, res) => {
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -917,7 +917,7 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
   var bonusValue = 0
   var operatorChargeValue = 0
   var problemStack = 0
-  var resp
+  var resp = null
   const totalTransActions = await Transactions.aggregate([{
     $group: {
       _id: [{ purpose: "$purpose" }, { trnxType: "$trnxType" }],
@@ -996,6 +996,7 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
       problemStack = problemStack + parseInt(lu.value)
     }
   })
+  resp = null
   if (problemStack - 100000000 === 0 && giftcardValue === 0 && operatorChargeValue === 0 && bonusValue === 0 && purchaseValue === 0) {
     resp = "success"
   } else {
@@ -1003,7 +1004,7 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
     const message = {
       channel: "sms",
       title: "SHOE GALLERY",
-      body: `Systemd Hacker baina.`,
+      body: `Systemd Hacker baina. Serveriig untraasan`,
       receivers: ["86218721"],
       shop_id: "2706",
     };

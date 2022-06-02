@@ -28,10 +28,12 @@ const connectDB = require("./config/db");
 const app = express();
 
 cron.schedule('* * * * *', () => {
+
+
   let data = JSON.stringify({ "walletSuperId": "DlHB2N6Sy9HkJRtSn2feTV6kM4WxYE0IvVTtvDlb1U25fuoKi7rDKX4QYZs9qtpv" });
   let config = {
     method: 'post',
-    url: 'https://dolphin-app-3r9tk.ondigitalocean.app/api/v1/transactions/ecosystem',
+    url: 'http://localhost:8080/api/v1/transactions/ecosystem',
     headers: {
       'Content-Type': 'application/json'
     },
@@ -40,11 +42,22 @@ cron.schedule('* * * * *', () => {
   };
   axios(config)
     .then((response) => {
-      console.log(response.headers);
+      if (response.data.success === true) {
+
+        if (response.data.data === "warning") {
+          console.log("Хэвийн бус")
+          shutDown()
+        } else if (response.data.data === "success") {
+          console.log("Эко систем хэвийн")
+        }
+      }
+
+
     })
     .catch((error) => {
       console.log("eco system шалгах боломжгүй")
     });
+
 });
 app.use(helmet());
 // MongoDB өгөгдлийн сантай холбогдох
@@ -125,3 +138,20 @@ process.on("unhandledRejection", (err, promise) => {
     process.exit(1);
   });
 });
+
+
+
+process.on('SIGTERM', shutDown)
+
+function shutDown() {
+  console.log('Received kill signal, shutting down gracefully ');
+  server.close(() => {
+    console.log('Closed out remaining connections');
+    process.exit(0);
+  });
+
+  setTimeout(() => {
+    console.error('Could not close connections in time, forcefully shutting down');
+    process.exit(1);
+  }, 10000);
+}

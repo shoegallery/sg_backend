@@ -1,2 +1,2 @@
-/node_modules;
-/log.gitigrone;
+node_modules;
+log.gitigrone;

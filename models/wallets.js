@@ -106,7 +106,6 @@ walletSchema.methods.checkPassword = async function (enteredPassword) {
 
 walletSchema.methods.generatePasswordChangeToken = function () {
   const resetToken = Math.floor(100000 + Math.random() * 900000);
-
   this.resetPasswordToken = crypto
     .createHash("sha256")
     .update(JSON.stringify(resetToken))

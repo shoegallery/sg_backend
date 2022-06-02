@@ -821,16 +821,12 @@ const getAllGiftCardDebit = asyncHandler(async (req, res, next) => {
 });
 
 const getAllUniversalStatement = asyncHandler(async (req, res, next) => {
-
-
   const { beginDate, endDate, Type } = req.body;
-
-
   const allWallets = await Transactions.find({
     purpose: Type.purpose,
     trnxType: Type.trnxType,
     createdAt: {
-      $gte: new Date(beginDate),
+      $gte: new Date(beginDate + "T00:00:00.000Z"),
       $lt: new Date(endDate + "T23:59:59.999Z")
     }
   })
@@ -843,34 +839,108 @@ const getAllUniversalStatement = asyncHandler(async (req, res, next) => {
   });
 });
 
-const totalTransaction = asyncHandler(async (req, res, next) => {
-  const { walletSuperId, id } = req.body;
+const statisticData = asyncHandler(async (req, res, next) => {
+  const { walletSuperId } = req.body;
 
-  const isStore = await Wallets.findById(id);
+  const isStore = await Wallets.find({ walletSuperId: walletSuperId });
 
   if (!walletSuperId) {
     throw new MyError("Дараах утгa оруулна уу: walletSuperId", 400);
   }
-  console.log(isStore.role);
-  if (isStore.role !== "operator" && isStore.role !== "admin") {
+
+  if (isStore[0].role !== "operator" && isStore[0].role !== "admin") {
     throw new MyError("Эрхгүй", 403);
   }
 
-  const allWallets = await Transactions.aggregate([
-    {
-      $group: {
-        _id: "$trnxType",
+  const groupMonthTransActions = await Transactions.aggregate([{
+    $group: {
+      _id: [{ date: { $dateToString: { format: "%Y-%m", date: "$createdAt" } } }, { purpose: "$purpose" }, { trnxType: "$trnxType" }],
+      sum: { $sum: "$amount" },
 
-        total: { $sum: "$amount" },
-      },
-    },
-  ]);
+    }
+  }]);
+  const totalTransActions = await Transactions.aggregate([{
+    $group: {
+      _id: [{ purpose: "$purpose" }, { trnxType: "$trnxType" }],
+      sum: { $sum: "$amount" },
+    }
+  }]);
+  const totalWallets = await Wallets.aggregate([{
+    $group: {
+      _id: [{ role: "$role" }],
+      sum: { $sum: "$balance" },
+    }
+  }]);
+  const lastTenTransActions = await Transactions.find({}).sort({ createdAt: -1 }).limit(10);
+  const allSelledCard = await Transactions.aggregate([{ $match: { purpose: "giftcard", trnxType: "Зарлага" } }, {
+    $group: {
+      _id: { amount: "$amount" },
+      "count": { "$sum": 1 }
+    }
+  }]);
 
   res.status(200).json({
     success: true,
-    data: allWallets,
+    data: [{
+      groupMonthTransActions: groupMonthTransActions,
+      lastTenTransActions: lastTenTransActions,
+      totalTransActions: totalTransActions,
+      totalWallets: totalWallets,
+      allSelledCard: allSelledCard
+
+    }]
+
+    ,
   });
 });
+const getTest = asyncHandler(async (req, res, next) => {
+  const { walletSuperId } = req.body;
+
+  const isStore = await Wallets.find({ walletSuperId: walletSuperId });
+
+  if (!walletSuperId) {
+    throw new MyError("Дараах утгa оруулна уу: walletSuperId", 400);
+  }
+
+  if (isStore[0].role !== "operator" && isStore[0].role !== "admin") {
+    throw new MyError("Эрхгүй", 403);
+  }
+
+  const groupMonthTransActions = await Transactions.aggregate([{ $match: { purpose: "giftcard", trnxType: "Зарлага" } }, {
+    $group: {
+      _id: { amount: "$amount" },
+      "count": { "$sum": 1 }
+    }
+  }]);
+
+  // const totalTransActions = await Transactions.aggregate([{
+  //   $group: {
+  //     _id: [{ purpose: "$purpose" }, { trnxType: "$trnxType" }],
+  //     sum: { $sum: "$amount" },
+  //   }
+  // }]);
+  // const totalWallets = await Wallets.aggregate([{
+  //   $group: {
+  //     _id: [{ role: "$role" }],
+  //     sum: { $sum: "$balance" },
+  //   }
+  // }]);
+  // const lastTenTransActions = await Transactions.find({}).sort({ createdAt: -1 }).limit(10);
+
+  res.status(200).json({
+    success: true,
+    data: [{
+      groupMonthTransActions: groupMonthTransActions,
+      // lastTenTransActions: lastTenTransActions,
+      // totalTransActions: totalTransActions,
+      // totalWallets: totalWallets
+
+    }]
+
+    ,
+  });
+});
+
 
 // const totalTransaction = asyncHandler(async (req, res, next) => {
 //   const { walletSuperId, id } = req.body;
@@ -1033,7 +1103,8 @@ const totalTransaction = asyncHandler(async (req, res, next) => {
 // });
 
 module.exports = {
-  totalTransaction,
+  getTest,
+  statisticData,
   userPurchase,
   getAllUniversalStatement,
   operatorCharge,

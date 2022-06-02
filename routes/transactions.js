@@ -4,7 +4,7 @@ const { protect, authorize } = require("../middleware/protect");
 
 const Transactions = require("../controllers/transactions");
 //Авах
-router.post("/total", Transactions.totalTransaction);
+
 
 router.use(protect);
 //Хэрэглэгчийн хийх шилжүүлэг
@@ -60,9 +60,14 @@ router
   .route("/list/debit")
   .post(authorize("admin", "operator"), Transactions.getAllTransferDebit);
 
-/*
-Админы харах Charge шилжүүлгүүд
+//Админы харах Charge шилжүүлгүүд
+router
+  .route("/statistic")
+  .post(authorize("admin", "operator"), Transactions.statisticData);
 
+
+
+/*
 router
   .route("/list/charge")
   .post(authorize("admin", "operator"), Transactions.getAllCharge);
@@ -91,6 +96,7 @@ router
 router
   .route("/list/universal")
   .post(authorize("admin", "operator"), Transactions.getAllUniversalStatement);
+
 //Админы харах Bonus шилжүүлгүүд
 router
   .route("/list/bonus")
@@ -101,5 +107,8 @@ router
 router
   .route("/list/bonus/debit")
   .post(authorize("admin", "operator"), Transactions.getAllBonusDebit);
+router
+  .route("/test")
+  .post(authorize("admin", "operator"), Transactions.getTest);
 
 module.exports = router;

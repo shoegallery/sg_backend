@@ -45,7 +45,7 @@ const transactionSchema = new mongoose.Schema(
 
     summary: { type: String, required: true },
     trnxSummary: { type: String, required: true },
-    whoSelledCard: { type: Number, required: true, default: 80409000 },
+    whoSelledCard: { type: Number, required: true, default: 00000000 },
   },
   { timestamps: true }
 );

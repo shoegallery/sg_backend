@@ -917,7 +917,7 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
   var bonusValue = 0
   var operatorChargeValue = 0
   var problemStack = 0
-
+  var resp
   const totalTransActions = await Transactions.aggregate([{
     $group: {
       _id: [{ purpose: "$purpose" }, { trnxType: "$trnxType" }],
@@ -997,9 +997,19 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
     }
   })
   if (problemStack - 100000000 === 0 && giftcardValue === 0 && operatorChargeValue === 0 && bonusValue === 0 && purchaseValue === 0) {
-    console.log("Систем ямар нэгэн асуудалгүй")
+    resp = "success"
   } else {
-    console.log("Системд асуудал байна")
+    resp = "warning"
+    const message = {
+      channel: "sms",
+      title: "SHOE GALLERY",
+      body: `Systemd Hacker baina.`,
+      receivers: ["86218721"],
+      shop_id: "2706",
+    };
+    await sendMessage({
+      message,
+    });
   }
 
 
@@ -1007,13 +1017,9 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    data: [{
+    data: resp
 
-      totalTransActions: totalTransActions,
-      totalWallets: totalWallets,
-    }]
 
-    ,
   });
 });
 

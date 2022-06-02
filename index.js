@@ -26,8 +26,8 @@ const errorHandler = require("./middleware/error");
 const connectDB = require("./config/db");
 // Express апп үүсгэх
 const app = express();
-cron.schedule('* * * * *', () => {
 
+cron.schedule('* * * * *', () => {
   let data = JSON.stringify({ "walletSuperId": "DlHB2N6Sy9HkJRtSn2feTV6kM4WxYE0IvVTtvDlb1U25fuoKi7rDKX4QYZs9qtpv" });
   let config = {
     method: 'post',
@@ -40,22 +40,13 @@ cron.schedule('* * * * *', () => {
   };
   axios(config)
     .then((response) => {
-      console.log("eco system шалгасан");
+      console.log(response.headers);
     })
     .catch((error) => {
       console.log("eco system шалгах боломжгүй")
     });
 });
-
-
-
-
-
-
-
-
 app.use(helmet());
-
 // MongoDB өгөгдлийн сантай холбогдох
 connectDB();
 app.disable("x-powered-by");

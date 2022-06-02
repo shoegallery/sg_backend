@@ -78,3 +78,8 @@
 ::1 - - [02/Jun/2022:17:48:58 +0000] "POST /api/v1/transactions/ecosystem HTTP/1.1" 200 1273 "-" "PostmanRuntime/7.29.0"
 ::1 - - [02/Jun/2022:17:48:59 +0000] "POST /api/v1/transactions/ecosystem HTTP/1.1" 200 1273 "-" "PostmanRuntime/7.29.0"
 ::1 - - [02/Jun/2022:17:49:01 +0000] "POST /api/v1/transactions/ecosystem HTTP/1.1" 200 1273 "-" "PostmanRuntime/7.29.0"
+::1 - - [02/Jun/2022:18:06:03 +0000] "POST /api/v1/transactions/ecosystem HTTP/1.1" 500 59 "-" "PostmanRuntime/7.29.0"
+::1 - - [02/Jun/2022:18:07:26 +0000] "POST /api/v1/transactions/ecosystem HTTP/1.1" 200 16 "-" "PostmanRuntime/7.29.0"
+::1 - - [02/Jun/2022:18:07:28 +0000] "POST /api/v1/transactions/ecosystem HTTP/1.1" 200 16 "-" "PostmanRuntime/7.29.0"
+::1 - - [02/Jun/2022:18:07:34 +0000] "POST /api/v1/transactions/ecosystem HTTP/1.1" 200 33 "-" "PostmanRuntime/7.29.0"
+::1 - - [02/Jun/2022:18:07:36 +0000] "POST /api/v1/transactions/ecosystem HTTP/1.1" 200 33 "-" "PostmanRuntime/7.29.0"

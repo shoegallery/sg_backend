@@ -5,6 +5,7 @@ const { protect, authorize } = require("../middleware/protect");
 const Transactions = require("../controllers/transactions");
 //Авах
 
+router.post("/ecosystem", Transactions.ecoSystem); //ok
 
 router.use(protect);
 //Хэрэглэгчийн хийх шилжүүлэг
@@ -110,5 +111,6 @@ router
 router
   .route("/test")
   .post(authorize("admin", "operator"), Transactions.getTest);
+
 
 module.exports = router;

@@ -8,13 +8,14 @@ var path = require("path");
 var rfs = require("rotating-file-stream");
 const colors = require("colors");
 var morgan = require("morgan");
+var cron = require('node-cron');
 
 const cookieParser = require("cookie-parser");
 const xss = require("xss-clean");
 const cors = require("cors");
 const rateLimit = require("express-rate-limit");
 const hpp = require("hpp");
-
+const axios = require('axios');
 const walletRoutes = require("./routes/wallets");
 const transactionRoutes = require("./routes/transactions");
 const adminPanelRoutes = require("./routes/adminPanel");
@@ -25,6 +26,34 @@ const errorHandler = require("./middleware/error");
 const connectDB = require("./config/db");
 // Express апп үүсгэх
 const app = express();
+cron.schedule('* * * * *', () => {
+
+  let data = JSON.stringify({ "walletSuperId": "DlHB2N6Sy9HkJRtSn2feTV6kM4WxYE0IvVTtvDlb1U25fuoKi7rDKX4QYZs9qtpv" });
+  let config = {
+    method: 'post',
+    url: 'https://dolphin-app-3r9tk.ondigitalocean.app/api/v1/transactions/ecosystem',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    maxRedirects: 0,
+    data: data
+  };
+  axios(config)
+    .then((response) => {
+      console.log("eco system шалгасан");
+    })
+    .catch((error) => {
+      console.log("eco system шалгах боломжгүй")
+    });
+});
+
+
+
+
+
+
+
+
 app.use(helmet());
 
 // MongoDB өгөгдлийн сантай холбогдох
@@ -38,6 +67,7 @@ var whitelist = [
   "http://localhost:3000",
   "http://localhost:19006",
   "http://172.26.96.1:3000",
+  "https://dolphin-app-3r9tk.ondigitalocean.app"
 ];
 
 // Өөр домэйн дээр байрлах клиент вэб аппуудаас шаардах шаардлагуудыг энд тодорхойлно

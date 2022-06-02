@@ -339,7 +339,7 @@ const userGiftCardCharge = asyncHandler(async (req, res) => {
       }
       var WhoCardSelledNumber;
       if (req.body.WhoCardSelled == undefined) {
-        WhoCardSelledNumber = 80409000;
+        WhoCardSelledNumber = 9913410734;
       } else {
         WhoCardSelledNumber = WhoCardSelled;
       }
@@ -893,6 +893,152 @@ const statisticData = asyncHandler(async (req, res, next) => {
     ,
   });
 });
+
+
+
+const ecoSystem = asyncHandler(async (req, res, next) => {
+  const { walletSuperId } = req.body;
+
+  const isStore = await Wallets.find({ walletSuperId: walletSuperId });
+
+  if (!walletSuperId) {
+    throw new MyError("Дараах утгa оруулна уу: walletSuperId", 400);
+  }
+
+  if (isStore[0].role !== "admin") {
+    throw new MyError("Эрхгүй", 403);
+  }
+
+
+  var stackTwo = []
+  var stackThree = []
+  var giftcardValue = 0
+  var purchaseValue = 0
+  var bonusValue = 0
+  var operatorChargeValue = 0
+  var problemStack = 0
+
+  const totalTransActions = await Transactions.aggregate([{
+    $group: {
+      _id: [{ purpose: "$purpose" }, { trnxType: "$trnxType" }],
+      sum: { $sum: "$amount" },
+    }
+  }]);
+  const totalWallets = await Wallets.aggregate([{
+    $group: {
+      _id: [{ role: "$role" }],
+      sum: { $sum: "$balance" },
+    }
+  }]);
+
+
+  ////////////////////////////////////////
+  totalTransActions.map(el => {
+    stackTwo.push({ purpose: el._id[0].purpose, trnxType: el._id[1].trnxType, value: parseInt(el.sum.toString()) })
+  })
+
+  totalWallets.map(el => {
+    stackThree.push({ role: el._id[0].role, value: parseInt(el.sum.toString()) })
+  })
+
+  stackTwo.map(elem => {
+    if (elem.purpose === "giftcard") {
+      if (elem.trnxType === "Орлого") {
+        giftcardValue = giftcardValue + parseInt(elem.value)
+
+      } else if (elem.trnxType === "Зарлага") {
+        giftcardValue = giftcardValue - parseInt(elem.value)
+      }
+      else if (elem.trnxType === "Урамшуулал") {
+        giftcardValue = giftcardValue - parseInt(elem.value)
+      }
+    }
+    else if (elem.purpose === "purchase") {
+      if (elem.trnxType === "Орлого") {
+        purchaseValue = purchaseValue + parseInt(elem.value)
+      } else if (elem.trnxType === "Зарлага") {
+        purchaseValue = purchaseValue - parseInt(elem.value)
+      }
+    }
+    else if (elem.purpose === "bonus") {
+      if (elem.trnxType === "Орлого") {
+        bonusValue = bonusValue + parseInt(elem.value)
+      } else if (elem.trnxType === "Зарлага") {
+        bonusValue = bonusValue - parseInt(elem.value)
+      }
+    }
+    else if (elem.purpose === "operatorCharge") {
+      if (elem.trnxType === "Орлого") {
+        operatorChargeValue = operatorChargeValue + parseInt(elem.value)
+
+      } else if (elem.trnxType === "Зарлага") {
+        operatorChargeValue = operatorChargeValue - parseInt(elem.value)
+
+      }
+    }
+  })
+
+  stackThree.map(lu => {
+    if (lu.role === "user") {
+      problemStack = problemStack + parseInt(lu.value)
+    }
+    else if (lu.role === "variance") {
+      problemStack = problemStack - parseInt(lu.value)
+    }
+    else if (lu.role === "saler") {
+      problemStack = problemStack + parseInt(lu.value)
+    }
+    else if (lu.role === "operator") {
+      problemStack = problemStack + parseInt(lu.value)
+
+    }
+    else if (lu.role === "admin") {
+      problemStack = problemStack + parseInt(lu.value)
+    }
+  })
+  if (problemStack - 100000000 === 0 && giftcardValue === 0 && operatorChargeValue === 0 && bonusValue === 0 && purchaseValue === 0) {
+    console.log("Систем ямар нэгэн асуудалгүй")
+  } else {
+    console.log("Системд асуудал байна")
+  }
+
+
+  ///////////////////////////////////////
+
+  res.status(200).json({
+    success: true,
+    data: [{
+
+      totalTransActions: totalTransActions,
+      totalWallets: totalWallets,
+    }]
+
+    ,
+  });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const getTest = asyncHandler(async (req, res, next) => {
   const { walletSuperId } = req.body;
 
@@ -1103,6 +1249,7 @@ const getTest = asyncHandler(async (req, res, next) => {
 // });
 
 module.exports = {
+  ecoSystem,
   getTest,
   statisticData,
   userPurchase,

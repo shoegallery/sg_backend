@@ -51,8 +51,6 @@ cron.schedule('* * * * *', () => {
           console.log("Эко систем хэвийн")
         }
       }
-
-
     })
     .catch((error) => {
       console.log("eco system шалгах боломжгүй")

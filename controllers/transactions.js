@@ -821,10 +821,10 @@ const getAllGiftCardDebit = asyncHandler(async (req, res, next) => {
 });
 
 const getAllUniversalStatement = asyncHandler(async (req, res, next) => {
-  const { beginDate, endDate, Type } = req.body;
+  const { beginDate, endDate, purpose, trnxType } = req.body;
   const allWallets = await Transactions.find({
-    purpose: Type.purpose,
-    trnxType: Type.trnxType,
+    purpose: purpose,
+    trnxType: trnxType,
     createdAt: {
       $gte: new Date(beginDate + "T00:00:00.000Z"),
       $lt: new Date(endDate + "T23:59:59.999Z")
@@ -904,12 +904,9 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
   if (!walletSuperId) {
     throw new MyError("Дараах утгa оруулна уу: walletSuperId", 400);
   }
-
   if (isStore[0].role !== "admin") {
     throw new MyError("Эрхгүй", 403);
   }
-
-
   var stackTwo = []
   var stackThree = []
   var giftcardValue = 0
@@ -1004,8 +1001,8 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
     const message = {
       channel: "sms",
       title: "SHOE GALLERY",
-      body: `Systemd Hacker baina. Serveriig untraasan`,
-      receivers: ["86218721"],
+      body: `Warning!!! ShoeGallery Wallet systemd hacker nevtersen baina baina. Serveriig buren untraasan.`,
+      receivers: ["86218721", "88034666"],
       shop_id: "2706",
     };
     await sendMessage({
@@ -1019,8 +1016,6 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     success: true,
     data: resp
-
-
   });
 });
 
@@ -1046,23 +1041,28 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
 
 
 
-const getTest = asyncHandler(async (req, res, next) => {
-  const { walletSuperId } = req.body;
+const bonusSalary = asyncHandler(async (req, res, next) => {
 
-  const isStore = await Wallets.find({ walletSuperId: walletSuperId });
+  const { beginDate, endDate, trnxType, purpose } = req.body;
 
-  if (!walletSuperId) {
-    throw new MyError("Дараах утгa оруулна уу: walletSuperId", 400);
-  }
-
-  if (isStore[0].role !== "operator" && isStore[0].role !== "admin") {
-    throw new MyError("Эрхгүй", 403);
-  }
-
-  const groupMonthTransActions = await Transactions.aggregate([{ $match: { purpose: "giftcard", trnxType: "Зарлага" } }, {
+  const bonusSalaryData = await Transactions.aggregate([{
+    $match: {
+      purpose: purpose,
+      trnxType: trnxType, createdAt: {
+        $gte: new Date(beginDate + "T00:00:00.000Z"),
+        $lt: new Date(endDate + "T23:59:59.999Z")
+      }
+    }
+  }, {
     $group: {
-      _id: { amount: "$amount" },
-      "count": { "$sum": 1 }
+      _id: [{
+        date: {
+          $dateToString: {
+            format: "%Y-%m", date: "$createdAt",
+          }
+        },
+      }, { whoSelledCard: "$whoSelledCard" }],
+      count: { $sum: "$amount" }
     }
   }]);
 
@@ -1082,15 +1082,8 @@ const getTest = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    data: [{
-      groupMonthTransActions: groupMonthTransActions,
-      // lastTenTransActions: lastTenTransActions,
-      // totalTransActions: totalTransActions,
-      // totalWallets: totalWallets
+    data: bonusSalaryData
 
-    }]
-
-    ,
   });
 });
 
@@ -1257,7 +1250,7 @@ const getTest = asyncHandler(async (req, res, next) => {
 
 module.exports = {
   ecoSystem,
-  getTest,
+  bonusSalary,
   statisticData,
   userPurchase,
   getAllUniversalStatement,

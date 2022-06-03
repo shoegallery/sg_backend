@@ -97,6 +97,9 @@ router
 router
   .route("/list/universal")
   .post(authorize("admin", "operator"), Transactions.getAllUniversalStatement);
+router
+  .route("/bonus/salary")
+  .post(authorize("admin", "operator"), Transactions.bonusSalary);
 
 //Админы харах Bonus шилжүүлгүүд
 router
@@ -108,9 +111,7 @@ router
 router
   .route("/list/bonus/debit")
   .post(authorize("admin", "operator"), Transactions.getAllBonusDebit);
-router
-  .route("/test")
-  .post(authorize("admin", "operator"), Transactions.getTest);
+
 
 
 module.exports = router;

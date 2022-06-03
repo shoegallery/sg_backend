@@ -20,6 +20,7 @@ const walletSchema = new mongoose.Schema(
       immutable: true,
       unique: true,
     },
+
     balance: {
       type: mongoose.Decimal128,
       required: true,

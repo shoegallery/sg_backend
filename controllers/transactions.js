@@ -60,6 +60,7 @@ const userPurchase = asyncHandler(async (req, res) => {
           403
         );
       }
+      console.log(OrderNumber.length)
       const reference = v4();
       const transferResult = await Promise.all([
         debitAccount({
@@ -78,7 +79,7 @@ const userPurchase = asyncHandler(async (req, res) => {
           phone: toPhone,
           purpose: "purchase",
           reference,
-          summary: `${fromPhone} утасны дугаартай худалдан авагчаас ${OrderNumber} захиалгын худалдан авалтын ${amount} төлбөр баталгаажсан.`,
+          summary: `${fromPhone} утасны дугаартай худалдан авагчаас ${OrderNumber} баримтын дугаартай худалдан авалтын ${amount} төлбөр баталгаажсан.`,
           trnxSummary: `Хүлээн авагч: ${fromPhone}. Шалгах дугаар:${reference} `,
           session,
           paidAt: `${new Date()}`,

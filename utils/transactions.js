@@ -49,8 +49,6 @@ const creditAccount = async ({
         summary,
         trnxSummary,
         whoSelledCard,
-
-
       },
     ],
     { session }
@@ -73,8 +71,6 @@ const debitAccount = async ({
   summary,
   trnxSummary,
   session,
-
-
 }) => {
   const wallet = await Wallets.findOne({ phone });
   if (!wallet) {
@@ -84,7 +80,6 @@ const debitAccount = async ({
       message: `Хүлээн авагч ${phone} байхгүй байна. Шалгана уу`,
     };
   }
-
   if (Number(wallet.balance) < amount) {
     return {
       status: false,
@@ -92,7 +87,6 @@ const debitAccount = async ({
       message: `Илгээгч ${phone} дансны үлдэгдэл хүрэлцэхгүй байна`,
     };
   }
-
   const updatedWallet = await Wallets.findOneAndUpdate(
     { phone },
     { $inc: { balance: -amount } },
@@ -115,7 +109,6 @@ const debitAccount = async ({
     ],
     { session }
   );
-
   return {
     status: true,
     statusCode: 201,
@@ -179,7 +172,6 @@ const varianceAccount = async ({
         ],
         { session }
       );
-
       return {
         status: true,
         statusCode: 201,

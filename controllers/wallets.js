@@ -341,8 +341,14 @@ const resetPassword = asyncHandler(async (req, res, next) => {
   }
 
   wallets.password = req.body.password;
-  wallets.resetPasswordToken = resetToken;
-  wallets.resetPasswordExpire = undefined;
+
+  // Заавал засах доорх 2уул undefined болно 
+
+  wallets.resetPasswordToken = encrypted;
+
+  /*{wallets.resetPasswordExpire = undefined;}*/
+
+  ////////////////////////////////////
   await wallets.save();
   const token = wallets.getJsonWebToken();
   res.status(200).json({

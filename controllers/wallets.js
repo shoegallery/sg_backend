@@ -65,6 +65,10 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
     d2 = new Date(d1);
   d2.setMinutes(d1.getMinutes() + 2880);
 
+
+
+  /////////////////////      Заавал нээ      /////////////////////
+
   /* if (new Date() < d2) {
     throw new MyError("3 хоногт 1 удаа нууц үг сэргээх боломжтой", 402);
   }*/
@@ -72,6 +76,12 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
   const resetToken = wallets.generatePasswordChangeToken();
 
   await wallets.save();
+
+
+  ///////////////////////////////////////////////////////////////////
+
+
+
 
   // await Wallets.save({ validateBeforeSave: false });
 

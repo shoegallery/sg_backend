@@ -65,10 +65,6 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
     d2 = new Date(d1);
   d2.setMinutes(d1.getMinutes() + 2880);
 
-
-
-  /////////////////////      Заавал нээ      /////////////////////
-
   /* if (new Date() < d2) {
     throw new MyError("3 хоногт 1 удаа нууц үг сэргээх боломжтой", 402);
   }*/
@@ -76,12 +72,6 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
   const resetToken = wallets.generatePasswordChangeToken();
 
   await wallets.save();
-
-
-  ///////////////////////////////////////////////////////////////////
-
-
-
 
   // await Wallets.save({ validateBeforeSave: false });
 
@@ -163,7 +153,7 @@ const login = asyncHandler(async (req, res, next) => {
   const token = wallets.getJsonWebToken();
 
   const cookieOption = {
-    expires: new Date(Date.now() + 20 * 60 * 1000),
+    expires: new Date(Date.now() + 3 * 60 * 60 * 1000),
     httpOnly: true,
   };
   var usePanel;
@@ -198,10 +188,13 @@ const logout = asyncHandler(async (req, res, next) => {
     httpOnly: true,
   };
 
+
   res.status(200).cookie("Bearar", null, cookieOption).json({
     status: true,
+    token: null,
+    message: "Log Out...",
+    wallets: null
 
-    data: "logged out...",
   });
 });
 
@@ -351,14 +344,8 @@ const resetPassword = asyncHandler(async (req, res, next) => {
   }
 
   wallets.password = req.body.password;
-
-  // Заавал засах доорх 2уул undefined болно 
-
-  wallets.resetPasswordToken = encrypted;
-
-  /*{wallets.resetPasswordExpire = undefined;}*/
-
-  ////////////////////////////////////
+  wallets.resetPasswordToken = undefined;
+  wallets.resetPasswordExpire = undefined;
   await wallets.save();
   const token = wallets.getJsonWebToken();
   res.status(200).json({

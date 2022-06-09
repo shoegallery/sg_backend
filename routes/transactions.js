@@ -1,16 +1,17 @@
 const express = require("express");
 const router = express.Router();
 const { protect, authorize } = require("../middleware/protect");
-
 const Transactions = require("../controllers/transactions");
-//Авах
 
+
+//Авах
 router.post("/ecosystem", Transactions.ecoSystem); //ok
 
 router.use(protect);
+
+
 //Хэрэглэгчийн хийх шилжүүлэг
 router.route("/purchase").post(authorize("user"), Transactions.userPurchase);
-//Test
 
 // Хэрэглэгчийн хувьд авах дансны мэдээлэл
 router
@@ -19,6 +20,7 @@ router
     authorize("user", "admin", "operator", "saler"),
     Transactions.getUserTransfers
   );
+
 router
   .route("/wallet/:id/credit")
   .post(
@@ -33,7 +35,6 @@ router
   );
 
 //Операторын хийх шилжүүлэг
-
 router
   .route("/giftcardcharge")
   .post(authorize("admin", "operator"), Transactions.userGiftCardCharge);
@@ -45,12 +46,13 @@ router
   .route("/bonus")
   .post(authorize("admin", "operator"), Transactions.userChargeBonus);
 
+
 //Админы хийх шилжүүлэг
 router
   .route("/operatorcharge")
   .post(authorize("admin"), Transactions.operatorCharge);
 
-//Админы харах бүх шилжүүлгүүд
+//Хяналтын харах бүх шилжүүлгүүд
 router
   .route("/list")
   .post(authorize("admin", "operator"), Transactions.getAllTransfer);
@@ -66,7 +68,13 @@ router
   .route("/statistic")
   .post(authorize("admin", "operator"), Transactions.statisticData);
 
+router
+  .route("/bosschecklist")
+  .post(authorize("admin"), Transactions.bossUnchecked);
 
+router
+  .route("/bosscheckit")
+  .post(authorize("admin"), Transactions.bossChecked);
 
 /*
 router
@@ -100,6 +108,8 @@ router
 router
   .route("/bonus/salary")
   .post(authorize("admin", "operator"), Transactions.bonusSalary);
+
+
 
 //Админы харах Bonus шилжүүлгүүд
 router

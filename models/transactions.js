@@ -46,6 +46,8 @@ const transactionSchema = new mongoose.Schema(
     summary: { type: String, required: true },
     trnxSummary: { type: String, required: true },
     whoSelledCard: { type: Number, required: true, default: 9913410734 },
+    bossCheck: { type: Boolean, default: false },
+    orderNumber: { type: String }
   },
   { timestamps: true }
 );

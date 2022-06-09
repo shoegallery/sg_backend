@@ -83,7 +83,7 @@ const userPurchase = asyncHandler(async (req, res) => {
           trnxSummary: `Илгээгч: ${toPhone}. Шалгах дугаар:${reference} `,
           session,
           paidAt: `${new Date()}`,
-          orderNumber: OrderNumber,
+          orderNumber: `${OrderNumber}`,
           bossCheck: false
         }),
         creditAccount({
@@ -95,7 +95,7 @@ const userPurchase = asyncHandler(async (req, res) => {
           trnxSummary: `Хүлээн авагч: ${fromPhone}. Шалгах дугаар:${reference} `,
           session,
           paidAt: `${new Date()}`,
-          orderNumber: OrderNumber,
+          orderNumber: `${OrderNumber}`,
           bossCheck: false
         }),
       ]);
@@ -636,7 +636,7 @@ const userChargeBonus = asyncHandler(async (req, res) => {
   }
 });
 
-const getUserTransfers = asyncHandler(async (req, res, next) => {
+const getMyWalletTransfers = asyncHandler(async (req, res, next) => {
   const { walletSuperId } = req.body;
   const wallets = await Wallets.find({ walletSuperId: walletSuperId });
 
@@ -665,216 +665,6 @@ const getUserTransfers = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     success: true,
     data: transactions,
-  });
-});
-const getUserTransfersDebit = asyncHandler(async (req, res, next) => {
-  const { walletSuperId } = req.body;
-  const wallets = await Wallets.find({ walletSuperId: walletSuperId });
-
-  if (!wallets) {
-    return res.status(400).json({
-      success: false,
-      message: req.params.id + " ID-тэй хэтэвч байхгүй!",
-    });
-  }
-
-  const transactions = await Transactions.find({
-    phone: wallets[0].phone,
-    trnxType: "Орлого",
-  }).sort({ createdAt: -1 })
-
-  if (!transactions) {
-    return res.status(400).json({
-      success: false,
-      message: " Утасны дугаартай гүйлгээ алга!",
-    });
-  }
-  res.status(200).json({
-    success: true,
-    data: transactions,
-  });
-});
-const getUserTransfersCredit = asyncHandler(async (req, res, next) => {
-  const { walletSuperId } = req.body;
-  const wallets = await Wallets.find({ walletSuperId: walletSuperId });
-
-  if (!wallets) {
-    return res.status(400).json({
-      success: false,
-      message: req.params.id + " ID-тэй хэтэвч байхгүй!",
-    });
-  }
-
-  const transactions = await Transactions.find({
-    phone: wallets[0].phone,
-    trnxType: "Зарлага",
-  })
-    .sort({ createdAt: -1 })
-
-
-  if (!transactions) {
-    return res.status(400).json({
-      success: false,
-      message: " Утасны дугаартай гүйлгээ алга!",
-    });
-  }
-  res.status(200).json({
-    success: true,
-    data: transactions,
-  });
-});
-
-const getAllTransfer = asyncHandler(async (req, res, next) => {
-
-  const select = req.query.select;
-  const allWallets = await Transactions.find(req.query, select)
-    .sort({ createdAt: -1 })
-  res.status(200).json({
-    success: true,
-    data: allWallets,
-
-  });
-});
-const getAllTransferCredit = asyncHandler(async (req, res, next) => {
-  const allWallets = await Transactions.find({ trnxType: "Зарлага" })
-    .sort({ createdAt: -1 })
-
-  res.status(200).json({
-    success: true,
-    data: allWallets,
-
-  });
-});
-const getAllTransferDebit = asyncHandler(async (req, res, next) => {
-  const allWallets = await Transactions.find({ trnxType: "Орлого" })
-    .sort({ createdAt: -1 })
-
-  res.status(200).json({
-    success: true,
-    data: allWallets,
-
-  });
-});
-const getAllCharge = asyncHandler(async (req, res, next) => {
-  const allWallets = await Transactions.find({ purpose: "charge" })
-    .sort({ createdAt: -1 })
-  res.status(200).json({
-    success: true,
-    data: allWallets,
-
-  });
-});
-const getAllChargeCredit = asyncHandler(async (req, res, next) => {
-  const allWallets = await Transactions.find({
-    purpose: "charge",
-    trnxType: "Зарлага",
-  })
-    .sort({ createdAt: -1 })
-
-  res.status(200).json({
-    success: true,
-    data: allWallets,
-
-  });
-});
-const getAllChargeDebit = asyncHandler(async (req, res, next) => {
-
-
-
-  const allWallets = await Transactions.find({
-    purpose: "charge",
-    trnxType: "Орлого",
-  })
-    .sort({ createdAt: -1 })
-
-  res.status(200).json({
-    success: true,
-    data: allWallets,
-
-  });
-});
-
-const getAllBonus = asyncHandler(async (req, res, next) => {
-
-
-
-  const allWallets = await Transactions.find({ purpose: "bonus" })
-    .sort({ createdAt: -1 })
-
-  res.status(200).json({
-    success: true,
-    data: allWallets,
-
-  });
-});
-const getAllBonusCredit = asyncHandler(async (req, res, next) => {
-
-
-
-  const allWallets = await Transactions.find({
-    purpose: "bonus",
-    trnxType: "Зарлага",
-  })
-    .sort({ createdAt: -1 })
-
-  res.status(200).json({
-    success: true,
-    data: allWallets,
-
-  });
-});
-const getAllBonusDebit = asyncHandler(async (req, res, next) => {
-
-
-
-  const allWallets = await Transactions.find({
-    purpose: "bonus",
-    trnxType: "Орлого",
-  })
-    .sort({ createdAt: -1 })
-
-  res.status(200).json({
-    success: true,
-    data: allWallets,
-
-  });
-});
-
-const getAllGiftCard = asyncHandler(async (req, res, next) => {
-  const allWallets = await Transactions.find({ purpose: "giftcard" })
-    .sort({ createdAt: -1 })
-  res.status(200).json({
-    success: true,
-    data: allWallets,
-
-  });
-});
-const getAllGiftCardCredit = asyncHandler(async (req, res, next) => {
-  const allWallets = await Transactions.find({
-    purpose: "giftcard",
-    trnxType: "Зарлага",
-
-  })
-    .sort({ createdAt: -1 })
-
-  res.status(200).json({
-    success: true,
-    data: allWallets,
-
-  });
-});
-const getAllGiftCardDebit = asyncHandler(async (req, res, next) => {
-  const allWallets = await Transactions.find({
-    purpose: "giftcard",
-    trnxType: "Орлого",
-
-  })
-    .sort({ createdAt: -1 })
-
-  res.status(200).json({
-    success: true,
-    data: allWallets,
-
   });
 });
 
@@ -1110,19 +900,6 @@ const bonusSalary = asyncHandler(async (req, res, next) => {
     }
   }]);
 
-  // const totalTransActions = await Transactions.aggregate([{
-  //   $group: {
-  //     _id: [{ purpose: "$purpose" }, { trnxType: "$trnxType" }],
-  //     sum: { $sum: "$amount" },
-  //   }
-  // }]);
-  // const totalWallets = await Wallets.aggregate([{
-  //   $group: {
-  //     _id: [{ role: "$role" }],
-  //     sum: { $sum: "$balance" },
-  //   }
-  // }]);
-  // const lastTenTransActions = await Transactions.find({}).sort({ createdAt: -1 }).limit(10);
 
   res.status(200).json({
     success: true,
@@ -1189,208 +966,41 @@ const bossChecked = asyncHandler(async (req, res, next) => {
   });
 });
 
-// const totalTransaction = asyncHandler(async (req, res, next) => {
-//   const { walletSuperId, id } = req.body;
-
-//   const isStore = await Wallets.findById(id);
-
-//   if (!walletSuperId) {
-//     return res.status(400).json({
-// success: false,
-//   message: "Дараах утгa оруулна уу: walletSuperId",
-//         });
-
-//   }
-//   console.log(isStore.role);
-//   if (isStore.role !== "operator" && isStore.role !== "admin") {
-//     return res.status(403).json({
-// success: false,
-//   message: "Эрхгүй",
-//         });
-
-//   }
-//   const totalGifcardDebit = await Transactions.find(
-//     {
-//       purpose: "giftcard",
-//       trnxType: "Орлого",
-//     },
-//     {
-//       $group: {
-//         total: { $sum: "$amount" },
-//       },
-//     }
-//   );
-//   const totalBonusDebit = await Transactions.find(
-//     {
-//       purpose: "bonus",
-//       trnxType: "Орлого",
-//     },
-//     {
-//       $group: {
-//         total: { $sum: "$amount" },
-//       },
-//     }
-//   );
-//   const totalChargeDebit = await Transactions.find(
-//     {
-//       purpose: "charge",
-//       trnxType: "Орлого",
-//     },
-//     {
-//       $group: {
-//         total: { $sum: "$amount" },
-//       },
-//     }
-//   );
-
-//   const totalPurchaseDebit = await Transactions.find(
-//     {
-//       purpose: "purchase",
-//       trnxType: "Орлого",
-//     },
-//     {
-//       $group: {
-//         total: { $sum: "$amount" },
-//       },
-//     }
-//   );
-//   const totalVarianceDebit = await Transactions.find(
-//     {
-//       purpose: "giftcard",
-//       trnxType: "Урамшуулал",
-//     },
-//     {
-//       $group: {
-//         total: { $sum: "$amount" },
-//       },
-//     }
-//   );
-//   console.log(totalPurchaseDebit);
-//   const totalOperatorChargeDebit = await Transactions.find(
-//     {
-//       purpose: "operatorCharge",
-//       trnxType: "Зарлага",
-//     },
-//     {
-//       $group: {
-//         total: { $sum: "$amount" },
-//       },
-//     }
-//   );
-
-//   const totalGifcardCredit = await Transactions.find(
-//     {
-//       purpose: "giftcard",
-//       trnxType: "Зарлага",
-//     },
-//     {
-//       $group: {
-//         total: { $sum: "$amount" },
-//       },
-//     }
-//   );
-//   const totalPurchaseCredit = await Transactions.find(
-//     {
-//       purpose: "purchase",
-//       trnxType: "Зарлага",
-//     },
-//     {
-//       $group: {
-//         total: { $sum: "$amount" },
-//       },
-//     }
-//   );
-
-//   const totalOperatorChargeCredit = await Transactions.find(
-//     {
-//       purpose: "operatorCharge",
-//       trnxType: "Зарлага",
-//     },
-//     {
-//       $group: {
-//         total: { $sum: "$amount" },
-//       },
-//     }
-//   );
-
-//   const totalBonusCredit = await Transactions.find(
-//     {
-//       purpose: "bonus",
-//       trnxType: "Зарлага",
-//     },
-//     {
-//       $group: {
-//         total: { $sum: "$amount" },
-//       },
-//     }
-//   );
-//   const totalChargeCredit = await Transactions.find(
-//     {
-//       purpose: "charge",
-//       trnxType: "Зарлага",
-//     },
-//     {
-//       $group: {
-//         total: { $sum: "$amount" },
-//       },
-//     }
-//   );
-//   res.status(200).json({
-//     success: true,
-//     data: {
-//       totalGifcardDebit: totalGifcardDebit,
-//       totalGifcardCredit: totalGifcardCredit,
-//       totalVarianceDebit: totalVarianceDebit,
-
-//       totalBonusDebit: totalBonusDebit,
-//       totalBonusCredit: totalBonusCredit,
-
-//       totalChargeDebit: totalChargeDebit,
-//       totalChargeCredit: totalChargeCredit,
-
-//       totalPurchaseDebit: totalPurchaseDebit,
-//       totalPurchaseCredit: totalPurchaseCredit,
-
-//       totalOperatorChargeDebit: totalOperatorChargeDebit,
-//       totalOperatorChargeCredit: totalOperatorChargeCredit,
-//     },
-//   });
-// });
-
 module.exports = {
-  //Чек тэй холбоотой
-  bossChecked,
-  bossUnchecked,
-  // Системийн auto хяналт
+  /* {Системийн auto хяналт}*/
   ecoSystem,
 
+  /* {Чек тэй холбоотой}*/
+  bossChecked,
+  bossUnchecked,
+
+  /* {Чек тэй холбоотой}*/
   bonusSalary,
   statisticData,
-  getAllUniversalStatement,
-  userPurchase,
-
   // Админы хийх зүйлс
+  getAllUniversalStatement,
+
+
+  userPurchase,
   operatorCharge,
-  getUserTransfers,
-  getUserTransfersDebit,
-  getUserTransfersCredit,
 
-  getAllTransfer,
-  getAllTransferCredit,
-  getAllTransferDebit,
 
+
+  getMyWalletTransfers,
   userCharge,
-  getAllCharge,
-  getAllChargeCredit,
-  getAllChargeDebit,
-
   userChargeBonus,
-  getAllBonus,
-  getAllBonusCredit,
-  getAllBonusDebit,
-
   userGiftCardCharge,
-  getAllGiftCard,
-  getAllGiftCardDebit,
-  getAllGiftCardCredit,
+
+
+
+
+
+
+
+
+
+
+
+
+
 };

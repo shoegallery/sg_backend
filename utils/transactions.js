@@ -10,6 +10,7 @@ const creditAccount = async ({
   summary,
   trnxSummary,
   session,
+  orderNumber
 }) => {
   if (purpose === "giftcard") {
     if (amount === 2000000) {
@@ -49,6 +50,7 @@ const creditAccount = async ({
         summary,
         trnxSummary,
         whoSelledCard,
+        orderNumber
       },
     ],
     { session }
@@ -71,6 +73,7 @@ const debitAccount = async ({
   summary,
   trnxSummary,
   session,
+  orderNumber
 }) => {
   const wallet = await Wallets.findOne({ phone });
   if (!wallet) {
@@ -105,6 +108,7 @@ const debitAccount = async ({
         summary,
         trnxSummary,
         whoSelledCard,
+        orderNumber
       },
     ],
     { session }
@@ -126,6 +130,7 @@ const varianceAccount = async ({
   summary,
   trnxSummary,
   session,
+  orderNumber
 }) => {
   try {
     let mainAmount = amount;
@@ -168,6 +173,7 @@ const varianceAccount = async ({
             summary,
             trnxSummary,
             whoSelledCard,
+            orderNumber
           },
         ],
         { session }

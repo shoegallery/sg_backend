@@ -987,17 +987,4 @@ module.exports = {
   userCharge,
   userChargeBonus,
   userMemberCardCharge,
-
-
-
-
-
-
-
-
-
-
-
-
-
 };

@@ -519,7 +519,7 @@ const userMemberCardCharge = asyncHandler(async (req, res) => {
       });
     }
   } catch (err) {
-
+    console.log(err)
     await session.abortTransaction();
     session.endSession();
     return res.status(400).json({

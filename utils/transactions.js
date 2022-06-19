@@ -12,7 +12,7 @@ const creditAccount = async ({
   session,
   orderNumber
 }) => {
-  if (purpose === "giftcard") {
+  if (purpose === "membercard") {
     if (amount === 2000000) {
       amount = 2500000;
     } else if (amount === 3000000) {
@@ -134,8 +134,8 @@ const varianceAccount = async ({
 }) => {
   try {
     let mainAmount = amount;
-    if (purpose === "giftcard" || purpose === "bonus") {
-      if (purpose === "giftcard") {
+    if (purpose === "membercard" || purpose === "bonus") {
+      if (purpose === "membercard") {
         if (amount === 2000000) {
           amount = 2500000;
         } else if (amount === 3000000) {

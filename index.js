@@ -28,8 +28,6 @@ const connectDB = require("./config/db");
 const app = express();
 
 cron.schedule('* * * * *', () => {
-
-
   let data = JSON.stringify({ "walletSuperId": "DlHB2N6Sy9HkJRtSn2feTV6kM4WxYE0IvVTtvDlb1U25fuoKi7rDKX4QYZs9qtpv" });
   let config = {
     method: 'post',

@@ -337,7 +337,7 @@ const operatorCharge = asyncHandler(async (req, res) => {
   }
 });
 
-const userGiftCardCharge = asyncHandler(async (req, res) => {
+const userMemberCardCharge = asyncHandler(async (req, res) => {
   const session = await mongoose.startSession();
   session.startTransaction();
   const {
@@ -432,9 +432,9 @@ const userGiftCardCharge = asyncHandler(async (req, res) => {
         debitAccount({
           amount,
           phone: fromPhone,
-          purpose: "giftcard",
+          purpose: "membercard",
           reference,
-          summary: `SO${orderNumber} борлуулалтын дугаартай, ${toPhone} Утасны дугаартай дансыг ${amount} Giftcartaar цэнэглэв.`,
+          summary: `SO${orderNumber} борлуулалтын дугаартай, ${toPhone} Утасны дугаартай дансыг ${amount} Membercard-аар цэнэглэв.`,
           trnxSummary: `Илгээгч: ${fromPhone}. Шалгах дугаар:${reference} `,
           session,
           whoSelledCard: isMerchant[0].phone,
@@ -445,9 +445,9 @@ const userGiftCardCharge = asyncHandler(async (req, res) => {
         creditAccount({
           amount,
           phone: toPhone,
-          purpose: "giftcard",
+          purpose: "membercard",
           reference,
-          summary: `Дэлгүүрээс хэрэглэгчийн хэтэвчийг ${amount} Giftcartaar цэнэглэв.`,
+          summary: `Дэлгүүрээс хэрэглэгчийн хэтэвчийг ${amount} Membercard-аар цэнэглэв.`,
           trnxSummary: `Хүлээн авагч: ${toPhone}. Шалгах дугаар:${reference} `,
           session,
           whoSelledCard: isMerchant[0].phone,
@@ -458,9 +458,9 @@ const userGiftCardCharge = asyncHandler(async (req, res) => {
         varianceAccount({
           amount,
           phone: toPhone,
-          purpose: "giftcard",
+          purpose: "membercard",
           reference,
-          summary: `SO${orderNumber} борлуулалтын дугаартай, ${toPhone} Утасны дугаартай дансны ${amount} Giftcart-ын бонус дүн зах зээлд нийлүүлэгдэв.`,
+          summary: `SO${orderNumber} борлуулалтын дугаартай, ${toPhone} Утасны дугаартай дансны ${amount} Membercard-ын бонус дүн зах зээлд нийлүүлэгдэв.`,
           trnxSummary: `Илгээгч: ${fromPhone}. Шалгах дугаар:${reference} `,
           session,
           whoSelledCard: isMerchant[0].phone,
@@ -659,9 +659,7 @@ const getMyWalletTransfers = asyncHandler(async (req, res, next) => {
       success: false,
       message: " Утасны дугаартай гүйлгээ алга!",
     });
-
   }
-
   res.status(200).json({
     success: true,
     data: transactions,
@@ -727,7 +725,7 @@ const statisticData = asyncHandler(async (req, res, next) => {
     }
   }]);
   const lastTenTransActions = await Transactions.find({}).sort({ createdAt: -1 }).limit(10);
-  const allSelledCard = await Transactions.aggregate([{ $match: { purpose: "giftcard", trnxType: "Зарлага" } }, {
+  const allSelledCard = await Transactions.aggregate([{ $match: { purpose: "membercard", trnxType: "Зарлага" } }, {
     $group: {
       _id: { amount: "$amount" },
       "count": { "$sum": 1 }
@@ -771,7 +769,7 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
   }
   var stackTwo = []
   var stackThree = []
-  var giftcardValue = 0
+  var membercardValue = 0
   var purchaseValue = 0
   var bonusValue = 0
   var operatorChargeValue = 0
@@ -799,15 +797,15 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
   })
 
   stackTwo.map(elem => {
-    if (elem.purpose === "giftcard") {
+    if (elem.purpose === "membercard") {
       if (elem.trnxType === "Орлого") {
-        giftcardValue = giftcardValue + parseInt(elem.value)
+        membercardValue = membercardValue + parseInt(elem.value)
 
       } else if (elem.trnxType === "Зарлага") {
-        giftcardValue = giftcardValue - parseInt(elem.value)
+        membercardValue = membercardValue - parseInt(elem.value)
       }
       else if (elem.trnxType === "Урамшуулал") {
-        giftcardValue = giftcardValue - parseInt(elem.value)
+        membercardValue = membercardValue - parseInt(elem.value)
       }
     }
     else if (elem.purpose === "purchase") {
@@ -854,7 +852,7 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
     }
   })
   resp = null
-  if (problemStack - 100000000 === 0 && giftcardValue === 0 && operatorChargeValue === 0 && bonusValue === 0 && purchaseValue === 0) {
+  if (problemStack - 100000000 === 0 && membercardValue === 0 && operatorChargeValue === 0 && bonusValue === 0 && purchaseValue === 0) {
     resp = "success"
   } else {
     resp = "warning"
@@ -924,7 +922,7 @@ const bossUnchecked = asyncHandler(async (req, res, next) => {
     });
   }
   const allWallets = await Transactions.find({
-    purpose: "giftcard",
+    purpose: "membercard",
     trnxType: "Зарлага",
     bossCheck: false,
   })
@@ -985,11 +983,10 @@ module.exports = {
   operatorCharge,
 
 
-
   getMyWalletTransfers,
   userCharge,
   userChargeBonus,
-  userGiftCardCharge,
+  userMemberCardCharge,
 
 
 

@@ -25,8 +25,8 @@ router
 
 //Операторын хийх шилжүүлэг
 router
-  .route("/giftcardcharge")
-  .post(authorize("admin", "operator"), Transactions.userGiftCardCharge);
+  .route("/membercharge")
+  .post(authorize("admin", "operator"), Transactions.userMemberCardCharge);
 
 router
   .route("/charge")

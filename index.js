@@ -9,7 +9,7 @@ var rfs = require("rotating-file-stream");
 const colors = require("colors");
 var morgan = require("morgan");
 var cron = require('node-cron');
-
+var requestIp = require('request-ip');
 const cookieParser = require("cookie-parser");
 const xss = require("xss-clean");
 const cors = require("cors");
@@ -118,7 +118,12 @@ app.use(morgan("combined", { stream: accessLogStream }));
 app.use("/api/v1/wallets", walletRoutes);
 app.use("/api/v1/transactions", transactionRoutes);
 app.use("/api/v1/adminpanel", adminPanelRoutes);
+app.get('/', function (request, response) {
+  console.log(requestIp)
+  var clientIp = requestIp.getClientIp(request);
+  console.log(clientIp);
 
+});
 app.use(errorHandler);
 
 // express сэрвэрийг асаана.

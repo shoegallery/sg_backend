@@ -188,3 +188,5 @@
 ::ffff:192.168.1.45 - - [19/Jun/2022:17:27:02 +0000] "POST /api/v1/transactions/wallet/62878c547533ce26b629efa5 HTTP/1.1" 200 3064 "-" "okhttp/4.9.2"
 ::ffff:192.168.1.45 - - [19/Jun/2022:17:27:03 +0000] "POST /api/v1/transactions/bosschecklist HTTP/1.1" 200 732 "-" "okhttp/4.9.2"
 ::ffff:192.168.1.45 - - [19/Jun/2022:17:27:03 +0000] "POST /api/v1/transactions/statistic HTTP/1.1" 200 11026 "-" "okhttp/4.9.2"
+::1 - - [20/Jun/2022:02:06:51 +0000] "GET / HTTP/1.1" - - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36"
+::1 - - [20/Jun/2022:02:07:05 +0000] "GET / HTTP/1.1" - - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36"

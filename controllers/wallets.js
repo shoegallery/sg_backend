@@ -1,6 +1,8 @@
 const Wallets = require("../models/wallets");
 const MyError = require("../utils/myError");
 const paginate = require("../utils/paginate");
+const { lookup } = require('geoip-lite');
+
 const asyncHandler = require("express-async-handler");
 const sendMessage = require("../utils/sendMessage");
 const crypto = require("crypto");
@@ -131,6 +133,9 @@ const getMyWallet = asyncHandler(async (req, res, next) => {
 });
 
 const login = asyncHandler(async (req, res, next) => {
+  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  console.log(ip); // ip address of the user
+  console.log(lookup(ip));
   const { phone, password } = req.body;
 
   // Оролтыгоо шалгана

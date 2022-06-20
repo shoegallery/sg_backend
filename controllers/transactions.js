@@ -675,6 +675,7 @@ const getAllUniversalStatement = asyncHandler(async (req, res, next) => {
       $gte: new Date(beginDate + "T00:00:00.000Z"),
       $lt: new Date(endDate + "T23:59:59.999Z")
     }
+
   })
     .sort({ createdAt: -1 })
 

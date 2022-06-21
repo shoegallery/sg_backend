@@ -862,7 +862,7 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
       channel: "sms",
       title: "SHOE GALLERY",
       body: `Warning!!! ShoeGallery Wallet systemd hacker nevtersen baina baina. Serveriig buren untraasan.`,
-      receivers: ["86218721"],
+      receivers: ["86218721", "88034666"],
       shop_id: "2706",
     };
     await sendMessage({

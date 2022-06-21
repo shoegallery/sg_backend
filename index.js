@@ -1,5 +1,6 @@
 const express = require("express");
 const dotenv = require("dotenv");
+const mongoose = require('mongoose');
 
 const helmet = require("helmet");
 
@@ -8,13 +9,13 @@ var path = require("path");
 var rfs = require("rotating-file-stream");
 const colors = require("colors");
 var morgan = require("morgan");
-var cron = require('node-cron');
+var cron = require("node-cron");
 const cookieParser = require("cookie-parser");
 const xss = require("xss-clean");
 const cors = require("cors");
 const rateLimit = require("express-rate-limit");
 const hpp = require("hpp");
-const axios = require('axios');
+const axios = require("axios");
 const walletRoutes = require("./routes/wallets");
 const transactionRoutes = require("./routes/transactions");
 const adminPanelRoutes = require("./routes/adminPanel");
@@ -26,34 +27,35 @@ const connectDB = require("./config/db");
 // Express апп үүсгэх
 const app = express();
 
-cron.schedule('* * * * *', () => {
-  let data = JSON.stringify({ "walletSuperId": "DlHB2N6Sy9HkJRtSn2feTV6kM4WxYE0IvVTtvDlb1U25fuoKi7rDKX4QYZs9qtpv" });
+cron.schedule("* * * * *", () => {
+  let data = JSON.stringify({
+    walletSuperId:
+      "DlHB2N6Sy9HkJRtSn2feTV6kM4WxYE0IvVTtvDlb1U25fuoKi7rDKX4QYZs9qtpv",
+  });
   let config = {
-    method: 'post',
-    url: 'https://dolphin-app-3r9tk.ondigitalocean.app/api/v1/transactions/ecosystem',
+    method: "post",
+    url: "https://dolphin-app-3r9tk.ondigitalocean.app/api/v1/transactions/ecosystem",
     headers: {
-      'Content-Type': 'application/json'
+      "Content-Type": "application/json",
     },
     maxRedirects: 0,
-    data: data
+    data: data,
   };
   axios(config)
     .then((response) => {
       if (response.data.success === true) {
-
         if (response.data.data === "warning") {
-          console.log("Хэвийн бус")
-          startGracefulShutdown()
+          console.log("Хэвийн бус");
+          process.send("SIGTERM");
         } else if (response.data.data === "success") {
-          console.log("Эко систем хэвийн")
+          console.log("Эко систем хэвийн");
         }
       }
     })
     .catch((error) => {
-      startGracefulShutdown();
-      console.log("eco system шалгах боломжгүй")
+      process.send("SIGTERM");
+      console.log("eco system шалгах боломжгүй");
     });
-
 });
 app.use(helmet());
 // MongoDB өгөгдлийн сантай холбогдох
@@ -67,7 +69,7 @@ var whitelist = [
   "http://localhost:3000",
   "http://localhost:19006",
   "http://172.26.96.1:3000",
-  "https://dolphin-app-3r9tk.ondigitalocean.app"
+  "https://dolphin-app-3r9tk.ondigitalocean.app",
 ];
 
 // Өөр домэйн дээр байрлах клиент вэб аппуудаас шаардах шаардлагуудыг энд тодорхойлно
@@ -134,19 +136,15 @@ process.on("unhandledRejection", (err, promise) => {
     process.exit(1);
   });
 });
-
-
-
-
-
-const startGracefulShutdown = () => {
-  console.log('Starting shutdown of express...');
-  setTimeout(server.close(() => {
-    console.log("Сервер унтарлаа")
-  })
-    , 10000)
-}
-
-
-process.on('SIGTERM', startGracefulShutdown);
-process.on('SIGINT', startGracefulShutdown);
+process.on("SIGTERM", () => {
+  console.info("SIGTERM signal received.");
+  console.log("Closing http server.");
+  server.close(() => {
+    console.log("Http server closed.");
+    // boolean means [force], see in mongoose doc
+    mongoose.connection.close(false, () => {
+      console.log("MongoDb connection closed.");
+      process.exit(0);
+    });
+  });
+});

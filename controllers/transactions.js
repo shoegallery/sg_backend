@@ -857,6 +857,7 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
     resp = "success"
   } else {
     resp = "warning"
+    console.log("warning")
     const message = {
       channel: "sms",
       title: "SHOE GALLERY",
@@ -868,7 +869,7 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
       message,
     });
   }
-  ///////////////////////////////////////
+
   res.status(200).json({
     success: true,
     data: resp

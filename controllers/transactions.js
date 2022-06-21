@@ -861,7 +861,7 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
       channel: "sms",
       title: "SHOE GALLERY",
       body: `Warning!!! ShoeGallery Wallet systemd hacker nevtersen baina baina. Serveriig buren untraasan.`,
-      receivers: ["86218721", "88034666"],
+      receivers: ["86218721"],
       shop_id: "2706",
     };
     await sendMessage({
@@ -875,9 +875,7 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
   });
 });
 const bonusSalary = asyncHandler(async (req, res, next) => {
-
   const { beginDate, endDate, trnxType, purpose } = req.body;
-
   const bonusSalaryData = await Transactions.aggregate([{
     $match: {
       purpose: purpose,

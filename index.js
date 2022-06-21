@@ -43,13 +43,14 @@ cron.schedule('* * * * *', () => {
 
         if (response.data.data === "warning") {
           console.log("Хэвийн бус")
-          shutDown()
+          startGracefulShutdown()
         } else if (response.data.data === "success") {
           console.log("Эко систем хэвийн")
         }
       }
     })
     .catch((error) => {
+      startGracefulShutdown();
       console.log("eco system шалгах боломжгүй")
     });
 
@@ -136,14 +137,16 @@ process.on("unhandledRejection", (err, promise) => {
 
 
 
-process.on('SIGTERM', shutDown)
-
-function shutDown() {
-  console.log('Received kill signal, shutting down gracefully ');
-  server.close(() => {
-    console.log('Closed out remaining connections');
-    process.exit(1);
-  });
 
 
+const startGracefulShutdown = () => {
+  console.log('Starting shutdown of express...');
+  setTimeout(server.close(() => {
+    console.log("Сервер унтарлаа")
+  })
+    , 10000)
 }
+
+
+process.on('SIGTERM', startGracefulShutdown);
+process.on('SIGINT', startGracefulShutdown);

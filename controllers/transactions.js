@@ -874,6 +874,7 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
     data: resp
   });
 });
+
 const bonusSalary = asyncHandler(async (req, res, next) => {
   const { beginDate, endDate, trnxType, purpose } = req.body;
   const bonusSalaryData = await Transactions.aggregate([{

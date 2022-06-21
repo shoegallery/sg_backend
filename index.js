@@ -46,14 +46,14 @@ cron.schedule("* * * * *", () => {
       if (response.data.success === true) {
         if (response.data.data === "warning") {
           console.log("Хэвийн бус");
-          process.send("SIGTERM");
+          process.kill(process.pid, 'SIGTERM');
         } else if (response.data.data === "success") {
           console.log("Эко систем хэвийн");
         }
       }
     })
     .catch((error) => {
-      process.send("SIGTERM");
+      process.kill(process.pid, 'SIGTERM');
       console.log("eco system шалгах боломжгүй");
     });
 });
@@ -136,15 +136,8 @@ process.on("unhandledRejection", (err, promise) => {
     process.exit(1);
   });
 });
-process.on("SIGTERM", () => {
-  console.info("SIGTERM signal received.");
-  console.log("Closing http server.");
+process.on('SIGTERM', () => {
   server.close(() => {
-    console.log("Http server closed.");
-    // boolean means [force], see in mongoose doc
-    mongoose.connection.close(false, () => {
-      console.log("MongoDb connection closed.");
-      process.exit(0);
-    });
+    console.log('Process terminated');
   });
 });

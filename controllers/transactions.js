@@ -898,12 +898,9 @@ const bonusSalary = asyncHandler(async (req, res, next) => {
       count: { $sum: "$amount" }
     }
   }]);
-
-
   res.status(200).json({
     success: true,
     data: bonusSalaryData
-
   });
 });
 const bossUnchecked = asyncHandler(async (req, res, next) => {

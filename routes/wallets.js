@@ -8,7 +8,7 @@ router.post("/forgot-password", Wallets.forgotPassword);
 router.post("/reset-password", Wallets.resetPassword);
 
 router.post("/login", Wallets.login); //ok
-
+router.post("/version", Wallets.version)
 router.use(protect);
 router
   .route("/logout")

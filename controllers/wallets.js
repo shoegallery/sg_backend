@@ -202,6 +202,16 @@ const logout = asyncHandler(async (req, res, next) => {
 
   });
 });
+const version = asyncHandler(async (req, res, next) => {
+
+
+
+  res.status(200).json({
+    status: true,
+    data: process.env.version
+
+  });
+});
 
 const getAllWallets = asyncHandler(async (req, res, next) => {
 
@@ -366,6 +376,7 @@ const resetPassword = asyncHandler(async (req, res, next) => {
 });
 
 module.exports = {
+  version,
   getMyWallet,
   deletewallets,
   updatewallets,

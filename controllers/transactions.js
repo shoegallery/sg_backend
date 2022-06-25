@@ -42,7 +42,6 @@ const userPurchase = asyncHandler(async (req, res) => {
           success: false,
           message: `Дараах утгуудыг оруулна уу: toPhone, fromPhone, amount, summary, walletSuperId, OrderNumber`,
         });
-
       }
       if (OrderNumber == undefined) {
         return res.status(400).json({
@@ -53,9 +52,9 @@ const userPurchase = asyncHandler(async (req, res) => {
       if (isUser.phone !== fromPhone) {
         return res.status(403).json({
           success: false,
-          message: "Худалдан авагч та өөрийнхөө хэтэвчнээс шилжүүлэг хийх ёстой!!",
+          message:
+            "Худалдан авагч та өөрийнхөө хэтэвчнээс шилжүүлэг хийх ёстой!!",
         });
-
       }
       if (isStore[0].role !== "saler") {
         return res.status(403).json({
@@ -64,13 +63,11 @@ const userPurchase = asyncHandler(async (req, res) => {
         });
       }
 
-
       if (`${OrderNumber}`.length !== 4) {
         return res.status(403).json({
           success: false,
           message: "Буруу",
         });
-
       }
       const reference = v4();
       const transferResult = await Promise.all([
@@ -84,7 +81,7 @@ const userPurchase = asyncHandler(async (req, res) => {
           session,
           paidAt: `${new Date()}`,
           orderNumber: `${OrderNumber}`,
-          bossCheck: false
+          bossCheck: false,
         }),
         creditAccount({
           amount,
@@ -96,7 +93,7 @@ const userPurchase = asyncHandler(async (req, res) => {
           session,
           paidAt: `${new Date()}`,
           orderNumber: `${OrderNumber}`,
-          bossCheck: false
+          bossCheck: false,
         }),
       ]);
       const failedTxns = transferResult.filter(
@@ -151,7 +148,6 @@ const userCharge = asyncHandler(async (req, res) => {
           success: false,
           message: "Та өөрийнхөө хэтэвчнээс шилжүүлэг хийх ёстой!!",
         });
-
       }
       if (isUser[0].role !== "user") {
         return res.status(403).json({
@@ -170,9 +166,9 @@ const userCharge = asyncHandler(async (req, res) => {
       ) {
         return res.status(400).json({
           success: false,
-          message: "Дараах утгуудыг оруулна уу: toPhone, fromPhone, amount, summary, walletSuperId",
+          message:
+            "Дараах утгуудыг оруулна уу: toPhone, fromPhone, amount, summary, walletSuperId",
         });
-
       }
 
       const transferResult = await Promise.all([
@@ -186,7 +182,7 @@ const userCharge = asyncHandler(async (req, res) => {
           session,
           paidAt: `${new Date()}`,
           orderNumber: "",
-          bossCheck: false
+          bossCheck: false,
         }),
         creditAccount({
           amount,
@@ -198,7 +194,7 @@ const userCharge = asyncHandler(async (req, res) => {
           session,
           paidAt: `${new Date()}`,
           orderNumber: "",
-          bossCheck: false
+          bossCheck: false,
         }),
       ]);
       const failedTxns = transferResult.filter(
@@ -250,7 +246,6 @@ const operatorCharge = asyncHandler(async (req, res) => {
           success: false,
           message: "Та өөрийнхөө хэтэвчнээс шилжүүлэг хийх ёстой!!",
         });
-
       }
       if (isUser[0].role !== "operator") {
         return res.status(403).json({
@@ -269,9 +264,9 @@ const operatorCharge = asyncHandler(async (req, res) => {
       ) {
         return res.status(400).json({
           success: false,
-          message: "Дараах утгуудыг оруулна уу: toPhone, fromPhone, amount, summary, walletSuperId",
+          message:
+            "Дараах утгуудыг оруулна уу: toPhone, fromPhone, amount, summary, walletSuperId",
         });
-
       }
 
       const transferResult = await Promise.all([
@@ -285,8 +280,7 @@ const operatorCharge = asyncHandler(async (req, res) => {
           session,
           paidAt: `${new Date()}`,
           orderNumber: "",
-          bossCheck: false
-
+          bossCheck: false,
         }),
         creditAccount({
           amount,
@@ -298,7 +292,7 @@ const operatorCharge = asyncHandler(async (req, res) => {
           session,
           paidAt: `${new Date()}`,
           orderNumber: "",
-          bossCheck: false
+          bossCheck: false,
         }),
       ]);
       const failedTxns = transferResult.filter(
@@ -348,7 +342,7 @@ const userMemberCardCharge = asyncHandler(async (req, res) => {
     id,
     walletSuperId,
     WhoCardSelled,
-    orderNumber
+    orderNumber,
   } = req.body;
 
   try {
@@ -366,9 +360,9 @@ const userMemberCardCharge = asyncHandler(async (req, res) => {
       ) {
         return res.status(403).json({
           success: false,
-          message: "Дараах утгуудыг оруулна уу: toPhone, fromPhone, amount, summary,WhoCardSelled",
+          message:
+            "Дараах утгуудыг оруулна уу: toPhone, fromPhone, amount, summary,WhoCardSelled",
         });
-
       }
       var WhoCardSelledNumber;
       if (req.body.WhoCardSelled == undefined) {
@@ -382,9 +376,9 @@ const userMemberCardCharge = asyncHandler(async (req, res) => {
       if (false == isMerchant) {
         return res.status(403).json({
           success: false,
-          message: "Та карт зарсан худалдааны зөвлөхийн дугаарыг зөв оруулна уу!!",
+          message:
+            "Та карт зарсан худалдааны зөвлөхийн дугаарыг зөв оруулна уу!!",
         });
-
       }
       if (
         (isStore.phone !== fromPhone && isStore.role !== "admin") ||
@@ -394,18 +388,13 @@ const userMemberCardCharge = asyncHandler(async (req, res) => {
           success: false,
           message: "Та өөрийнхөө хэтэвчнээс шилжүүлэг хийх ёстой!!",
         });
-
       }
       if (isUser[0].role !== "user") {
-
-
         return res.status(403).json({
           success: false,
           message: "Та зөвхөн хэрэглэгчийн данс руу шилжүүлэг хийнэ!!",
         });
-
       }
-
 
       if (isMerchant[0].role == "user") {
         return res.status(403).json({
@@ -440,7 +429,7 @@ const userMemberCardCharge = asyncHandler(async (req, res) => {
           whoSelledCard: isMerchant[0].phone,
           paidAt: `${new Date()}`,
           orderNumber: `SO${orderNumber}`,
-          bossCheck: false
+          bossCheck: false,
         }),
         creditAccount({
           amount,
@@ -453,7 +442,7 @@ const userMemberCardCharge = asyncHandler(async (req, res) => {
           whoSelledCard: isMerchant[0].phone,
           paidAt: `${new Date()}`,
           orderNumber: `SO${orderNumber}`,
-          bossCheck: false
+          bossCheck: false,
         }),
         varianceAccount({
           amount,
@@ -466,7 +455,7 @@ const userMemberCardCharge = asyncHandler(async (req, res) => {
           whoSelledCard: isMerchant[0].phone,
           paidAt: `${new Date()}`,
           orderNumber: `SO${orderNumber}`,
-          bossCheck: false
+          bossCheck: false,
         }),
       ]);
       const failedTxns = transferResult.filter(
@@ -474,7 +463,7 @@ const userMemberCardCharge = asyncHandler(async (req, res) => {
       );
       if (failedTxns.length) {
         const errors = failedTxns.map((a) => a.message);
-        console.log(errors.codeName)
+        console.log(errors.codeName);
         await session.abortTransaction();
         session.endSession();
         return res.status(400).json({
@@ -519,13 +508,12 @@ const userMemberCardCharge = asyncHandler(async (req, res) => {
       });
     }
   } catch (err) {
-    console.log(err)
+    console.log(err);
     await session.abortTransaction();
     session.endSession();
     return res.status(400).json({
       success: false,
       message: `Ямар нэгэн зүйл буруу байна.`,
-
     });
   }
 });
@@ -548,7 +536,6 @@ const userChargeBonus = asyncHandler(async (req, res) => {
           success: false,
           message: "Та өөрийнхөө хэтэвчнээс шилжүүлэг хийх ёстой!!",
         });
-
       }
 
       if (isUser[0].role !== "user") {
@@ -556,7 +543,6 @@ const userChargeBonus = asyncHandler(async (req, res) => {
           success: false,
           message: "Та зөвхөн хэрэглэгчийн данс руу шилжүүлэг хийнэ!!",
         });
-
       }
 
       const reference = v4();
@@ -570,9 +556,9 @@ const userChargeBonus = asyncHandler(async (req, res) => {
       ) {
         return res.status(403).json({
           success: false,
-          message: "Дараах утгуудыг оруулна уу: toPhone, fromPhone, amount, summary",
+          message:
+            "Дараах утгуудыг оруулна уу: toPhone, fromPhone, amount, summary",
         });
-
       }
       const transferResult = await Promise.all([
         debitAccount({
@@ -585,7 +571,7 @@ const userChargeBonus = asyncHandler(async (req, res) => {
           session,
           paidAt: `${new Date()}`,
           orderNumber: "",
-          bossCheck: false
+          bossCheck: false,
         }),
         creditAccount({
           amount,
@@ -597,7 +583,7 @@ const userChargeBonus = asyncHandler(async (req, res) => {
           session,
           paidAt: `${new Date()}`,
           orderNumber: "",
-          bossCheck: false
+          bossCheck: false,
         }),
       ]);
       const failedTxns = transferResult.filter(
@@ -645,7 +631,6 @@ const getMyWalletTransfers = asyncHandler(async (req, res, next) => {
       success: false,
       message: walletSuperId + " ID-тэй хэтэвч байхгүй!",
     });
-
   }
 
   const transactions = await Transactions.find({
@@ -673,16 +658,12 @@ const getAllUniversalStatement = asyncHandler(async (req, res, next) => {
     trnxType: trnxType,
     createdAt: {
       $gte: new Date(beginDate + "T00:00:00.000Z"),
-      $lt: new Date(endDate + "T23:59:59.999Z")
-    }
-
-  })
-    .sort({ createdAt: -1 })
-
+      $lt: new Date(endDate + "T23:59:59.999Z"),
+    },
+  }).sort({ createdAt: -1 });
   res.status(200).json({
     success: true,
     data: allWallets,
-
   });
 });
 
@@ -703,52 +684,62 @@ const statisticData = asyncHandler(async (req, res, next) => {
       success: false,
       message: "Эрхгүй",
     });
-
   }
 
-  const groupMonthTransActions = await Transactions.aggregate([{
-    $group: {
-      _id: [{ date: { $dateToString: { format: "%Y-%m", date: "$createdAt" } } }, { purpose: "$purpose" }, { trnxType: "$trnxType" }],
-      sum: { $sum: "$amount" },
-
-    }
-  }]);
-  const totalTransActions = await Transactions.aggregate([{
-    $group: {
-      _id: [{ purpose: "$purpose" }, { trnxType: "$trnxType" }],
-      sum: { $sum: "$amount" },
-    }
-  }]);
-  const totalWallets = await Wallets.aggregate([{
-    $group: {
-      _id: [{ role: "$role" }],
-      sum: { $sum: "$balance" },
-    }
-  }]);
-  const lastTenTransActions = await Transactions.find({}).sort({ createdAt: -1 }).limit(10);
-  const allSelledCard = await Transactions.aggregate([{ $match: { purpose: "membercard", trnxType: "Зарлага" } }, {
-    $group: {
-      _id: { amount: "$amount" },
-      "count": { "$sum": 1 }
-    }
-  }]);
+  const groupMonthTransActions = await Transactions.aggregate([
+    {
+      $group: {
+        _id: [
+          { date: { $dateToString: { format: "%Y-%m", date: "$createdAt" } } },
+          { purpose: "$purpose" },
+          { trnxType: "$trnxType" },
+        ],
+        sum: { $sum: "$amount" },
+      },
+    },
+  ]);
+  const totalTransActions = await Transactions.aggregate([
+    {
+      $group: {
+        _id: [{ purpose: "$purpose" }, { trnxType: "$trnxType" }],
+        sum: { $sum: "$amount" },
+      },
+    },
+  ]);
+  const totalWallets = await Wallets.aggregate([
+    {
+      $group: {
+        _id: [{ role: "$role" }],
+        sum: { $sum: "$balance" },
+      },
+    },
+  ]);
+  const lastTenTransActions = await Transactions.find({})
+    .sort({ createdAt: -1 })
+    .limit(10);
+  const allSelledCard = await Transactions.aggregate([
+    { $match: { purpose: "membercard", trnxType: "Зарлага" } },
+    {
+      $group: {
+        _id: { amount: "$amount" },
+        count: { $sum: 1 },
+      },
+    },
+  ]);
 
   res.status(200).json({
     success: true,
-    data: [{
-      groupMonthTransActions: groupMonthTransActions,
-      lastTenTransActions: lastTenTransActions,
-      totalTransActions: totalTransActions,
-      totalWallets: totalWallets,
-      allSelledCard: allSelledCard
-
-    }]
-
-    ,
+    data: [
+      {
+        groupMonthTransActions: groupMonthTransActions,
+        lastTenTransActions: lastTenTransActions,
+        totalTransActions: totalTransActions,
+        totalWallets: totalWallets,
+        allSelledCard: allSelledCard,
+      },
+    ],
   });
 });
-
-
 
 const ecoSystem = asyncHandler(async (req, res, next) => {
   const { walletSuperId } = req.body;
@@ -765,98 +756,102 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
       success: false,
       message: "Эрхгүй",
     });
-
   }
-  var stackTwo = []
-  var stackThree = []
-  var membercardValue = 0
-  var purchaseValue = 0
-  var bonusValue = 0
-  var operatorChargeValue = 0
-  var problemStack = 0
-  var resp = null
-  const totalTransActions = await Transactions.aggregate([{
-    $group: {
-      _id: [{ purpose: "$purpose" }, { trnxType: "$trnxType" }],
-      sum: { $sum: "$amount" },
-    }
-  }]);
-  const totalWallets = await Wallets.aggregate([{
-    $group: {
-      _id: [{ role: "$role" }],
-      sum: { $sum: "$balance" },
-    }
-  }]);
+  var stackTwo = [];
+  var stackThree = [];
+  var membercardValue = 0;
+  var purchaseValue = 0;
+  var bonusValue = 0;
+  var operatorChargeValue = 0;
+  var problemStack = 0;
+  var resp = null;
+  const totalTransActions = await Transactions.aggregate([
+    {
+      $group: {
+        _id: [{ purpose: "$purpose" }, { trnxType: "$trnxType" }],
+        sum: { $sum: "$amount" },
+      },
+    },
+  ]);
+  const totalWallets = await Wallets.aggregate([
+    {
+      $group: {
+        _id: [{ role: "$role" }],
+        sum: { $sum: "$balance" },
+      },
+    },
+  ]);
   ////////////////////////////////////////
-  totalTransActions.map(el => {
-    stackTwo.push({ purpose: el._id[0].purpose, trnxType: el._id[1].trnxType, value: parseInt(el.sum.toString()) })
-  })
+  totalTransActions.map((el) => {
+    stackTwo.push({
+      purpose: el._id[0].purpose,
+      trnxType: el._id[1].trnxType,
+      value: parseInt(el.sum.toString()),
+    });
+  });
 
-  totalWallets.map(el => {
-    stackThree.push({ role: el._id[0].role, value: parseInt(el.sum.toString()) })
-  })
+  totalWallets.map((el) => {
+    stackThree.push({
+      role: el._id[0].role,
+      value: parseInt(el.sum.toString()),
+    });
+  });
 
-  stackTwo.map(elem => {
+  stackTwo.map((elem) => {
     if (elem.purpose === "membercard") {
       if (elem.trnxType === "Орлого") {
-        membercardValue = membercardValue + parseInt(elem.value)
-
+        membercardValue = membercardValue + parseInt(elem.value);
       } else if (elem.trnxType === "Зарлага") {
-        membercardValue = membercardValue - parseInt(elem.value)
+        membercardValue = membercardValue - parseInt(elem.value);
+      } else if (elem.trnxType === "Урамшуулал") {
+        membercardValue = membercardValue - parseInt(elem.value);
       }
-      else if (elem.trnxType === "Урамшуулал") {
-        membercardValue = membercardValue - parseInt(elem.value)
-      }
-    }
-    else if (elem.purpose === "purchase") {
+    } else if (elem.purpose === "purchase") {
       if (elem.trnxType === "Орлого") {
-        purchaseValue = purchaseValue + parseInt(elem.value)
+        purchaseValue = purchaseValue + parseInt(elem.value);
       } else if (elem.trnxType === "Зарлага") {
-        purchaseValue = purchaseValue - parseInt(elem.value)
+        purchaseValue = purchaseValue - parseInt(elem.value);
       }
-    }
-    else if (elem.purpose === "bonus") {
+    } else if (elem.purpose === "bonus") {
       if (elem.trnxType === "Орлого") {
-        bonusValue = bonusValue + parseInt(elem.value)
+        bonusValue = bonusValue + parseInt(elem.value);
       } else if (elem.trnxType === "Зарлага") {
-        bonusValue = bonusValue - parseInt(elem.value)
+        bonusValue = bonusValue - parseInt(elem.value);
       }
-    }
-    else if (elem.purpose === "operatorCharge") {
+    } else if (elem.purpose === "operatorCharge") {
       if (elem.trnxType === "Орлого") {
-        operatorChargeValue = operatorChargeValue + parseInt(elem.value)
-
+        operatorChargeValue = operatorChargeValue + parseInt(elem.value);
       } else if (elem.trnxType === "Зарлага") {
-        operatorChargeValue = operatorChargeValue - parseInt(elem.value)
-
+        operatorChargeValue = operatorChargeValue - parseInt(elem.value);
       }
     }
-  })
+  });
 
-  stackThree.map(lu => {
+  stackThree.map((lu) => {
     if (lu.role === "user") {
-      problemStack = problemStack + parseInt(lu.value)
+      problemStack = problemStack + parseInt(lu.value);
+    } else if (lu.role === "variance") {
+      problemStack = problemStack - parseInt(lu.value);
+    } else if (lu.role === "saler") {
+      problemStack = problemStack + parseInt(lu.value);
+    } else if (lu.role === "operator") {
+      problemStack = problemStack + parseInt(lu.value);
+    } else if (lu.role === "admin") {
+      problemStack = problemStack + parseInt(lu.value);
     }
-    else if (lu.role === "variance") {
-      problemStack = problemStack - parseInt(lu.value)
-    }
-    else if (lu.role === "saler") {
-      problemStack = problemStack + parseInt(lu.value)
-    }
-    else if (lu.role === "operator") {
-      problemStack = problemStack + parseInt(lu.value)
-
-    }
-    else if (lu.role === "admin") {
-      problemStack = problemStack + parseInt(lu.value)
-    }
-  })
-  resp = null
-  if (problemStack - 1000000000 === 0 && membercardValue === 0 && operatorChargeValue === 0 && bonusValue === 0 && purchaseValue === 0) {
-    resp = "success"
+  });
+  resp = null;
+  if (
+    problemStack - 1000000000 === 0 &&
+    membercardValue === 0 &&
+    operatorChargeValue === 0 &&
+    bonusValue === 0 &&
+    purchaseValue === 0
+  ) {
+    resp = "success";
   } else {
-    resp = "warning"
-    console.log("warning")
+    resp = "warning";
+    console.log("warning");
     const message = {
       channel: "sms",
       title: "SHOE GALLERY",
@@ -871,35 +866,43 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    data: resp
+    data: resp,
   });
 });
 
 const bonusSalary = asyncHandler(async (req, res, next) => {
   const { beginDate, endDate, trnxType, purpose } = req.body;
-  const bonusSalaryData = await Transactions.aggregate([{
-    $match: {
-      purpose: purpose,
-      trnxType: trnxType, createdAt: {
-        $gte: new Date(beginDate + "T00:00:00.000Z"),
-        $lt: new Date(endDate + "T23:59:59.999Z")
-      }
-    }
-  }, {
-    $group: {
-      _id: [{
-        date: {
-          $dateToString: {
-            format: "%Y-%m", date: "$createdAt",
-          }
+  const bonusSalaryData = await Transactions.aggregate([
+    {
+      $match: {
+        purpose: purpose,
+        trnxType: trnxType,
+        createdAt: {
+          $gte: new Date(beginDate + "T00:00:00.000Z"),
+          $lt: new Date(endDate + "T23:59:59.999Z"),
         },
-      }, { whoSelledCard: "$whoSelledCard" }],
-      count: { $sum: "$amount" }
-    }
-  }]);
+      },
+    },
+    {
+      $group: {
+        _id: [
+          {
+            date: {
+              $dateToString: {
+                format: "%Y-%m",
+                date: "$createdAt",
+              },
+            },
+          },
+          { whoSelledCard: "$whoSelledCard" },
+        ],
+        count: { $sum: "$amount" },
+      },
+    },
+  ]);
   res.status(200).json({
     success: true,
-    data: bonusSalaryData
+    data: bonusSalaryData,
   });
 });
 const bossUnchecked = asyncHandler(async (req, res, next) => {
@@ -922,8 +925,7 @@ const bossUnchecked = asyncHandler(async (req, res, next) => {
     purpose: "membercard",
     trnxType: "Зарлага",
     bossCheck: false,
-  })
-    .sort({ createdAt: -1 })
+  }).sort({ createdAt: -1 });
 
   res.status(200).json({
     success: true,
@@ -954,7 +956,7 @@ const bossChecked = asyncHandler(async (req, res, next) => {
   if (wallets.bossCheck === true) {
     throw new MyError("болохгүй", 403);
   }
-  wallets.bossCheck = true
+  wallets.bossCheck = true;
   await wallets.save();
   res.status(200).json({
     success: true,
@@ -975,10 +977,8 @@ module.exports = {
   // Админы хийх зүйлс
   getAllUniversalStatement,
 
-
   userPurchase,
   operatorCharge,
-
 
   getMyWalletTransfers,
   userCharge,

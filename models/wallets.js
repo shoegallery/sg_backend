@@ -20,7 +20,6 @@ const walletSchema = new mongoose.Schema(
       immutable: true,
       unique: true,
     },
-
     balance: {
       type: mongoose.Decimal128,
       required: true,
@@ -50,7 +49,7 @@ const walletSchema = new mongoose.Schema(
       type: Number,
       required: true,
       unique: true,
-      min: 60000000,
+      min: 10000000,
       max: 99999999,
     },
     isStore: {
@@ -75,6 +74,20 @@ const walletSchema = new mongoose.Schema(
       maxlength: 4,
       select: false,
     },
+    LoggedIpAddress: {
+      type: String,
+      default: "0.0.0.0",
+    },
+    BufferIpAddress: {
+      type: String,
+      default: "0.0.0.0",
+    },
+    LoginLock: {
+      type: Boolean,
+      default: false,
+    },
+    loginToken: String,
+    loginTokenExpire: Date,
     resetPasswordToken: String,
     resetPasswordExpire: Date,
   },
@@ -85,12 +98,9 @@ walletSchema.pre("save", async function (next) {
   // Нууц үг өөрчлөгдөөгүй бол дараачийн middleware рүү шилж
   if (!this.isModified("password")) next();
   // Нууц үг өөрчлөгдсөн
-  console.time("salt");
   const salt = await bcrypt.genSalt(10);
-  console.timeEnd("salt");
-  console.time("hash");
   this.password = await bcrypt.hash(this.password, salt);
-  console.timeEnd("hash");
+
 });
 
 walletSchema.methods.getJsonWebToken = function () {
@@ -117,6 +127,18 @@ walletSchema.methods.generatePasswordChangeToken = function () {
 
   this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
   return resetToken;
+};
+
+walletSchema.methods.generateLoginToken = function () {
+  const loginToken = Math.floor(100000 + Math.random() * 900000);
+
+  this.encryptedLoginToken = crypto
+    .createHash("sha256")
+    .update(JSON.stringify(loginToken))
+    .digest("hex");
+
+  this.loginTokenExpire = Date.now() + 10 * 60 * 1000;
+  return loginToken;
 };
 
 module.exports = mongoose.model("Wallets", walletSchema);

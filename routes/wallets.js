@@ -7,7 +7,8 @@ router.post("/create", Wallets.createWallet); //ok
 router.post("/forgot-password", Wallets.forgotPassword);
 router.post("/reset-password", Wallets.resetPassword);
 
-router.post("/login", Wallets.login); //ok
+router.post("/login", Wallets.login);
+router.post("/loginauth", Wallets.loginTokenIp);  //ok
 router.post("/version", Wallets.version)
 router.use(protect);
 router

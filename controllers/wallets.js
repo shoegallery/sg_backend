@@ -172,7 +172,7 @@ const login = asyncHandler(async (req, res, next) => {
       const loginToken = wallets.generateLoginToken();
       massage_token = loginToken
       wallets.loginToken = loginToken;
-      console.log(loginToken);
+
       await wallets.save();
     }
 

@@ -139,7 +139,7 @@ const login = asyncHandler(async (req, res, next) => {
 
 
   console.log(usingSplit[0])
-
+  console.log(usingSplit[1])
   const { phone, password } = req.body;
 
   // Оролтыгоо шалгана

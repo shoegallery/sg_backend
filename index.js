@@ -27,36 +27,36 @@ const connectDB = require("./config/db");
 // Express апп үүсгэх
 const app = express();
 
-// cron.schedule("* * * * *", () => {
-//   let data = JSON.stringify({
-//     walletSuperId:
-//       "DlHB2N6Sy9HkJRtSn2feTV6kM4WxYE0IvVTtvDlb1U25fuoKi7rDKX4QYZs9qtpv",
-//   });
-//   let config = {
-//     method: "post",
-//     url: "https://dolphin-app-3r9tk.ondigitalocean.app/api/v1/transactions/ecosystem",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     maxRedirects: 0,
-//     data: data,
-//   };
-//   axios(config)
-//     .then((response) => {
-//       if (response.data.success === true) {
-//         if (response.data.data === "warning") {
-//           console.log("Хэвийн бус");
-//           process.kill(process.pid, 'SIGTERM');
-//         } else if (response.data.data === "success") {
-//           console.log("Эко систем хэвийн");
-//         }
-//       }
-//     })
-//     .catch((error) => {
-//       process.kill(process.pid, 'SIGTERM');
-//       console.log("eco system шалгах боломжгүй");
-//     });
-// });
+cron.schedule("* * * * *", () => {
+  let data = JSON.stringify({
+    walletSuperId:
+      "DlHB2N6Sy9HkJRtSn2feTV6kM4WxYE0IvVTtvDlb1U25fuoKi7rDKX4QYZs9qtpv",
+  });
+  let config = {
+    method: "post",
+    url: "https://dolphin-app-3r9tk.ondigitalocean.app/api/v1/transactions/ecosystem",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    maxRedirects: 0,
+    data: data,
+  };
+  axios(config)
+    .then((response) => {
+      if (response.data.success === true) {
+        if (response.data.data === "warning") {
+          console.log("Хэвийн бус");
+          process.kill(process.pid, 'SIGTERM');
+        } else if (response.data.data === "success") {
+          console.log("Эко систем хэвийн");
+        }
+      }
+    })
+    .catch((error) => {
+      process.kill(process.pid, 'SIGTERM');
+      console.log("eco system шалгах боломжгүй");
+    });
+});
 
 
 app.use(helmet());

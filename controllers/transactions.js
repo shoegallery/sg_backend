@@ -752,7 +752,6 @@ const statisticData = asyncHandler(async (req, res, next) => {
 
 const ecoSystem = asyncHandler(async (req, res, next) => {
   const { walletSuperId } = req.body;
-
   const isStore = await Wallets.find({ walletSuperId: walletSuperId });
 
   if (!walletSuperId) {
@@ -853,7 +852,7 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
     }
   })
   resp = null
-  if (problemStack - 100000000 === 0 && membercardValue === 0 && operatorChargeValue === 0 && bonusValue === 0 && purchaseValue === 0) {
+  if (problemStack - 1000000000 === 0 && membercardValue === 0 && operatorChargeValue === 0 && bonusValue === 0 && purchaseValue === 0) {
     resp = "success"
   } else {
     resp = "warning"

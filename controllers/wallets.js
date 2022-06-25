@@ -2,6 +2,7 @@ const Wallets = require("../models/wallets");
 const MyError = require("../utils/myError");
 const paginate = require("../utils/paginate");
 const { lookup } = require('geoip-lite');
+var ip = require('ip');
 
 const asyncHandler = require("express-async-handler");
 const sendMessage = require("../utils/sendMessage");
@@ -133,8 +134,8 @@ const getMyWallet = asyncHandler(async (req, res, next) => {
 });
 
 const login = asyncHandler(async (req, res, next) => {
-  const ip = req.headers['x-forwarded-for'];
-  console.log(ip); // ip address of the user
+  // const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  console.log(ip.address()); // ip address of the user
 
   const { phone, password } = req.body;
 

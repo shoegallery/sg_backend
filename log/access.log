@@ -248,3 +248,5 @@
 ::1 - - [25/Jun/2022:11:20:15 +0000] "POST /api/v1/wallets/login HTTP/1.1" 200 498 "-" "PostmanRuntime/7.29.0"
 ::1 - - [25/Jun/2022:11:20:17 +0000] "POST /api/v1/wallets/login HTTP/1.1" 200 498 "-" "PostmanRuntime/7.29.0"
 ::1 - - [25/Jun/2022:11:29:42 +0000] "POST /api/v1/wallets/login HTTP/1.1" 200 498 "-" "PostmanRuntime/7.29.0"
+::1 - - [25/Jun/2022:11:47:18 +0000] "POST /api/v1/wallets/login HTTP/1.1" 200 498 "-" "PostmanRuntime/7.29.0"
+::1 - - [25/Jun/2022:11:47:43 +0000] "POST /api/v1/wallets/login HTTP/1.1" 200 498 "-" "PostmanRuntime/7.29.0"

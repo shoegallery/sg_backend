@@ -133,8 +133,8 @@ const getMyWallet = asyncHandler(async (req, res, next) => {
 });
 
 const login = asyncHandler(async (req, res, next) => {
-  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-  console.log(ip[0]); // ip address of the user
+  const ip = req.headers['x-forwarded-for'];
+  console.log(ip); // ip address of the user
 
   const { phone, password } = req.body;
 

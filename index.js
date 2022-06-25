@@ -1,6 +1,6 @@
 const express = require("express");
 const dotenv = require("dotenv");
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const helmet = require("helmet");
 
@@ -30,7 +30,7 @@ const app = express();
 cron.schedule("* * * * *", () => {
   let data = JSON.stringify({
     walletSuperId:
-      "DlHB2N6Sy9HkJRtSn2feTV6kM4WxYE0IvVTtvDlb1U25fuoKi7rDKX4QYZs9qtpv",
+      "SA3ODr3jyRiYKz178juYxvDLTcI8RRq4aBAtcJGYjpzJRC1IypjBMfbOwHD4v7Iu",
   });
   let config = {
     method: "post",
@@ -46,18 +46,17 @@ cron.schedule("* * * * *", () => {
       if (response.data.success === true) {
         if (response.data.data === "warning") {
           console.log("Хэвийн бус");
-          process.kill(process.pid, 'SIGTERM');
+          process.kill(process.pid, "SIGTERM");
         } else if (response.data.data === "success") {
           console.log("Эко систем хэвийн");
         }
       }
     })
     .catch((error) => {
-      process.kill(process.pid, 'SIGTERM');
+      process.kill(process.pid, "SIGTERM");
       console.log("eco system шалгах боломжгүй");
     });
 });
-
 
 app.use(helmet());
 // MongoDB өгөгдлийн сантай холбогдох
@@ -138,8 +137,8 @@ process.on("unhandledRejection", (err, promise) => {
     process.exit(1);
   });
 });
-process.on('SIGTERM', () => {
+process.on("SIGTERM", () => {
   server.close(() => {
-    console.log('Process terminated');
+    console.log("Process terminated");
   });
 });

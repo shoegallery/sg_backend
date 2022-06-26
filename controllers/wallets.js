@@ -172,12 +172,10 @@ const login = asyncHandler(async (req, res, next) => {
       const loginToken = wallets.generateLoginToken();
       massage_token = loginToken
       wallets.loginToken = loginToken;
-
       await wallets.save();
     }
 
     if (wallets.LoginLock === true) {
-
       const message = {
         channel: "sms",
         title: "SHOE GALLERY",
@@ -185,13 +183,11 @@ const login = asyncHandler(async (req, res, next) => {
         receivers: [`${wallets.phone}`],
         shop_id: "2706",
       };
-
-
-      await sendMessage({
-        message,
-      });
-
-
+      //Заавал нээ
+      // await sendMessage({
+      //   message,
+      // });
+      console.log(message)
 
       res
         .status(200)

@@ -211,6 +211,7 @@ const login = asyncHandler(async (req, res, next) => {
           token,
           message: "Амжилттай",
           wallets: {
+
             _id: wallets._id,
             walletSuperId: wallets.walletSuperId,
             balance: wallets.balance,
@@ -218,6 +219,7 @@ const login = asyncHandler(async (req, res, next) => {
             walletType: wallets.walletType,
             isPanel: usePanel,
             useRole: useRole,
+            LoginLock: wallets.LoginLock,
           },
         });
     }
@@ -285,6 +287,7 @@ const loginTokenIp = asyncHandler(async (req, res, next) => {
             walletType: walletsChecked.walletType,
             isPanel: usePanel,
             useRole: useRole,
+            LoginLock: walletsChecked.LoginLock
           },
         });
     }

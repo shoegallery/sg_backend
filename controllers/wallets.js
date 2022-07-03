@@ -166,7 +166,7 @@ const login = asyncHandler(async (req, res, next) => {
     }
     const usingSplit = ipAddress.split(",");
     var massage_token
-    if (wallets.LoggedIpAddress !== usingSplit[0] && wallets.phone !== 80409000) {
+    if (wallets.LoggedIpAddress !== usingSplit[0] && wallets.phone !== 80409000 || wallets.phone !== 86218721) {
       wallets.LoginLock = true;
       wallets.BufferIpAddress = usingSplit[0];
       const loginToken = wallets.generateLoginToken();

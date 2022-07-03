@@ -10,3 +10,6 @@
 ::1 - - [25/Jun/2022:16:06:54 +0000] "POST /api/v1/wallets/reset-password HTTP/1.1" 403 107 "-" "PostmanRuntime/7.29.0"
 ::1 - - [25/Jun/2022:16:06:55 +0000] "POST /api/v1/wallets/reset-password HTTP/1.1" 403 107 "-" "PostmanRuntime/7.29.0"
 ::1 - - [25/Jun/2022:16:07:02 +0000] "POST /api/v1/wallets/reset-password HTTP/1.1" 200 339 "-" "PostmanRuntime/7.29.0"
+::ffff:192.168.1.45 - - [03/Jul/2022:03:02:46 +0000] "POST /api/v1/wallets/login HTTP/1.1" 200 110 "-" "okhttp/4.9.2"
+::ffff:192.168.1.45 - - [03/Jul/2022:03:02:56 +0000] "POST /api/v1/wallets/loginauth HTTP/1.1" 200 518 "-" "okhttp/4.9.2"
+::ffff:192.168.1.45 - - [03/Jul/2022:03:02:57 +0000] "POST /api/v1/transactions/wallet/62b738d03b0b8558052d456f HTTP/1.1" 200 26 "-" "okhttp/4.9.2"

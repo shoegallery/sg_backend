@@ -184,10 +184,10 @@ const login = asyncHandler(async (req, res, next) => {
         shop_id: "2706",
       };
       //Заавал нээ
-      // await sendMessage({
-      //   message,
-      // });
-      console.log(message)
+      await sendMessage({
+        message,
+      });
+      // console.log(message)
 
       res
         .status(200)

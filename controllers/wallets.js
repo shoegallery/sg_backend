@@ -173,7 +173,12 @@ const login = asyncHandler(async (req, res, next) => {
       massage_token = loginToken
       wallets.loginToken = loginToken;
       await wallets.save();
+    } else {
+      wallets.LoginLock = false;
+
+      await wallets.save();
     }
+
 
     if (wallets.LoginLock === true) {
       const message = {

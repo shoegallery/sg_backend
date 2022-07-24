@@ -131,9 +131,8 @@ const getMyWallet = asyncHandler(async (req, res, next) => {
 });
 
 const login = asyncHandler(async (req, res, next) => {
-
-  const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-
+  const ipAddress =
+    req.headers["x-forwarded-for"] || req.connection.remoteAddress;
 
   const { phone, password } = req.body;
 
@@ -165,20 +164,23 @@ const login = asyncHandler(async (req, res, next) => {
       useRole = wallets.role;
     }
     const usingSplit = ipAddress.split(",");
-    var massage_token
+    var massage_token;
     if (wallets.LoggedIpAddress !== usingSplit[0]) {
       wallets.LoginLock = true;
       wallets.BufferIpAddress = usingSplit[0];
       const loginToken = wallets.generateLoginToken();
-      massage_token = loginToken
+      massage_token = loginToken;
       wallets.loginToken = loginToken;
       await wallets.save();
     }
-    if (wallets.phone === 80409000 || wallets.phone === 86218721) {
+    if (
+      wallets.phone === 80409000 ||
+      wallets.phone === 86218721 ||
+      wallets.role === "saler"
+    ) {
       wallets.LoginLock = false;
       await wallets.save();
     }
-
 
     if (wallets.LoginLock === true) {
       const message = {
@@ -216,7 +218,6 @@ const login = asyncHandler(async (req, res, next) => {
           token,
           message: "Амжилттай",
           wallets: {
-
             _id: wallets._id,
             walletSuperId: wallets.walletSuperId,
             balance: wallets.balance,
@@ -230,7 +231,6 @@ const login = asyncHandler(async (req, res, next) => {
     }
   }
 
-  // Оролтыгоо шалгана
 });
 const loginTokenIp = asyncHandler(async (req, res, next) => {
   const { phone, password, loginToken } = req.body;
@@ -292,7 +292,7 @@ const loginTokenIp = asyncHandler(async (req, res, next) => {
             walletType: walletsChecked.walletType,
             isPanel: usePanel,
             useRole: useRole,
-            LoginLock: walletsChecked.LoginLock
+            LoginLock: walletsChecked.LoginLock,
           },
         });
     }

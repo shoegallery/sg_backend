@@ -22,7 +22,7 @@ const userPurchase = asyncHandler(async (req, res) => {
     summary,
     id,
     walletSuperId,
-    OrderNumber,
+
   } = req.body;
 
   const isUser = await Wallets.findById(id);
@@ -35,20 +35,14 @@ const userPurchase = asyncHandler(async (req, res) => {
         !amount &&
         !summary &&
         !id &&
-        !walletSuperId &&
-        !OrderNumber
+        !walletSuperId
       ) {
         return res.status(400).json({
           success: false,
-          message: `Дараах утгуудыг оруулна уу: toPhone, fromPhone, amount, summary, walletSuperId, OrderNumber`,
+          message: `Дараах утгуудыг оруулна уу: toPhone, fromPhone, amount, summary, walletSuperId`,
         });
       }
-      if (OrderNumber == undefined) {
-        return res.status(400).json({
-          success: false,
-          message: `Дараах утгуудыг оруулна уу: toPhone, fromPhone, amount, summary, walletSuperId, OrderNumber`,
-        });
-      }
+
       if (isUser.phone !== fromPhone) {
         return res.status(403).json({
           success: false,
@@ -62,13 +56,6 @@ const userPurchase = asyncHandler(async (req, res) => {
           message: "Худалдан авагч та дэлгүүрийн данс руу шилжүүлэг хийнэ!!",
         });
       }
-
-      if (`${OrderNumber}`.length !== 4) {
-        return res.status(403).json({
-          success: false,
-          message: "Буруу",
-        });
-      }
       const reference = v4();
       const transferResult = await Promise.all([
         debitAccount({
@@ -76,11 +63,11 @@ const userPurchase = asyncHandler(async (req, res) => {
           phone: fromPhone,
           purpose: "purchase",
           reference,
-          summary: `Хэтэвчнээс ${OrderNumber} дугаартай худалдан авалтын төлбөр амжилттай төлөгдлөө.`,
+          summary: `Хэтэвчнээс худалдан авалтын төлбөр амжилттай төлөгдлөө.`,
           trnxSummary: `Илгээгч: ${toPhone}. Шалгах дугаар:${reference} `,
           session,
           paidAt: `${new Date()}`,
-          orderNumber: `${OrderNumber}`,
+          orderNumber: "",
           bossCheck: false,
         }),
         creditAccount({
@@ -88,11 +75,11 @@ const userPurchase = asyncHandler(async (req, res) => {
           phone: toPhone,
           purpose: "purchase",
           reference,
-          summary: `${fromPhone} утасны дугаартай худалдан авагчаас ${OrderNumber} баримтын дугаартай худалдан авалтын ${amount} төлбөр баталгаажсан.`,
+          summary: `${fromPhone} утасны дугаартай худалдан авагчаас худалдан авалтын ${amount} төлбөр баталгаажсан.`,
           trnxSummary: `Хүлээн авагч: ${fromPhone}. Шалгах дугаар:${reference} `,
           session,
           paidAt: `${new Date()}`,
-          orderNumber: `${OrderNumber}`,
+          orderNumber: "",
           bossCheck: false,
         }),
       ]);

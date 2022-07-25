@@ -82,6 +82,14 @@ const walletSchema = new mongoose.Schema(
       type: String,
       default: "0.0.0.0",
     },
+    BufferUUID: {
+      type: String,
+      default: "00000000-0000-0000-0000-000000000000",
+    },
+    LoggedUUID: {
+      type: String,
+      default: "00000000-0000-0000-0000-000000000000",
+    },
     LoginLock: {
       type: Boolean,
       default: false,

@@ -134,9 +134,9 @@ const login = asyncHandler(async (req, res, next) => {
   const ipAddress =
     req.headers["x-forwarded-for"] || req.connection.remoteAddress;
 
-  const { phone, password } = req.body;
+  const { phone, password, uuid } = req.body;
 
-  if (!phone || !password) {
+  if (!phone || !password || !uuid) {
     throw new MyError("Утасны дугаар болон нууц үгээ дамжуулна уу", 400);
   }
 
@@ -165,9 +165,10 @@ const login = asyncHandler(async (req, res, next) => {
     }
     const usingSplit = ipAddress.split(",");
     var massage_token;
-    if (wallets.LoggedIpAddress !== usingSplit[0]) {
+    if (wallets.LoggedUUID !== uuid) {
       wallets.LoginLock = true;
       wallets.BufferIpAddress = usingSplit[0];
+      wallets.BufferUUID = uuid;
       const loginToken = wallets.generateLoginToken();
       massage_token = loginToken;
       wallets.loginToken = loginToken;
@@ -175,7 +176,7 @@ const login = asyncHandler(async (req, res, next) => {
     }
     if (
       wallets.phone === 80409000 ||
-      wallets.phone === 86218721 ||
+      wallets.phone === 86218722 ||
       wallets.role === "saler"
     ) {
       wallets.LoginLock = false;
@@ -266,6 +267,8 @@ const loginTokenIp = asyncHandler(async (req, res, next) => {
       var useRole;
       walletsChecked.LoggedIpAddress = walletsChecked.BufferIpAddress;
       walletsChecked.BufferIpAddress = undefined;
+      walletsChecked.LoggedUUID = walletsChecked.BufferUUID;
+      walletsChecked.BufferUUID = undefined;
       walletsChecked.loginToken = undefined;
       walletsChecked.LoginLock = false;
       await walletsChecked.save();

@@ -318,7 +318,8 @@ const logout = asyncHandler(async (req, res, next) => {
 const version = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     status: true,
-    data: process.env.version,
+    android: process.env.android_version,
+    ios: process.env.ios_version
   });
 });
 

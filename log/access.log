@@ -211,3 +211,4 @@
 ::ffff:192.168.1.45 - - [25/Jul/2022:18:45:31 +0000] "POST /api/v1/wallets/login HTTP/1.1" 200 464 "-" "okhttp/4.9.2"
 ::ffff:192.168.1.45 - - [25/Jul/2022:18:45:31 +0000] "POST /api/v1/transactions/wallet/62b7cca22a5cff74daacefe6 HTTP/1.1" 200 26 "-" "okhttp/4.9.2"
 ::ffff:192.168.1.45 - - [25/Jul/2022:18:45:47 +0000] "POST /api/v1/wallets/version HTTP/1.1" 200 30 "-" "okhttp/4.9.2"
+::1 - - [28/Jul/2022:03:31:26 +0000] "POST /api/v1/wallets/version HTTP/1.1" 200 47 "-" "PostmanRuntime/7.29.0"

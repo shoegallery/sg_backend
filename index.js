@@ -95,7 +95,7 @@ var corsOptions = {
 
 // Express rate limit : Дуудалтын тоог хязгаарлав
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: 10 * 60 * 1000, // 15 minutes
   max: 200, // limit each IP to 100 requests per windowMs
   message: "15 минутанд 200 удаа л хандаж болно! ",
 });

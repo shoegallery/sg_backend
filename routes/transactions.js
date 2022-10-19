@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { protect, authorize } = require("../middleware/protect");
 const Transactions = require("../controllers/transactions");
-
+const CouponCode = require("../controllers/couponcode");
 
 
 router.post("/ecosystem", Transactions.ecoSystem);
@@ -20,8 +20,9 @@ router
     authorize("user", "admin", "operator", "saler"),
     Transactions.getMyWalletTransfers
   );
-
-
+router
+  .route("/use_coupon")
+  .post(authorize("user"), Transactions.userCouponBonus);
 
 //Операторын хийх шилжүүлэг
 router
@@ -41,9 +42,16 @@ router
   .route("/operatorcharge")
   .post(authorize("admin"), Transactions.operatorCharge);
 
+router
+  .route("/get_odoo_coupon")
+  .post(authorize("admin"), CouponCode.odooData);
 
-
-
+router
+  .route("/generate_coupon")
+  .post(authorize("admin"), CouponCode.generate_coupon);
+router
+  .route("/test")
+  .post(authorize("admin"), CouponCode.test);
 //Админы харах Charge шилжүүлгүүд
 router
   .route("/statistic")

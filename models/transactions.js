@@ -19,6 +19,8 @@ const transactionSchema = new mongoose.Schema(
         "membercard",
         "giftcard",
         "operatorCharge",
+        "coupon",
+
       ],
       required: true,
     },

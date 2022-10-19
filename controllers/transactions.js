@@ -1,5 +1,6 @@
 const Transactions = require("../models/transactions");
 const Wallets = require("../models/wallets");
+const CouponCode = require("../models/coupon");
 const mongoose = require("mongoose");
 const { v4, stringify } = require("uuid");
 const {
@@ -15,15 +16,7 @@ const sendMessage = require("../utils/sendMessage");
 const userPurchase = asyncHandler(async (req, res) => {
   const session = await mongoose.startSession();
   session.startTransaction();
-  const {
-    toPhone,
-    fromPhone,
-    amount,
-    summary,
-    id,
-    walletSuperId,
-
-  } = req.body;
+  const { toPhone, fromPhone, amount, summary, id, walletSuperId } = req.body;
 
   const isUser = await Wallets.findById(id);
   const isStore = await Wallets.find({ phone: toPhone });
@@ -334,7 +327,7 @@ const userMemberCardCharge = asyncHandler(async (req, res) => {
 
   try {
     const isStore = await Wallets.findById(id);
-    var walletNewType;
+    let walletNewType;
     if (amount > 0 && isStore.walletSuperId == walletSuperId) {
       if (
         !toPhone &&
@@ -351,7 +344,7 @@ const userMemberCardCharge = asyncHandler(async (req, res) => {
             "Дараах утгуудыг оруулна уу: toPhone, fromPhone, amount, summary,WhoCardSelled",
         });
       }
-      var WhoCardSelledNumber;
+      let WhoCardSelledNumber;
       if (req.body.WhoCardSelled == undefined) {
         WhoCardSelledNumber = 9913410734;
       } else {
@@ -450,7 +443,7 @@ const userMemberCardCharge = asyncHandler(async (req, res) => {
       );
       if (failedTxns.length) {
         const errors = failedTxns.map((a) => a.message);
-        console.log(errors.codeName);
+
         await session.abortTransaction();
         session.endSession();
         return res.status(400).json({
@@ -495,7 +488,7 @@ const userMemberCardCharge = asyncHandler(async (req, res) => {
       });
     }
   } catch (err) {
-    console.log(err);
+
     await session.abortTransaction();
     session.endSession();
     return res.status(400).json({
@@ -599,6 +592,82 @@ const userChargeBonus = asyncHandler(async (req, res) => {
         message: `Боломжгүй`,
       });
     }
+  } catch (err) {
+    await session.abortTransaction();
+    session.endSession();
+    return res.status(500).json({
+      success: false,
+      message: `Ямар нэгэн зүйл буруу байна.`,
+    });
+  }
+});
+
+const userCouponBonus = asyncHandler(async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const { coupon_code, walletSuperId } = req.body;
+    if (!coupon_code && !walletSuperId) {
+      return res.status(403).json({
+        success: false,
+        message: "Дараах утгуудыг оруулна уу: coupon_code, walletSuperId",
+      });
+    }
+    const UserData = await Wallets.find({ walletSuperId: walletSuperId });
+    const CoupenData = await CouponCode.find({ coupon_code: coupon_code });
+
+    if (!CoupenData) {
+      return res.status(403).json({
+        success: false,
+        message: "Байхгүй код байна.",
+      });
+    }
+    if (CoupenData[0].usedIt === true) {
+      return res.status(403).json({
+        success: false,
+        message: "Хүчингүй код байна.",
+      });
+    }
+
+    const reference = v4();
+
+    const transferResult = await Promise.all([
+      creditAccount({
+        amount: CoupenData[0].amount,
+        phone: UserData[0].phone,
+        purpose: "coupon",
+        reference,
+        summary: `${UserData[0].phone} Утасны дугаартай хэрэглэгч ${CoupenData[0].amount} үнийн дүнтэй ${CoupenData[0].coupon_code} coupon кодыг идэвхжүүлэв.`,
+        trnxSummary: `Coupon дугаар: ${CoupenData[0].coupon_code}. Шалгах дугаар:${reference} `,
+        session,
+        paidAt: `${new Date()}`,
+        orderNumber: `${CoupenData[0].so_order}`,
+      }),
+    ]);
+    const failedTxns = transferResult.filter(
+      (result) => result.status !== true
+    );
+    if (failedTxns.length) {
+      const errors = failedTxns.map((a) => a.message);
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(400).json({
+        success: false,
+        message: errors,
+      });
+    }
+    const updateCoupon = await CouponCode.findOne({
+      coupon_code: CoupenData[0].coupon_code,
+    });
+    updateCoupon.usedIt = true;
+    await updateCoupon.save();
+    await session.commitTransaction();
+    session.endSession();
+    return res.status(201).json({
+      success: true,
+      message: "Coupon бонус амжилттай",
+    });
   } catch (err) {
     await session.abortTransaction();
     session.endSession();
@@ -713,6 +782,7 @@ const statisticData = asyncHandler(async (req, res, next) => {
       },
     },
   ]);
+  ////////
 
   res.status(200).json({
     success: true,
@@ -744,14 +814,16 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
       message: "Эрхгүй",
     });
   }
-  var stackTwo = [];
-  var stackThree = [];
-  var membercardValue = 0;
-  var purchaseValue = 0;
-  var bonusValue = 0;
-  var operatorChargeValue = 0;
-  var problemStack = 0;
-  var resp = null;
+  let stackTwo = [];
+  let stackThree = [];
+  let membercardValue = 0;
+  let purchaseValue = 0;
+  let bonusValue = 0;
+  let operatorChargeValue = 0;
+  let autoSumCouponCode = 0;
+  let problemStack = 0;
+  let resp = null;
+  let couponUsedSum = 0;
   const totalTransActions = await Transactions.aggregate([
     {
       $group: {
@@ -760,6 +832,18 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
       },
     },
   ]);
+  const couponUsed = await CouponCode.aggregate([
+    {
+      $group: {
+        _id: [{ usedIt: "$usedIt" }],
+        sum: { $sum: "$amount" },
+      },
+    },
+  ]);
+  couponUsed[0]._id[0].usedIt === true
+    ? (couponUsedSum = couponUsed[0].sum)
+    : (couponUsedSum = couponUsed[1].sum);
+
   const totalWallets = await Wallets.aggregate([
     {
       $group: {
@@ -811,12 +895,16 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
       } else if (elem.trnxType === "Зарлага") {
         operatorChargeValue = operatorChargeValue - parseInt(elem.value);
       }
+    } else if (elem.purpose === "coupon") {
+      if (elem.trnxType === "Орлого") {
+        autoSumCouponCode = autoSumCouponCode + parseInt(elem.value);
+      }
     }
   });
 
   stackThree.map((lu) => {
     if (lu.role === "user") {
-      problemStack = problemStack + parseInt(lu.value);
+      problemStack = problemStack + parseInt(lu.value) - couponUsedSum;
     } else if (lu.role === "variance") {
       problemStack = problemStack - parseInt(lu.value);
     } else if (lu.role === "saler") {
@@ -828,17 +916,19 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
     }
   });
   resp = null;
+
   if (
     problemStack - 1000000000 === 0 &&
     membercardValue === 0 &&
     operatorChargeValue === 0 &&
     bonusValue === 0 &&
-    purchaseValue === 0
+    purchaseValue === 0 &&
+    autoSumCouponCode === couponUsedSum
   ) {
     resp = "success";
   } else {
     resp = "warning";
-    console.log("warning");
+
     const message = {
       channel: "sms",
       title: "SHOE GALLERY",
@@ -963,7 +1053,7 @@ module.exports = {
   statisticData,
   // Админы хийх зүйлс
   getAllUniversalStatement,
-
+  userCouponBonus,
   userPurchase,
   operatorCharge,
 

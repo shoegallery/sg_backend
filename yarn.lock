@@ -136,6 +136,11 @@ array-from@^2.1.1:
   resolved "https://registry.npmjs.org/array-from/-/array-from-2.1.1.tgz"
   integrity sha512-GQTc6Uupx1FCavi5mPzBvVT7nEOeWMmUA9P95wpfpW1XwMSKs+KaymD5C2Up7KAUKg/mYwbsUYzdZWcoajlNZg==
 
+arrow-identity@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/arrow-identity/-/arrow-identity-1.0.1.tgz#21173279375fd3327020ba1dca44c22bbd70f314"
+  integrity sha512-BLEOT2n7pD3/Tp+8i8hd+UV3rGFSHtZP0L1gioAM6oI4bnkV3b6Szsdk3Ft2w9jyEI2QeKlk1Gvs30I5X26yJQ==
+
 async@^2.6.1:
   version "2.6.4"
   resolved "https://registry.npmjs.org/async/-/async-2.6.4.tgz"
@@ -2256,6 +2261,13 @@ strip-json-comments@~2.0.1:
   resolved "https://registry.npmjs.org/strip-json-comments/-/strip-json-comments-2.0.1.tgz"
   integrity sha1-PFMZQukIwml8DsNEhYwobHygpgo=
 
+sum-any-array@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/sum-any-array/-/sum-any-array-1.0.1.tgz#7bd8552a807f25534ae39070059598ac4420107b"
+  integrity sha512-vW9CKScGVXHH0dy0hrmETRZ9qy/t+ks0uHZJA/WYAWupCIEVK98TgLIuiJvMNr+fG+7LGbRdAariSf2CVsXEMA==
+  dependencies:
+    arrow-identity "^1.0.1"
+
 supports-color@^5.5.0:
   version "5.5.0"
   resolved "https://registry.npmjs.org/supports-color/-/supports-color-5.5.0.tgz"
@@ -2465,6 +2477,11 @@ vary@^1, vary@~1.1.2:
   version "1.1.2"
   resolved "https://registry.npmjs.org/vary/-/vary-1.1.2.tgz"
   integrity sha1-IpnwLG3tMNSllhsLn3RSShj2NPw=
+
+voucher-code-generator@^1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/voucher-code-generator/-/voucher-code-generator-1.3.0.tgz#51c6748ff68f9a18e45e71fef5e815cd68e2249e"
+  integrity sha512-t4wnI91KC58LtjX2I0rJDhRm1JTXD+G7A+7iqp0sRSgpeJP4eKLexDRDLe2nedR7xFQcVlZudDZRBLrMP5+KTA==
 
 webidl-conversions@^3.0.0:
   version "3.0.1"

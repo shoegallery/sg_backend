@@ -140,9 +140,10 @@ const generate_coupon = asyncHandler(async (req, res) => {
                     receivers: [`${result.coupon_phone}`],
                     shop_id: "2706",
                 };
-                await sendMessage({
-                    message,
-                });
+                // await sendMessage({
+                //     message,
+                // });
+                console.log(message)
             }
         }
     })

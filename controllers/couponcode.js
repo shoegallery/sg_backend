@@ -148,7 +148,7 @@ const generate_coupon = asyncHandler(async (req, res) => {
         }
     })
     return res.status(200).json({
-        message: result
+        message: ok
     });
 });
 const test = asyncHandler(async (req, res, next) => {

@@ -618,18 +618,25 @@ const userCouponBonus = asyncHandler(async (req, res) => {
     const CoupenData = await CouponCode.find({ coupon_code: coupon_code });
 
 
-    if (CoupenData[0].usedIt === true) {
-      return res.status(405).json({
-        success: false,
-        message: "Хүчингүй код байна.",
-      });
-    }
+
     if (!CoupenData) {
-      return res.status(403).json({
-        success: false,
-        message: "Байхгүй код байна.",
-      });
+
+      if (CoupenData[0].usedIt === true) {
+        return res.status(405).json({
+          success: false,
+          message: "Хүчингүй код байна.",
+        });
+      }
+      else {
+        return res.status(403).json({
+          success: false,
+          message: "Байхгүй код байна.",
+        });
+      }
+
     }
+
+
     const reference = v4();
 
     const transferResult = await Promise.all([

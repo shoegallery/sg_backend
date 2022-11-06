@@ -627,12 +627,12 @@ const userCouponBonus = asyncHandler(async (req, res) => {
           message: "Хүчингүй код байна.",
         });
       }
-      else {
-        return res.status(403).json({
-          success: false,
-          message: "Байхгүй код байна.",
-        });
-      }
+
+      return res.status(403).json({
+        success: false,
+        message: "Байхгүй код байна.",
+      });
+
 
     }
 

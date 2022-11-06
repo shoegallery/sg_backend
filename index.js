@@ -22,7 +22,7 @@ const adminPanelRoutes = require("./routes/adminPanel");
 // Аппын тохиргоог process.env рүү ачаалах
 dotenv.config({ path: "./config/config.env" });
 
-const errorHandler = require("./middleware/error").default;
+const errorHandler = require("./middleware/error");
 const connectDB = require("./config/db");
 // Express апп үүсгэх
 const app = express();

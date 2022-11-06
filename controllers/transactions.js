@@ -616,65 +616,61 @@ const userCouponBonus = asyncHandler(async (req, res) => {
     }
     const UserData = await Wallets.find({ walletSuperId: walletSuperId });
     const CoupenData = await CouponCode.find({ coupon_code: coupon_code });
-
-
-
     if (!CoupenData) {
-
+      return res.status(403).json({
+        success: false,
+        message: "Байхгүй код байна.",
+      });
+    }
+    else {
       if (CoupenData[0].usedIt === true) {
         return res.status(405).json({
           success: false,
           message: "Хүчингүй код байна.",
         });
       }
-
-      return res.status(403).json({
-        success: false,
-        message: "Байхгүй код байна.",
-      });
-
-
+      else {
+        const reference = v4();
+        const transferResult = await Promise.all([
+          creditAccount({
+            amount: CoupenData[0].amount,
+            phone: UserData[0].phone,
+            purpose: "coupon",
+            reference,
+            summary: `${UserData[0].phone} Утасны дугаартай хэрэглэгч ${CoupenData[0].amount} үнийн дүнтэй ${CoupenData[0].coupon_code} coupon кодыг идэвхжүүлэв.`,
+            trnxSummary: `Coupon дугаар: ${CoupenData[0].coupon_code}. Шалгах дугаар:${reference} `,
+            session,
+            paidAt: `${new Date()}`,
+            orderNumber: `${CoupenData[0].so_order}`,
+          }),
+        ]);
+        const failedTxns = transferResult.filter(
+          (result) => result.status !== true
+        );
+        if (failedTxns.length) {
+          const errors = failedTxns.map((a) => a.message);
+          await session.abortTransaction();
+          session.endSession();
+          return res.status(400).json({
+            success: false,
+            message: errors,
+          });
+        }
+        const updateCoupon = await CouponCode.findOne({
+          coupon_code: CoupenData[0].coupon_code,
+        });
+        updateCoupon.usedIt = true;
+        await updateCoupon.save();
+        await session.commitTransaction();
+        session.endSession();
+        return res.status(201).json({
+          success: true,
+          message: "Coupon бонус амжилттай",
+        });
+      }
     }
 
 
-    const reference = v4();
-
-    const transferResult = await Promise.all([
-      creditAccount({
-        amount: CoupenData[0].amount,
-        phone: UserData[0].phone,
-        purpose: "coupon",
-        reference,
-        summary: `${UserData[0].phone} Утасны дугаартай хэрэглэгч ${CoupenData[0].amount} үнийн дүнтэй ${CoupenData[0].coupon_code} coupon кодыг идэвхжүүлэв.`,
-        trnxSummary: `Coupon дугаар: ${CoupenData[0].coupon_code}. Шалгах дугаар:${reference} `,
-        session,
-        paidAt: `${new Date()}`,
-        orderNumber: `${CoupenData[0].so_order}`,
-      }),
-    ]);
-    const failedTxns = transferResult.filter(
-      (result) => result.status !== true
-    );
-    if (failedTxns.length) {
-      const errors = failedTxns.map((a) => a.message);
-      await session.abortTransaction();
-      session.endSession();
-      return res.status(400).json({
-        success: false,
-        message: errors,
-      });
-    }
-    const updateCoupon = await CouponCode.findOne({
-      coupon_code: CoupenData[0].coupon_code,
-    });
-    updateCoupon.usedIt = true;
-    await updateCoupon.save();
-    await session.commitTransaction();
-    session.endSession();
-    return res.status(201).json({
-      success: true,
-      message: "Coupon бонус амжилттай",
-    });
   } catch (err) {
     await session.abortTransaction();
     session.endSession();
@@ -943,9 +939,10 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
       receivers: ["86218721", "88034666"],
       shop_id: "2706",
     };
-    await sendMessage({
-      message,
-    });
+    //Заавал нээ
+    // await sendMessage({
+    //   message,
+    // });
   }
 
   res.status(200).json({

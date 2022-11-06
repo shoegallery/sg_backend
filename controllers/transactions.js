@@ -995,10 +995,10 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
           receivers: ["86218721", "88034666"],
           shop_id: "2706",
         };
-        //Заавал нээ
-        // await sendMessage({
-        //   message,
-        // });
+
+        await sendMessage({
+          message,
+        });
       }
 
       res.status(200).json({

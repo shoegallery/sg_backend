@@ -919,6 +919,7 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
             operatorChargeValue = operatorChargeValue - parseInt(elem.value);
           }
         } else if (elem.purpose === "coupon") {
+          console.log(elem)
           if (elem.trnxType === "Орлого") {
             autoSumCouponCode = autoSumCouponCode + parseInt(elem.value);
           }

@@ -16,6 +16,11 @@ const couponSchema = new mongoose.Schema(
             type: Boolean,
             default: false,
         },
+        whoUsedIt: {
+            type: Number,
+            min: 10000000,
+            max: 99999999,
+        },
         amount: { type: Number, required: [true], },
         so_order: { type: String, unique: true, required: [true], },
         CouponExpire: {

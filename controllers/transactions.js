@@ -705,6 +705,7 @@ const userCouponBonus = asyncHandler(async (req, res) => {
         const updateCoupon = await CouponCode.findOne({
           coupon_code: CoupenData[0].coupon_code,
         });
+        updateCoupon.whoUsedIt = UserData[0].phone;
         updateCoupon.usedIt = true;
         await updateCoupon.save();
         await session.commitTransaction();

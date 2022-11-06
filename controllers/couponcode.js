@@ -23,7 +23,7 @@ const odooData = asyncHandler(async (req, res) => {
     const response_data = [];
     const wallets = await Wallets.findOne({ walletSuperId: walletSuperId });
     if (!wallets) {
-        throw new MyError("Хүчингүй " + walletSuperId + " алга", 401);
+        throw new MyError("Хүчингүй " + walletSuperId, 401);
     }
     var odoo_data = JSON.stringify({
         jsonrpc: "2.0",
@@ -114,42 +114,47 @@ const generate_coupon = asyncHandler(async (req, res) => {
     const { walletSuperId, data } = req.body;
     const wallets = await Wallets.findOne({ walletSuperId: walletSuperId });
     var result;
+    const session = await mongoose.startSession();
     if (!wallets) {
         throw new MyError("Хүчингүй " + walletSuperId + " алга", 401);
     }
-    data.map(async (lu) => {
-        const duplicate = await CouponCode.findOne({ so_order: lu.SO });
-        if (!duplicate) {
-            result = await CouponCode.create({
-                amount: 30000,
-                coupon_phone: lu.phone_number,
-                usedIt: false,
-                coupon_code: voucher_codes.generate({
-                    length: 5,
-                    count: 1,
-                    charset: voucher_codes.charset("alphabetic")
-                })[0],
-                so_order: lu.SO
-            });
-
-            if (result) {
-                const message = {
-                    channel: "sms",
-                    title: "SHOE GALLERY",
-                    body: `Sain baina uu? Ta daraah coupon codiig (${result.coupon_code}) ShoeGallery WALLET app-d ashiglan hudaldan avaltaasaa 30000MNT hunguluuleerei. SHOE GALLERY | 80409000`,
-                    receivers: [`${result.coupon_phone}`],
-                    shop_id: "2706",
-                };
-                // await sendMessage({
-                //     message,
-                // });
-                console.log(message)
+    else {
+        data.map(async (lu) => {
+            const duplicate = await CouponCode.findOne({ so_order: lu.SO });
+            if (!duplicate) {
+                result = await CouponCode.create({
+                    amount: 30000,
+                    coupon_phone: lu.phone_number,
+                    usedIt: false,
+                    coupon_code: voucher_codes.generate({
+                        length: 5,
+                        count: 1,
+                        charset: voucher_codes.charset("alphabetic")
+                    })[0],
+                    so_order: lu.SO
+                });
+                if (result) {
+                    const message = {
+                        channel: "sms",
+                        title: "SHOE GALLERY",
+                        body: `Sain baina uu? Ta daraah coupon codiig (${result.coupon_code}) ShoeGallery WALLET app-d ashiglan hudaldan avaltaasaa 30000MNT hunguluuleerei. SHOE GALLERY | 80409000`,
+                        receivers: [`${result.coupon_phone}`],
+                        shop_id: "2706",
+                    };
+                    // await sendMessage({
+                    //     message,
+                    // });
+                    console.log(message)
+                }
             }
-        }
-    })
-    return res.status(200).json({
-        message: ok
-    });
+        })
+        await session.abortTransaction();
+        session.endSession();
+        return res.status(200).json({
+            message: ok
+        });
+    }
+
 });
 const test = asyncHandler(async (req, res, next) => {
     var stack = [];

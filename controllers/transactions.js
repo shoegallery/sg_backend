@@ -131,15 +131,10 @@ const couponList = asyncHandler(async (req, res) => {
       const allWallets = await CouponCode.aggregate([{
         $group: {
           _id: {
-            date: {
-              $dateToString: {
-                format: "%Y-%m",
-                date: "$createdAt",
-              },
-            },
             usedIt: "$usedIt"
           },
-          count: { $sum: "$amount" },
+          sum: { $sum: "$amount" },
+          count: { $sum: "amount" }
         },
       }]).sort({ createdAt: -1 });
 

@@ -22,7 +22,7 @@ const couponSchema = new mongoose.Schema(
             type: Date,
             default: Date.now() + 10 * 24 * 60 * 60 * 1000
         },
-    }
+    }, { timestamps: true }
 );
 
 const CouponCode = mongoose.model("CouponCode", couponSchema);

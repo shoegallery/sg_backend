@@ -64,7 +64,9 @@ router
 router
   .route("/bosscheckit")
   .post(authorize("admin"), Transactions.bossChecked);
-
+router
+  .route("/coupon_list")
+  .post(authorize("admin"), Transactions.couponList);
 
 
 

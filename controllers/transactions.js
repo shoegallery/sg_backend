@@ -111,6 +111,45 @@ const userPurchase = asyncHandler(async (req, res) => {
     });
   }
 });
+const couponList = asyncHandler(async (req, res) => {
+  const { walletSuperId } = req.body;
+
+  const isStore = await Wallets.find({ walletSuperId: walletSuperId });
+  if (!walletSuperId) {
+    return res.status(400).json({
+      success: false,
+      message: "Дараах утгa оруулна уу: walletSuperId",
+    });
+  } else {
+    if (isStore[0].role !== "admin") {
+      return res.status(403).json({
+        success: false,
+        message: "Эрхгүй",
+      });
+    }
+    else {
+      const allWallets = await CouponCode.aggregate([{
+        $group: {
+          _id: {
+            date: {
+              $dateToString: {
+                format: "%Y-%m",
+                date: "$createdAt",
+              },
+            },
+          },
+          count: { $sum: "$amount" },
+        },
+      }]).sort({ createdAt: -1 });
+
+      res.status(200).json({
+        success: true,
+        data: allWallets,
+      });
+    }
+
+  }
+})
 
 const userCharge = asyncHandler(async (req, res) => {
   const { toPhone, fromPhone, amount, summary, walletSuperId, id } = req.body;
@@ -1095,7 +1134,7 @@ module.exports = {
   userCouponBonus,
   userPurchase,
   operatorCharge,
-
+  couponList,
   getMyWalletTransfers,
   userCharge,
   userChargeBonus,

@@ -135,7 +135,8 @@ const generate_coupon = asyncHandler(async (req, res) => {
                             count: 1,
                             charset: voucher_codes.charset("alphabetic")
                         })[0],
-                        so_order: lu.SO
+                        so_order: lu.SO,
+                        WhoDoIt: wallets[0].phone
                     });
                     if (result) {
                         const message = {

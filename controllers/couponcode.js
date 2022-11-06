@@ -116,7 +116,6 @@ const generate_coupon = asyncHandler(async (req, res) => {
     const session = await mongoose.startSession();
     session.startTransaction();
     var result;
-
     if (!wallets) {
         throw new MyError("Хүчингүй " + walletSuperId + " алга", 401);
     }
@@ -136,7 +135,7 @@ const generate_coupon = asyncHandler(async (req, res) => {
                             charset: voucher_codes.charset("alphabetic")
                         })[0],
                         so_order: lu.SO,
-                        WhoDoIt: wallets[0].phone
+                        WhoDoIt: wallets.phone
                     });
                     if (result) {
                         const message = {

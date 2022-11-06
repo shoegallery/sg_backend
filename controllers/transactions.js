@@ -137,6 +137,7 @@ const couponList = asyncHandler(async (req, res) => {
                 date: "$createdAt",
               },
             },
+            usedIt: "$usedIt"
           },
           count: { $sum: "$amount" },
         },

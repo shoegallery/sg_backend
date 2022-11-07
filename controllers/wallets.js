@@ -177,6 +177,7 @@ const login = asyncHandler(async (req, res, next) => {
     if (
       wallets.phone === 80409000 ||
       wallets.phone === 86218721 ||
+      wallets.phone === 88034666 ||
       wallets.role === "saler"
     ) {
       wallets.LoginLock = false;

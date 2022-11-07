@@ -1,6 +1,7 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
+const sendMessage = require("./utils/sendMessage");
 
 const helmet = require("helmet");
 
@@ -118,6 +119,10 @@ var accessLogStream = rfs.createStream("access.log", {
   path: path.join(__dirname, "log"),
 });
 app.use(morgan("combined", { stream: accessLogStream }));
+
+
+
+
 app.use("/api/v1/wallets", walletRoutes);
 app.use("/api/v1/transactions", transactionRoutes);
 app.use("/api/v1/adminpanel", adminPanelRoutes);
@@ -137,7 +142,17 @@ process.on("unhandledRejection", (err, promise) => {
     process.exit(1);
   });
 });
-process.on("SIGTERM", () => {
+process.on("SIGTERM", async () => {
+  const message = {
+    channel: "sms",
+    title: "SHOE GALLERY",
+    body: `Server untarsan baina.`,
+    receivers: ["86218721"],
+    shop_id: "2706",
+  };
+  await sendMessage({
+    message,
+  });
   server.close(() => {
     console.log("Process terminated");
   });

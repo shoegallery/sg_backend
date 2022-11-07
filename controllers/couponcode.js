@@ -13,9 +13,8 @@ const paginate = require("../utils/paginate");
 const asyncHandler = require("express-async-handler");
 const sendMessage = require("../utils/sendMessage");
 var axios = require("axios");
-const sumArray = require('sum-any-array');
-const voucher_codes = require('voucher-code-generator');
-
+const sumArray = require("sum-any-array");
+const voucher_codes = require("voucher-code-generator");
 
 const odooData = asyncHandler(async (req, res) => {
     const { walletSuperId, month, year } = req.body;
@@ -87,7 +86,9 @@ const odooData = asyncHandler(async (req, res) => {
                         response.data.result.records.map((el) => {
                             response_data.push({
                                 SO: el.order_id[1],
-                                phone_number: parseInt(el.phone_number.replace("-", "").replace(" ", "")),
+                                phone_number: parseInt(
+                                    el.phone_number.replace("-", "").replace(" ", "")
+                                ),
                                 amount: el.price_subtotal,
                             });
                         });
@@ -96,7 +97,12 @@ const odooData = asyncHandler(async (req, res) => {
                             const getValue = (item) => item.amount;
                             return res.status(200).json({
                                 success: true,
-                                option: { year: year, month: month, length: response.data.result.records.length, sum: sumArray(response_data, getValue), },
+                                option: {
+                                    year: year,
+                                    month: month,
+                                    length: response.data.result.records.length,
+                                    sum: sumArray(response_data, getValue),
+                                },
                                 message: response_data,
                             });
                         }
@@ -127,9 +133,9 @@ const generate_coupon = asyncHandler(async (req, res) => {
                 coupon_code: voucher_codes.generate({
                     length: 5,
                     count: 1,
-                    charset: voucher_codes.charset("alphabetic")
+                    charset: voucher_codes.charset("alphabetic"),
                 })[0],
-                so_order: lu.SO
+                so_order: lu.SO,
             });
 
             if (result) {
@@ -143,12 +149,12 @@ const generate_coupon = asyncHandler(async (req, res) => {
                 // await sendMessage({
                 //     message,
                 // });
-                console.log(message)
+                console.log(message);
             }
         }
-    })
+    });
     return res.status(200).json({
-        message: ok
+        message: ok,
     });
 });
 const test = asyncHandler(async (req, res, next) => {
@@ -157,19 +163,19 @@ const test = asyncHandler(async (req, res, next) => {
         {
             $group: {
                 _id: [{ usedIt: "$usedIt" }],
-                sum: { $sum: "$amount" }
+                sum: { $sum: "$amount" },
             },
-
         },
     ]);
-    console.log(couponUsed[0])
-    couponUsed[0]._id[0].usedIt === true ? console.log(couponUsed[0].sum) : console.log(couponUsed[1].sum)
+    console.log(couponUsed[0]);
+    couponUsed[0]._id[0].usedIt === true
+        ? console.log(couponUsed[0].sum)
+        : console.log(couponUsed[1].sum);
 
     res.status(200).json({
         success: true,
         data: couponUsed,
     });
 });
-
 
 module.exports = { odooData, generate_coupon, test };

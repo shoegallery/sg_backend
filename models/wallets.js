@@ -15,10 +15,6 @@ const walletSchema = new mongoose.Schema(
   {
     username: {
       type: String,
-      required: true,
-      trim: true,
-      immutable: true,
-      unique: true,
     },
     balance: {
       type: mongoose.Decimal128,
@@ -52,6 +48,7 @@ const walletSchema = new mongoose.Schema(
       min: 10000000,
       max: 99999999,
     },
+
     isStore: {
       type: String,
     },
@@ -85,12 +82,32 @@ const walletSchema = new mongoose.Schema(
     BufferUUID: {
       type: String,
       default: "00000000-0000-0000-0000-000000000000",
+
     },
     LoggedUUID: {
       type: String,
       default: "00000000-0000-0000-0000-000000000000",
+
     },
     LoginLock: {
+      type: Boolean,
+      default: false,
+    },
+    LoginLimitter: {
+      type: Number,
+      required: true,
+      default: 0
+    },
+    authLock: {
+      type: Boolean,
+      default: false,
+    },
+    authLimitter: {
+      type: Number,
+      required: true,
+      default: 0
+    },
+    Blocked: {
       type: Boolean,
       default: false,
     },
@@ -123,6 +140,7 @@ walletSchema.methods.getJsonWebToken = function () {
 };
 
 walletSchema.methods.checkPassword = async function (enteredPassword) {
+
   return await bcrypt.compare(enteredPassword, this.password);
 };
 

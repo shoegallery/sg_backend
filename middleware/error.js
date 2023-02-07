@@ -1,5 +1,5 @@
 const errorHandler = (err, req, res, next) => {
-  console.log(err.stack.cyan.underline);
+
 
   const error = { ...err };
 
@@ -26,11 +26,16 @@ const errorHandler = (err, req, res, next) => {
     error.message = "Энэ талбарын утгыг давхардуулж өгч болохгүй!";
     error.statusCode = 400;
   }
+  if (error.code === "ERR_HTTP_HEADERS_SENT") {
+    error.message = "Хэвийн";
+    error.statusCode = 200;
+  }
 
-  res.status(err.statusCode || 500).json({
+  res.status(error.statusCode || 500).json({
     success: false,
-    error,
+    message: error.message
   });
+
 };
 
 module.exports = errorHandler;

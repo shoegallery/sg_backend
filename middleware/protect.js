@@ -24,7 +24,6 @@ exports.protect = asyncHandler(async (req, res, next) => {
   if (parseInt(Date.now() / 1000) > req.exp) {
     throw new MyError("Энэ үйлдлийг хийхэд таны эрх хүрэхгүй байна.", 400);
   }
-
   next();
 });
 

@@ -19,6 +19,7 @@ const hpp = require("hpp");
 const axios = require("axios");
 const walletRoutes = require("./routes/wallets");
 const transactionRoutes = require("./routes/transactions");
+const marketingRoutes = require("./routes/marketing");
 const adminPanelRoutes = require("./routes/adminPanel");
 // Аппын тохиргоог process.env рүү ачаалах
 dotenv.config({ path: "./config/config.env" });
@@ -27,37 +28,37 @@ const errorHandler = require("./middleware/error");
 const connectDB = require("./config/db");
 // Express апп үүсгэх
 const app = express();
-
-cron.schedule("* * * * *", () => {
-  let data = JSON.stringify({
-    walletSuperId:
-      "SA3ODr3jyRiYKz178juYxvDLTcI8RRq4aBAtcJGYjpzJRC1IypjBMfbOwHD4v7Iu",
-  });
-  let config = {
-    method: "post",
-    url: "https://dolphin-app-3r9tk.ondigitalocean.app/api/v1/transactions/ecosystem",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    maxRedirects: 0,
-    data: data,
-  };
-  axios(config)
-    .then((response) => {
-      if (response.data.success === true) {
-        if (response.data.data === "warning") {
-          console.log("Хэвийн бус");
-          process.kill(process.pid, "SIGTERM");
-        } else if (response.data.data === "success") {
-          console.log("Эко систем хэвийн");
-        }
-      }
-    })
-    .catch((error) => {
-      process.kill(process.pid, "SIGTERM");
-      console.log("eco system шалгах боломжгүй");
-    });
-});
+//заавал нээ
+// cron.schedule("* * * * *", () => {
+//   let data = JSON.stringify({
+//     walletSuperId:
+//       "SA3ODr3jyRiYKz178juYxvDLTcI8RRq4aBAtcJGYjpzJRC1IypjBMfbOwHD4v7Iu",
+//   });
+//   let config = {
+//     method: "post",
+//     url: "https://dolphin-app-3r9tk.ondigitalocean.app/api/v1/transactions/ecosystem",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     maxRedirects: 0,
+//     data: data,
+//   };
+//   axios(config)
+//     .then((response) => {
+//       if (response.data.success === true) {
+//         if (response.data.data === "warning") {
+//           console.log("Хэвийн бус");
+//           process.kill(process.pid, "SIGTERM");
+//         } else if (response.data.data === "success") {
+//           console.log("Эко систем хэвийн");
+//         }
+//       }
+//     })
+//     .catch((error) => {
+//       process.kill(process.pid, "SIGTERM");
+//       console.log("eco system шалгах боломжгүй");
+//     });
+// });
 
 app.use(helmet());
 // MongoDB өгөгдлийн сантай холбогдох
@@ -124,6 +125,7 @@ app.use(morgan("combined", { stream: accessLogStream }));
 
 
 app.use("/api/v1/wallets", walletRoutes);
+app.use("/api/v1/marketing", marketingRoutes);
 app.use("/api/v1/transactions", transactionRoutes);
 app.use("/api/v1/adminpanel", adminPanelRoutes);
 

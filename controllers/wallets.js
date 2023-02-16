@@ -202,6 +202,7 @@ const createWallet = asyncHandler(async (req, res) => {
 });
 ///////////////////////////////////////////////////////////////////
 
+
 const getMyWallet = asyncHandler(async (req, res, next) => {
   // Оролтыгоо шалгана
   const { walletSuperId } = req.body;
@@ -368,7 +369,12 @@ const version = asyncHandler(async (req, res, next) => {
     ios: process.env.ios_version,
   });
 });
+const checkLogged = asyncHandler(async (req, res, next) => {
+  res.status(200).json({
+    status: true,
 
+  });
+});
 const getAllWallets = asyncHandler(async (req, res, next) => {
   const select = req.query.select;
   ["select", "sort", "page", "limit"].forEach((el) => delete req.query[el]);
@@ -498,7 +504,7 @@ module.exports = {
   createWallet,
 
   logout,
-
+  checkLogged,
   login,
   getAllWalletsOperator,
   getAllWalletsVariance,

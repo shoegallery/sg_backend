@@ -11,6 +11,9 @@ router.use(protect);
 router
   .route("/logout")
   .post(authorize("admin", "operator", "user", "saler"), Wallets.logout);
+router
+  .route("/checkLogged")
+  .post(authorize("admin", "operator", "user", "saler"), Wallets.checkLogged);
 
 router
   .route("/my/:id")

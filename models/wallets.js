@@ -4,8 +4,6 @@ const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 
-
-
 var randtoken = require("rand-token").generator({
   chars: "default",
   source: crypto.randomBytes,
@@ -52,6 +50,8 @@ const walletSchema = new mongoose.Schema(
     isStore: {
       type: String,
     },
+    compilation: { type: Boolean, default: false },
+    color: { type: String, default: "base" },
     gender: { type: String, enum: ["male", "female"] },
     role: {
       type: String,
@@ -64,6 +64,12 @@ const walletSchema = new mongoose.Schema(
       required: [true, "Хэтэвчний эрхийг оруулна уу"],
       enum: ["rosegold", "platnium", "golden", "member"],
       default: "member",
+    },
+    interest: {
+      type: String,
+      enum: ["all", "male", "female"],
+      default: "all",
+
     },
     pinCode: {
       type: String,
@@ -82,12 +88,10 @@ const walletSchema = new mongoose.Schema(
     BufferUUID: {
       type: String,
       default: "00000000-0000-0000-0000-000000000000",
-
     },
     LoggedUUID: {
       type: String,
       default: "00000000-0000-0000-0000-000000000000",
-
     },
     LoginLock: {
       type: Boolean,
@@ -96,7 +100,7 @@ const walletSchema = new mongoose.Schema(
     LoginLimitter: {
       type: Number,
       required: true,
-      default: 0
+      default: 0,
     },
     authLock: {
       type: Boolean,
@@ -105,7 +109,7 @@ const walletSchema = new mongoose.Schema(
     authLimitter: {
       type: Number,
       required: true,
-      default: 0
+      default: 0,
     },
     Blocked: {
       type: Boolean,
@@ -125,7 +129,6 @@ walletSchema.pre("save", async function (next) {
   // Нууц үг өөрчлөгдсөн
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
-
 });
 
 walletSchema.methods.getJsonWebToken = function () {
@@ -140,7 +143,6 @@ walletSchema.methods.getJsonWebToken = function () {
 };
 
 walletSchema.methods.checkPassword = async function (enteredPassword) {
-
   return await bcrypt.compare(enteredPassword, this.password);
 };
 

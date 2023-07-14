@@ -6,7 +6,7 @@ const router = express.Router();
 router.post("/create", Wallets.createWallet); //ok
 router.post("/login", Wallets.login);
 
-router.post("/version", Wallets.version)
+router.post("/version", Wallets.version);
 router.use(protect);
 router
   .route("/logout")
@@ -18,6 +18,9 @@ router
 router
   .route("/my/:id")
   .post(authorize("user", "admin", "operator", "saler"), Wallets.getMyWallet);
+router
+  .route("/info")
+  .post(authorize("user"), Wallets.myInfo);
 
 router
   .route("/list")
@@ -33,7 +36,7 @@ router
   .get(authorize("admin", "operator"), Wallets.getAllWalletsStore);
 router
   .route("/list-users")
-  .get(authorize("admin", "operator"), Wallets.getAllWalletsUser);//ok
+  .get(authorize("admin", "operator"), Wallets.getAllWalletsUser); //ok
 
 router
   .route("/:id")

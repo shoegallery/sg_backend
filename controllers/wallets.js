@@ -8,7 +8,6 @@ const asyncHandler = require("express-async-handler");
 const sendMessage = require("../utils/sendMessage");
 const crypto = require("crypto");
 
-
 ////////////////////////////////////////////////////////////
 const createWallet = asyncHandler(async (req, res) => {
   try {
@@ -62,6 +61,8 @@ const createWallet = asyncHandler(async (req, res) => {
                 isPanel: usePanel,
                 useRole: useRole,
                 LoginLock: wallets.LoginLock,
+                compilation: wallets.compilation,
+                color: wallets.color,
               },
             });
         } else {
@@ -202,11 +203,10 @@ const createWallet = asyncHandler(async (req, res) => {
 });
 ///////////////////////////////////////////////////////////////////
 
-
 const getMyWallet = asyncHandler(async (req, res, next) => {
   // Оролтыгоо шалгана
   const { walletSuperId } = req.body;
-
+  console.log(walletSuperId);
   if (!walletSuperId) {
     throw new MyError("Хэтэвчний ID" + walletSuperId, 400);
   }
@@ -233,6 +233,8 @@ const getMyWallet = asyncHandler(async (req, res, next) => {
       walletType: wallets.walletType,
       isPanel: usePanel,
       useRole: useRole,
+      compilation: wallets.compilation,
+      color: wallets.color,
     },
   });
 });
@@ -308,6 +310,7 @@ const login = asyncHandler(async (req, res, next) => {
         walletsChecked.loginToken = undefined;
         walletsChecked.LoginLock = false;
         walletsChecked.password = encrypted;
+
         await walletsChecked.save();
 
         if (
@@ -336,6 +339,8 @@ const login = asyncHandler(async (req, res, next) => {
               isPanel: usePanel,
               useRole: useRole,
               LoginLock: walletsChecked.LoginLock,
+              compilation: walletsChecked.compilation,
+              color: walletsChecked.color,
             },
           });
       } else {
@@ -372,7 +377,6 @@ const version = asyncHandler(async (req, res, next) => {
 const checkLogged = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     status: true,
-
   });
 });
 const getAllWallets = asyncHandler(async (req, res, next) => {
@@ -452,6 +456,34 @@ const getwallets = asyncHandler(async (req, res, next) => {
   });
 });
 
+const myInfo = asyncHandler(async (req, res, next) => {
+  const { phone, walletSuperId, gender, color, interest } = req.body;
+  if (!phone || !walletSuperId || !gender || !color || !interest) {
+    return res.status(483).json({
+      success: false,
+      message: `параметр бүрэн дамжуулна уу`,
+    });
+  }
+  const walletsChecked = await Wallets.findOne({
+    phone: phone,
+    walletSuperId: walletSuperId,
+  });
+
+  if (!walletsChecked) {
+    return res.status(483).json({
+      success: false,
+      message: `Хэрэглэгч алга`,
+    });
+  }
+  walletsChecked.color = color;
+  walletsChecked.interest = interest;
+  walletsChecked.gender = gender;
+  await walletsChecked.save();
+  res.status(200).json({
+    status: "ok",
+  });
+});
+
 const updatewallets = asyncHandler(async (req, res, next) => {
   const wallets = await Wallets.findByIdAndUpdate(
     req.params.id,
@@ -502,7 +534,7 @@ module.exports = {
   getwallets,
   getAllWallets,
   createWallet,
-
+  myInfo,
   logout,
   checkLogged,
   login,

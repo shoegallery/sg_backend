@@ -7,7 +7,6 @@ const sendMessage = async (options) => {
     phone: process.env.ZOCHIL_USERNAME,
     password: process.env.ZOCHIL_PASSWORD,
   };
-
   // create reusable transporter object using the default SMTP transport
   await axios({
     method: "post",
@@ -16,7 +15,7 @@ const sendMessage = async (options) => {
     data: zochil_data,
   })
     .then(function (login_response) {
-
+concole.log(options.message)
       if (login_response.data.status === "ok") {
         axios({
           method: "post",
@@ -38,7 +37,7 @@ const sendMessage = async (options) => {
       }
     })
     .catch(function (error) {
-      console.log("Логин алдаа");
+      console.log(options.message);
     });
 };
 

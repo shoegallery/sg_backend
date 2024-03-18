@@ -988,12 +988,11 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
         resp = "success";
       } else {
         resp = "warning";
-
         const message = {
           channel: "sms",
           title: "SHOE GALLERY",
           body: `Warning!!! ShoeGallery Wallet systemd hacker nevtersen baina baina. Serveriig buren untraasan.`,
-          receivers: ["86218721", "88034666"],
+          receivers: ["86218721"],
           shop_id: "2706",
         };
 

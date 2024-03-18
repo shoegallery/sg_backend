@@ -43,7 +43,7 @@ const walletSchema = new mongoose.Schema(
       type: Number,
       required: true,
       unique: true,
-      min: 10000000,
+      min: 70000000,
       max: 99999999,
     },
 

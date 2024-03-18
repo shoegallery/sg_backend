@@ -21,12 +21,12 @@ const walletRoutes = require("./routes/wallets");
 const transactionRoutes = require("./routes/transactions");
 const marketingRoutes = require("./routes/marketing");
 const adminPanelRoutes = require("./routes/adminPanel");
-// Аппын тохиргоог process.env рүү ачаалах
+
 dotenv.config({ path: "./config/config.env" });
 
 const errorHandler = require("./middleware/error");
 const connectDB = require("./config/db");
-// Express апп үүсгэх
+
 const app = express();
 //заавал нээ
 // cron.schedule("* * * * *", () => {
@@ -50,13 +50,13 @@ const app = express();
 //           console.log("Хэвийн бус");
 //           process.kill(process.pid, "SIGTERM");
 //         } else if (response.data.data === "success") {
-//           console.log("Эко систем хэвийн");
+//           console.log("систем хэвийн");
 //         }
 //       }
 //     })
 //     .catch((error) => {
 //       process.kill(process.pid, "SIGTERM");
-//       console.log("eco system шалгах боломжгүй");
+//       console.log("system шалгах боломжгүй");
 //     });
 // });
 
@@ -66,12 +66,17 @@ connectDB();
 app.disable("x-powered-by");
 app.use(express.json());
 
-// Манай рест апиг дуудах эрхтэй сайтуудын жагсаалт :
+
 
 var whitelist = [
   "http://localhost:3000",
   "http://localhost:19006",
   "http://172.26.96.1:3000",
+  "http://192.168.21.117",
+  "http://192.168.1.16",
+  "http://172.20.10.6",
+  "http://192.168.1.5",
+  "http://192.168.134.117",
   "https://dolphin-app-3r9tk.ondigitalocean.app",
 ];
 
@@ -135,7 +140,7 @@ app.use(errorHandler);
 const server = app.listen(
   
   process.env.PORT,
-  console.log(`Express сэрвэр ${process.env.PORT} порт дээр аслаа... `.rainbow)
+  console.log(`сэрвэр ${process.env.PORT} порт дээр аслаа... `)
 );
 
 // Баригдалгүй цацагдсан бүх алдаануудыг энд барьж авна
@@ -148,7 +153,7 @@ process.on("unhandledRejection", (err, promise) => {
 process.on("SIGTERM", async () => {
   const message = {
     channel: "sms",
-    title: "SHOE GALLERY",
+    title: "",
     body: `Server untarsan baina.`,
     receivers: ["86218721"],
     shop_id: "2706",

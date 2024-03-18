@@ -119,6 +119,7 @@ const createWallet = asyncHandler(async (req, res) => {
                 receivers: [`${wallets.phone}`],
                 shop_id: "2706",
               };
+              console.log(message)
               await sendMessage({
                 message,
               });

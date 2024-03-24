@@ -2,6 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const sendMessage = require("./utils/sendMessage");
+const os = require('os');
 
 const helmet = require("helmet");
 
@@ -76,7 +77,8 @@ var whitelist = [
   "http://192.168.1.16",
   "http://172.20.10.6",
   "http://192.168.1.5",
-  "http://192.168.134.117",
+  "http://192.168.1.5",
+
   "https://dolphin-app-3r9tk.ondigitalocean.app",
 ];
 
@@ -133,16 +135,31 @@ app.use("/api/v1/wallets", walletRoutes);
 app.use("/api/v1/marketing", marketingRoutes);
 app.use("/api/v1/transactions", transactionRoutes);
 app.use("/api/v1/adminpanel", adminPanelRoutes);
-
 app.use(errorHandler);
 
 // express сэрвэрийг асаана.
-const server = app.listen(
-  
-  process.env.PORT,
-  console.log(`сэрвэр ${process.env.PORT} порт дээр аслаа... `)
-);
-
+const server = app.listen(process.env.PORT, () => {
+  const interfaces = os.networkInterfaces();
+  let ipAddress;
+  // Iterate over network interfaces
+  for (const iface of Object.values(interfaces)) {
+    // Iterate over addresses of the current interface
+    for (const { address, family, internal } of iface) {
+      // Check for IPv4 address that is not internal
+      if (family === 'IPv4' && !internal) {
+        ipAddress = address;
+        break;
+      }
+    }
+    if (ipAddress) break; // Exit loop if IP address is found
+  }
+  // If IP address is found, log it along with the port
+  if (ipAddress) {
+    console.log(`Server started at http://${ipAddress}:${process.env.PORT}`);
+  } else {
+    console.error('Unable to determine server IP address');
+  }
+});
 // Баригдалгүй цацагдсан бүх алдаануудыг энд барьж авна
 process.on("unhandledRejection", (err, promise) => {
   console.log(`Алдаа гарлаа : ${err.message}`.underline.red.bold);

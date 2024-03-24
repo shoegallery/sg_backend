@@ -7,6 +7,8 @@ router.post("/create", Wallets.createWallet); //ok
 router.post("/login", Wallets.login);
 
 router.post("/version", Wallets.version);
+router.get("/test", Wallets.testcheck);
+
 router.use(protect);
 router
   .route("/logout")

@@ -85,7 +85,7 @@ const createWallet = asyncHandler(async (req, res) => {
             await sendMessage({
               message,
             });
-            console.log(message);
+          
             return res.status(480).json({
               success: false,
               message: "Баталгаажуулах кодыг оруулах шаардлагатай",
@@ -119,11 +119,11 @@ const createWallet = asyncHandler(async (req, res) => {
                 receivers: [`${wallets.phone}`],
                 shop_id: "2706",
               };
-              console.log(message)
+             
               await sendMessage({
                 message,
               });
-              console.log(message);
+             
               return res.status(481).json({
                 success: false,
                 message: "Баталгаажуулах кодыг оруулах шаардлагатай",
@@ -147,7 +147,7 @@ const createWallet = asyncHandler(async (req, res) => {
               await sendMessage({
                 message,
               });
-              console.log(message);
+            
               return res.status(482).json({
                 success: false,
                 message: "Баталгаажуулах кодыг оруулах шаардлагатай",
@@ -188,7 +188,7 @@ const createWallet = asyncHandler(async (req, res) => {
     await sendMessage({
       message,
     });
-    console.log(message);
+  
     return res.status(499).json({
       success: true,
       status: true,
@@ -375,6 +375,15 @@ const version = asyncHandler(async (req, res, next) => {
     ios: process.env.ios_version,
   });
 });
+
+const testcheck = asyncHandler(async (req, res, next) => {
+  res.status(200).json({
+    status: true,
+    message: "yes",
+  });
+});
+
+
 const checkLogged = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     status: true,
@@ -528,6 +537,7 @@ const deletewallets = asyncHandler(async (req, res, next) => {
 });
 
 module.exports = {
+  testcheck,
   version,
   getMyWallet,
   deletewallets,

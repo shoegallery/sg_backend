@@ -15,7 +15,7 @@ const sendMessage = async (options) => {
     data: zochil_data,
   })
     .then(function (login_response) {
-concole.log(options.message)
+
       if (login_response.data.status === "ok") {
         axios({
           method: "post",

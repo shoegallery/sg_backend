@@ -135,7 +135,7 @@ const PushNof = asyncHandler(async (req, res) => {
 
 const getToken = asyncHandler(async (req, res, next) => {
     const { token } = req.body;
-    console.log(typeof token === "string");
+console.log(req.body)
     if (typeof token === "string") {
         const result = await notificationList.create({
             expoNoticationToken: token,

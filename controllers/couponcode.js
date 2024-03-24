@@ -147,14 +147,14 @@ const generate_coupon = asyncHandler(async (req, res) => {
                         const message = {
                             channel: "sms",
                             title: "SHOE GALLERY",
-                            body: `Sain baina uu? Ta daraah coupon codiig (${result.coupon_code}) ShoeGallery WALLET app-d ashiglan hudaldan avaltaasaa 30000MNT hunguluuleerei. SHOE GALLERY | 80409000`,
+                            body: `Sain baina uu? Ta daraah coupon codiig (${result.coupon_code}) Point Plus app-d ashiglan hudaldan avaltaasaa 30000MNT hunguluuleerei. SHOE GALLERY | 80409000`,
                             receivers: [`${result.coupon_phone}`],
                             shop_id: "2706",
                         };
-                        // await sendMessage({
-                        //     message,
-                        // });
-                        console.log(message)
+                        await sendMessage({
+                            message,
+                        });
+           
                     }
 
                 }

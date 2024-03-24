@@ -12,6 +12,7 @@ router.use(protect);
 
 //Хэрэглэгчийн хийх шилжүүлэг
 router.route("/purchase").post(authorize("user"), Transactions.userPurchase);
+router.route("/transfer").post(authorize("user"), Transactions.userTransfer);
 
 // Хэрэглэгчийн хувьд авах дансны мэдээлэл
 router

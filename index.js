@@ -29,15 +29,15 @@ const errorHandler = require("./middleware/error");
 const connectDB = require("./config/db");
 
 const app = express();
-//заавал нээ
+
 // cron.schedule("* * * * *", () => {
 //   let data = JSON.stringify({
 //     walletSuperId:
-//       "SA3ODr3jyRiYKz178juYxvDLTcI8RRq4aBAtcJGYjpzJRC1IypjBMfbOwHD4v7Iu",
+//       "FUcE7fv87has1tigQs6HKzQ4R8qcBwLz5IbnZ96vi3c1xNIRKHrLwwmykQggsEme",
 //   });
 //   let config = {
 //     method: "post",
-//     url: "https://dolphin-app-3r9tk.ondigitalocean.app/api/v1/transactions/ecosystem",
+//     url: "http://192.168.1.5:8080/api/v1/transactions/ecosystem",
 //     headers: {
 //       "Content-Type": "application/json",
 //     },
@@ -175,6 +175,7 @@ process.on("SIGTERM", async () => {
     receivers: ["86218721"],
     shop_id: "2706",
   };
+
   await sendMessage({
     message,
   });

@@ -111,6 +111,105 @@ const userPurchase = asyncHandler(async (req, res) => {
     });
   }
 });
+
+const userTransfer = asyncHandler(async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  const { toPhone, fromPhone, amount, summary, id, walletSuperId } = req.body;
+
+  const isUser = await Wallets.findById(id);
+  const isStore = await Wallets.find({ phone: toPhone });
+  try {
+    if (amount > 0 && isUser.walletSuperId == walletSuperId) {
+      if (
+        !toPhone &&
+        !fromPhone &&
+        !amount &&
+        !summary &&
+        !id &&
+        !walletSuperId
+      ) {
+        return res.status(400).json({
+          success: false,
+          message: `Дараах утгуудыг оруулна уу: toPhone, fromPhone, amount, summary, walletSuperId`,
+        });
+      }
+
+      if (isUser.phone !== fromPhone) {
+        return res.status(403).json({
+          success: false,
+          message:
+            "Худалдан авагч та өөрийнхөө хэтэвчнээс шилжүүлэг хийх ёстой!!",
+        });
+      }
+      if (isStore[0].role !== "user") {
+        return res.status(403).json({
+          success: false,
+          message: "Хэрэглэгч та хэрэглэгчийн данс руу шилжүүлэг хийнэ!!",
+        });
+      }
+      const reference = v4();
+      const transferResult = await Promise.all([
+        debitAccount({
+          amount,
+          phone: fromPhone,
+          purpose: "transfer",
+          reference,
+          summary: `Хэтэвчнээс ${toPhone} данс руу амжилттай шилжүүллээ.`,
+          trnxSummary: `Илгээгч: ${toPhone}. Шалгах дугаар:${reference} `,
+          session,
+          paidAt: `${new Date()}`,
+          orderNumber: "",
+          bossCheck: false,
+        }),
+        creditAccount({
+          amount,
+          phone: toPhone,
+          purpose: "transfer",
+          reference,
+          summary: `${fromPhone} утасны дугаартай хэрэглэгч таны дансанд ${amount} бэлэглэлээ.`,
+          trnxSummary: `Хүлээн авагч: ${fromPhone}. Шалгах дугаар:${reference} `,
+          session,
+          paidAt: `${new Date()}`,
+          orderNumber: "",
+          bossCheck: false,
+        }),
+      ]);
+      const failedTxns = transferResult.filter(
+        (result) => result.status !== true
+      );
+      if (failedTxns.length) {
+        const errors = failedTxns.map((a) => a.message);
+        await session.abortTransaction();
+        session.endSession();
+        return res.status(406).json({
+          success: false,
+          message: errors,
+        });
+      }
+      await session.commitTransaction();
+      session.endSession();
+      return res.status(201).json({
+        success: true,
+        message: "Шилжүүлэг амжилттай",
+      });
+    } else {
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(400).json({
+        success: false,
+        message: `Боломжгүй`,
+      });
+    }
+  } catch (err) {
+    await session.abortTransaction();
+    session.endSession();
+    return res.status(405).json({
+      success: false,
+      message: `Ямар нэгэн зүйл буруу байна`,
+    });
+  }
+});
 const couponList = asyncHandler(async (req, res) => {
   const { walletSuperId } = req.body;
 
@@ -866,13 +965,17 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
     });
   }
   else {
-    if (isStore[0].role !== "admin") {
+    if (isStore[0].role !== "variance") {
       return res.status(403).json({
         success: false,
         message: "Эрхгүй",
       });
     }
+
+   
     else {
+
+
       let stackTwo = [];
       let stackThree = [];
       let membercardValue = 0;
@@ -891,6 +994,7 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
           },
         },
       ]);
+  
       const couponUsed = await CouponCode.aggregate([
         {
           $group: {
@@ -899,6 +1003,7 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
           },
         },
       ]);
+
       couponUsed[0]._id[0].usedIt === true
         ? (couponUsedSum = couponUsed[0].sum)
         : (couponUsedSum = couponUsed[1].sum);
@@ -975,6 +1080,8 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
           problemStack = problemStack + parseInt(lu.value);
         }
       });
+console.log(problemStack)
+
       resp = null;
 
       if (
@@ -991,14 +1098,14 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
         const message = {
           channel: "sms",
           title: "SHOE GALLERY",
-          body: `Warning!!! ShoeGallery Wallet systemd hacker nevtersen baina baina. Serveriig buren untraasan.`,
+          body: `Warning!!! Point Plus systemd hacker nevtersen baina baina. Serveriig buren untraasan.`,
           receivers: ["86218721"],
           shop_id: "2706",
         };
-
-        await sendMessage({
-          message,
-        });
+        //Заавал нээ
+        // await sendMessage({
+        //   message,
+        // });
       }
 
       res.status(200).json({
@@ -1129,6 +1236,7 @@ module.exports = {
   getAllUniversalStatement,
   userCouponBonus,
   userPurchase,
+  userTransfer,
   operatorCharge,
   couponList,
   getMyWalletTransfers,

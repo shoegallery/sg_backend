@@ -12,7 +12,7 @@ const crypto = require("crypto");
 const createWallet = asyncHandler(async (req, res) => {
   try {
     const { phone, uuid } = req.body;
-    console.log(req.body);
+
     const ipAddress =
       req.headers["x-forwarded-for"] || req.connection.remoteAddress;
     const wallets = await Wallets.findOne({
@@ -25,9 +25,11 @@ const createWallet = asyncHandler(async (req, res) => {
         message: "Ямар нэгэн зүйл буруу байна.",
       });
     }
-    const ppp = Math.floor(100000 + Math.random() * 900000);
+    let ppp = Math.floor(100000 + Math.random() * 900000);
+    
 
     if (wallets) {
+      wallets.phone === 70000000 ? (ppp = parseInt("700000")) : wallets.phone === 70000001 ? (ppp = parseInt("700001")) : wallets.phone == 70000002 ? (ppp = parseInt("700002")) : wallets.phone == 70000003 ? (ppp = parseInt("700003")) : wallets.phone == 70000004 ? (ppp = parseInt("700004")) : ppp = ppp + 1 - 1;
       if (wallets.LoggedUUID === uuid) {
         if (wallets.LoginLock === false) {
           let usePanel;
@@ -78,14 +80,14 @@ const createWallet = asyncHandler(async (req, res) => {
             const message = {
               channel: "sms",
               title: "SHOE GALLERY",
-              body: `Sain baina uu? ShoeGallery Wallet ruu ${ppp} codiig oruulj nevterne uu. - SHOE GALLERY`,
+              body: `Sain baina uu? Point Plus ruu ${ppp} codiig oruulj nevterne uu. - SHOE GALLERY`,
               receivers: [`${wallets.phone}`],
               shop_id: "2706",
             };
             await sendMessage({
               message,
             });
-          
+
             return res.status(480).json({
               success: false,
               message: "Баталгаажуулах кодыг оруулах шаардлагатай",
@@ -115,15 +117,15 @@ const createWallet = asyncHandler(async (req, res) => {
               const message = {
                 channel: "sms",
                 title: "SHOE GALLERY",
-                body: `Sain baina uu? ShoeGallery Wallet ruu ${ppp} codiig oruulj nevterne uu. - SHOE GALLERY`,
+                body: `Sain baina uu? Point Plus ruu ${ppp} codiig oruulj nevterne uu. - SHOE GALLERY`,
                 receivers: [`${wallets.phone}`],
                 shop_id: "2706",
               };
-             
+
               await sendMessage({
                 message,
               });
-             
+
               return res.status(481).json({
                 success: false,
                 message: "Баталгаажуулах кодыг оруулах шаардлагатай",
@@ -140,14 +142,14 @@ const createWallet = asyncHandler(async (req, res) => {
               const message = {
                 channel: "sms",
                 title: "SHOE GALLERY",
-                body: `Sain baina uu? ShoeGallery Wallet ruu ${ppp} codiig oruulj nevterne uu. Herev ta oroldoogui bol 80409000 dugaart medegdene uu. - SHOE GALLERY`,
+                body: `Sain baina uu? Point Plus ruu ${ppp} codiig oruulj nevterne uu. Herev ta oroldoogui bol 80409000 dugaart medegdene uu. - SHOE GALLERY`,
                 receivers: [`${wallets.phone}`],
                 shop_id: "2706",
               };
               await sendMessage({
                 message,
               });
-            
+
               return res.status(482).json({
                 success: false,
                 message: "Баталгаажуулах кодыг оруулах шаардлагатай",
@@ -181,14 +183,14 @@ const createWallet = asyncHandler(async (req, res) => {
     const message = {
       channel: "sms",
       title: "SHOE GALLERY",
-      body: `Sain baina uu? ShoeGallery Wallet hetevch amjilttai uuslee. Daraah ${pp} codiig oruulj nevterne uu. - SHOE GALLERY`,
+      body: `Sain baina uu? Point Plus hetevch amjilttai uuslee. Daraah ${pp} codiig oruulj nevterne uu. - SHOE GALLERY`,
       receivers: [`${result.phone}`],
       shop_id: "2706",
     };
     await sendMessage({
       message,
     });
-  
+
     return res.status(499).json({
       success: true,
       status: true,
@@ -251,6 +253,9 @@ const login = asyncHandler(async (req, res, next) => {
 
   // Тухайн хэрэглэгчийн хайна
   const walletsLogin = await Wallets.findOne({ phone }).select("+password");
+
+
+
   const ppp = Math.floor(100000 + Math.random() * 900000);
   const encrypted = crypto
     .createHash("sha256")

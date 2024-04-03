@@ -26,15 +26,15 @@ const createWallet = asyncHandler(async (req, res) => {
       });
     }
     let ppp = Math.floor(100000 + Math.random() * 900000);
-    
 
+    console.log(ppp)
     if (wallets) {
       wallets.phone === 70000000 ? (ppp = parseInt("700000")) : wallets.phone === 70000001 ? (ppp = parseInt("700001")) : wallets.phone == 70000002 ? (ppp = parseInt("700002")) : wallets.phone == 70000003 ? (ppp = parseInt("700003")) : wallets.phone == 70000004 ? (ppp = parseInt("700004")) : ppp = ppp + 1 - 1;
       if (wallets.LoggedUUID === uuid) {
         if (wallets.LoginLock === false) {
           let usePanel;
           let useRole;
-          if (wallets.role === "admin" || wallets.role === "operator") {
+          if (wallets.role === "admin" || wallets.role === "operator" || wallets.role === "saler") {
             usePanel = "officeWorker";
             useRole = wallets.role;
           }
@@ -84,10 +84,10 @@ const createWallet = asyncHandler(async (req, res) => {
               receivers: [`${wallets.phone}`],
               shop_id: "2706",
             };
-            await sendMessage({
-              message,
-            });
-
+            // await sendMessage({
+            //   message,
+            // });
+            console.log(message)
             return res.status(480).json({
               success: false,
               message: "Баталгаажуулах кодыг оруулах шаардлагатай",
@@ -125,7 +125,7 @@ const createWallet = asyncHandler(async (req, res) => {
               await sendMessage({
                 message,
               });
-
+              message
               return res.status(481).json({
                 success: false,
                 message: "Баталгаажуулах кодыг оруулах шаардлагатай",
@@ -146,9 +146,10 @@ const createWallet = asyncHandler(async (req, res) => {
                 receivers: [`${wallets.phone}`],
                 shop_id: "2706",
               };
-              await sendMessage({
-                message,
-              });
+              // await sendMessage({
+              //   message,
+              // });
+              console.log(message)
 
               return res.status(482).json({
                 success: false,
@@ -187,9 +188,10 @@ const createWallet = asyncHandler(async (req, res) => {
       receivers: [`${result.phone}`],
       shop_id: "2706",
     };
-    await sendMessage({
-      message,
-    });
+    // await sendMessage({
+    //   message,
+    // });
+    console.log(message)
 
     return res.status(499).json({
       success: true,
@@ -209,7 +211,7 @@ const createWallet = asyncHandler(async (req, res) => {
 const getMyWallet = asyncHandler(async (req, res, next) => {
   // Оролтыгоо шалгана
   const { walletSuperId } = req.body;
-  console.log(walletSuperId);
+
   if (!walletSuperId) {
     throw new MyError("Хэтэвчний ID" + walletSuperId, 400);
   }

@@ -2,12 +2,15 @@ var axios = require("axios");
 
 // async..await is not allowed in global scope, must use a wrapper
 var udid = 'e596cd6a-bb31-4055-a42e-6e16530373f0';
+
+
 const sendMessage = async (options) => {
-  console.log(options)
+  console.log(options);
   var zochil_data = {
     phone: process.env.ZOCHIL_USERNAME,
     password: process.env.ZOCHIL_PASSWORD,
   };
+  
   // create reusable transporter object using the default SMTP transport
   await axios({
     method: "post",

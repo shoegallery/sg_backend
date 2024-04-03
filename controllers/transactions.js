@@ -972,7 +972,7 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
       });
     }
 
-   
+
     else {
 
 
@@ -994,7 +994,7 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
           },
         },
       ]);
-  
+
       const couponUsed = await CouponCode.aggregate([
         {
           $group: {
@@ -1060,7 +1060,7 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
             operatorChargeValue = operatorChargeValue - parseInt(elem.value);
           }
         } else if (elem.purpose === "coupon") {
-          console.log(elem)
+        
           if (elem.trnxType === "Орлого") {
             autoSumCouponCode = autoSumCouponCode + parseInt(elem.value);
           }
@@ -1080,10 +1080,8 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
           problemStack = problemStack + parseInt(lu.value);
         }
       });
-console.log(problemStack)
 
       resp = null;
-
       if (
         problemStack - 1000000000 === 0 &&
         membercardValue === 0 &&

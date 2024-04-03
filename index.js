@@ -37,7 +37,7 @@ const app = express();
 //   });
 //   let config = {
 //     method: "post",
-//     url: "http://192.168.1.5:8080/api/v1/transactions/ecosystem",
+//     url: "http://172.21.176.1:8080/api/v1/transactions/ecosystem",
 //     headers: {
 //       "Content-Type": "application/json",
 //     },
@@ -48,6 +48,7 @@ const app = express();
 //     .then((response) => {
 //       if (response.data.success === true) {
 //         if (response.data.data === "warning") {
+
 //           console.log("Хэвийн бус");
 //           process.kill(process.pid, "SIGTERM");
 //         } else if (response.data.data === "success") {
@@ -75,11 +76,16 @@ var whitelist = [
   "http://172.26.96.1:3000",
   "http://192.168.21.117",
   "http://192.168.1.16",
+  "http://192.168.235.117",
   "http://172.20.10.6",
   "http://192.168.1.5",
   "http://192.168.1.5",
+  "http://192.168.235.117",
+  "http://10.0.9.200",
+  "http://172.17.240.1",
+  "http://192.168.235.117",
+  "http://172.21.176.1",
 
-  "https://dolphin-app-3r9tk.ondigitalocean.app",
 ];
 
 // Өөр домэйн дээр байрлах клиент вэб аппуудаас шаардах шаардлагуудыг энд тодорхойлно
@@ -160,6 +166,7 @@ const server = app.listen(process.env.PORT, () => {
     console.error('Unable to determine server IP address');
   }
 });
+
 // Баригдалгүй цацагдсан бүх алдаануудыг энд барьж авна
 process.on("unhandledRejection", (err, promise) => {
   console.log(`Алдаа гарлаа : ${err.message}`.underline.red.bold);
@@ -175,10 +182,10 @@ process.on("SIGTERM", async () => {
     receivers: ["86218721"],
     shop_id: "2706",
   };
-
-  await sendMessage({
-    message,
-  });
+  console.log(message.body)
+  // await sendMessage({
+  //   message,
+  // });
   server.close(() => {
     console.log("Process terminated");
   });

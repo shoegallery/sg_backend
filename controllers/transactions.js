@@ -225,26 +225,26 @@ const couponList = asyncHandler(async (req, res) => {
         success: false,
         message: "Эрхгүй",
       });
-    }
-    else {
-      const allWallets = await CouponCode.aggregate([{
-        $group: {
-          _id: {
-            usedIt: "$usedIt"
+    } else {
+      const allWallets = await CouponCode.aggregate([
+        {
+          $group: {
+            _id: {
+              usedIt: "$usedIt",
+            },
+            sum: { $sum: "$amount" },
+            count: { $sum: "amount" },
           },
-          sum: { $sum: "$amount" },
-          count: { $sum: "amount" }
         },
-      }]).sort({ createdAt: -1 });
+      ]).sort({ createdAt: -1 });
 
       res.status(200).json({
         success: true,
         data: allWallets,
       });
     }
-
   }
-})
+});
 
 const userCharge = asyncHandler(async (req, res) => {
   const { toPhone, fromPhone, amount, summary, walletSuperId, id } = req.body;
@@ -529,8 +529,7 @@ const userMemberCardCharge = asyncHandler(async (req, res) => {
           success: false,
           message: `Эдгээрийг сонгоно. 2 сая , 3 сая , 5 сая`,
         });
-      }
-      else {
+      } else {
         const transferResult = await Promise.all([
           debitAccount({
             amount,
@@ -624,7 +623,6 @@ const userMemberCardCharge = asyncHandler(async (req, res) => {
       });
     }
   } catch (err) {
-
     await session.abortTransaction();
     session.endSession();
     return res.status(400).json({
@@ -652,15 +650,13 @@ const userChargeBonus = asyncHandler(async (req, res) => {
           success: false,
           message: "Та өөрийнхөө хэтэвчнээс шилжүүлэг хийх ёстой!!",
         });
-      }
-      else {
+      } else {
         if (isUser[0].role !== "user") {
           return res.status(403).json({
             success: false,
             message: "Та зөвхөн хэрэглэгчийн данс руу шилжүүлэг хийнэ!!",
           });
-        }
-        else {
+        } else {
           const reference = v4();
           if (
             !toPhone &&
@@ -675,8 +671,7 @@ const userChargeBonus = asyncHandler(async (req, res) => {
               message:
                 "Дараах утгуудыг оруулна уу: toPhone, fromPhone, amount, summary",
             });
-          }
-          else {
+          } else {
             const transferResult = await Promise.all([
               debitAccount({
                 amount,
@@ -715,7 +710,6 @@ const userChargeBonus = asyncHandler(async (req, res) => {
                 message: errors,
               });
             }
-
           }
           await session.commitTransaction();
           session.endSession();
@@ -724,11 +718,7 @@ const userChargeBonus = asyncHandler(async (req, res) => {
             message: "Бонус цэнэглэлт амжилттай",
           });
         }
-
-
       }
-
-
     } else {
       await session.abortTransaction();
       session.endSession();
@@ -766,15 +756,13 @@ const userCouponBonus = asyncHandler(async (req, res) => {
         success: false,
         message: "Байхгүй код байна.",
       });
-    }
-    else {
+    } else {
       if (CoupenData[0].usedIt === true) {
         return res.status(405).json({
           success: false,
           message: "Хүчингүй код байна.",
         });
-      }
-      else {
+      } else {
         const reference = v4();
         const transferResult = await Promise.all([
           creditAccount({
@@ -815,8 +803,6 @@ const userCouponBonus = asyncHandler(async (req, res) => {
         });
       }
     }
-
-
   } catch (err) {
     await session.abortTransaction();
     session.endSession();
@@ -855,7 +841,6 @@ const getMyWalletTransfers = asyncHandler(async (req, res, next) => {
       });
     }
   }
-
 });
 
 const getAllUniversalStatement = asyncHandler(async (req, res, next) => {
@@ -884,9 +869,7 @@ const statisticData = asyncHandler(async (req, res, next) => {
       success: false,
       message: "Дараах утгa оруулна уу: walletSuperId",
     });
-  }
-  else {
-
+  } else {
     if (isStore[0].role !== "operator" && isStore[0].role !== "admin") {
       return res.status(403).json({
         success: false,
@@ -897,7 +880,11 @@ const statisticData = asyncHandler(async (req, res, next) => {
         {
           $group: {
             _id: [
-              { date: { $dateToString: { format: "%Y-%m", date: "$createdAt" } } },
+              {
+                date: {
+                  $dateToString: { format: "%Y-%m", date: "$createdAt" },
+                },
+              },
               { purpose: "$purpose" },
               { trnxType: "$trnxType" },
             ],
@@ -948,10 +935,7 @@ const statisticData = asyncHandler(async (req, res, next) => {
         ],
       });
     }
-
-
   }
-
 });
 
 const ecoSystem = asyncHandler(async (req, res, next) => {
@@ -963,19 +947,13 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
       success: false,
       message: "Дараах утгa оруулна уу: walletSuperId",
     });
-  }
-  else {
+  } else {
     if (isStore[0].role !== "variance") {
       return res.status(403).json({
         success: false,
         message: "Эрхгүй",
       });
-    }
-
-
-    else {
-
-
+    } else {
       let stackTwo = [];
       let stackThree = [];
       let membercardValue = 0;
@@ -1060,7 +1038,6 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
             operatorChargeValue = operatorChargeValue - parseInt(elem.value);
           }
         } else if (elem.purpose === "coupon") {
-        
           if (elem.trnxType === "Орлого") {
             autoSumCouponCode = autoSumCouponCode + parseInt(elem.value);
           }
@@ -1094,11 +1071,14 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
       } else {
         resp = "warning";
         const message = {
-          channel: "sms",
-          title: "SHOE GALLERY",
-          body: `Warning!!! Point Plus systemd hacker nevtersen baina baina. Serveriig buren untraasan.`,
-          receivers: ["86218721"],
-          shop_id: "2706",
+          website_id: 59,
+          sms: {
+            to: "86218721",
+            content: `Warning!!! Point Plus systemd hacker nevtersen baina baina. Serveriig buren untraasan.`,
+            price: 55,
+            operator: "unitel",
+            status: "loading",
+          },
         };
         //Заавал нээ
         // await sendMessage({
@@ -1111,9 +1091,7 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
         data: resp,
       });
     }
-
   }
-
 });
 
 const bonusSalary = asyncHandler(async (req, res, next) => {
@@ -1161,14 +1139,12 @@ const bossUnchecked = asyncHandler(async (req, res, next) => {
       message: "Дараах утгa оруулна уу: walletSuperId",
     });
   } else {
-
     if (isStore[0].role !== "admin") {
       return res.status(403).json({
         success: false,
         message: "Эрхгүй",
       });
-    }
-    else {
+    } else {
       const allWallets = await Transactions.find({
         purpose: "membercard",
         trnxType: "Зарлага",
@@ -1180,7 +1156,6 @@ const bossUnchecked = asyncHandler(async (req, res, next) => {
         data: allWallets,
       });
     }
-
   }
 });
 const bossChecked = asyncHandler(async (req, res, next) => {
@@ -1192,15 +1167,13 @@ const bossChecked = asyncHandler(async (req, res, next) => {
       success: false,
       message: "Дараах утгa оруулна уу: walletSuperId",
     });
-  }
-  else {
+  } else {
     if (isStore[0].role !== "admin") {
       return res.status(403).json({
         success: false,
         message: "Эрхгүй",
       });
-    }
-    else {
+    } else {
       const wallets = await Transactions.findById(id);
       if (!wallets) {
         throw new MyError("id байхгүй", 403);
@@ -1214,9 +1187,7 @@ const bossChecked = asyncHandler(async (req, res, next) => {
         success: true,
       });
     }
-
   }
-
 });
 
 module.exports = {

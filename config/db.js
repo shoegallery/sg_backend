@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const sendMessage = require("../utils/sendMessage")
+const sendMessage = require("../utils/sendMessage");
 const connectDB = async () => {
   mongoose
     .connect(process.env.DATABASE_URL, {
@@ -11,11 +11,14 @@ const connectDB = async () => {
     })
     .catch((err) => {
       const message = {
-        channel: "sms",
-        title: "SHOE GALLERY",
-        body: `MongoDB salsan baina`,
-        receivers: ["86218721"],
-        shop_id: "2706",
+        website_id: 59,
+        sms: {
+          to: "86218721",
+          content: "MongoDB salsan baina",
+          price: 55,
+          operator: "unitel",
+          status: "loading",
+        },
       };
       sendMessage({
         message,

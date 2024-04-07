@@ -27,14 +27,28 @@ const createWallet = asyncHandler(async (req, res) => {
     }
     let ppp = Math.floor(100000 + Math.random() * 900000);
 
-    console.log(ppp)
+    console.log(ppp);
     if (wallets) {
-      wallets.phone === 70000000 ? (ppp = parseInt("700000")) : wallets.phone === 70000001 ? (ppp = parseInt("700001")) : wallets.phone == 70000002 ? (ppp = parseInt("700002")) : wallets.phone == 70000003 ? (ppp = parseInt("700003")) : wallets.phone == 70000004 ? (ppp = parseInt("700004")) : ppp = ppp + 1 - 1;
+      wallets.phone === 70000000
+        ? (ppp = parseInt("700000"))
+        : wallets.phone === 70000001
+        ? (ppp = parseInt("700001"))
+        : wallets.phone == 70000002
+        ? (ppp = parseInt("700002"))
+        : wallets.phone == 70000003
+        ? (ppp = parseInt("700003"))
+        : wallets.phone == 70000004
+        ? (ppp = parseInt("700004"))
+        : (ppp = ppp + 1 - 1);
       if (wallets.LoggedUUID === uuid) {
         if (wallets.LoginLock === false) {
           let usePanel;
           let useRole;
-          if (wallets.role === "admin" || wallets.role === "operator" || wallets.role === "saler") {
+          if (
+            wallets.role === "admin" ||
+            wallets.role === "operator" ||
+            wallets.role === "saler"
+          ) {
             usePanel = "officeWorker";
             useRole = wallets.role;
           }
@@ -78,16 +92,20 @@ const createWallet = asyncHandler(async (req, res) => {
             wallets.LoginLimitter = wallets.LoginLimitter + 1;
             await wallets.save();
             const message = {
-              channel: "sms",
-              title: "SHOE GALLERY",
-              body: `Sain baina uu? Point Plus ruu ${ppp} codiig oruulj nevterne uu. - SHOE GALLERY`,
-              receivers: [`${wallets.phone}`],
-              shop_id: "2706",
+              website_id: 59,
+              sms: {
+                to: `${wallets.phone}`,
+                content: `Sain baina uu? Point Plus ruu ${ppp} codiig oruulj nevterne uu. - POINT PLUS`,
+                price: 55,
+                operator: "unitel",
+                status: "loading",
+              },
             };
+
             // await sendMessage({
             //   message,
             // });
-            console.log(message)
+            console.log(message);
             return res.status(480).json({
               success: false,
               message: "Баталгаажуулах кодыг оруулах шаардлагатай",
@@ -115,17 +133,20 @@ const createWallet = asyncHandler(async (req, res) => {
               wallets.LoginLimitter = wallets.LoginLimitter + 1;
               await wallets.save();
               const message = {
-                channel: "sms",
-                title: "SHOE GALLERY",
-                body: `Sain baina uu? Point Plus ruu ${ppp} codiig oruulj nevterne uu. - SHOE GALLERY`,
-                receivers: [`${wallets.phone}`],
-                shop_id: "2706",
+                website_id: 59,
+                sms: {
+                  to: `${wallets.phone}`,
+                  content: `Sain baina uu? Point Plus ruu ${ppp} codiig oruulj nevterne uu. - POINT PLUS`,
+                  price: 55,
+                  operator: "unitel",
+                  status: "loading",
+                },
               };
 
               await sendMessage({
                 message,
               });
-              message
+              message;
               return res.status(481).json({
                 success: false,
                 message: "Баталгаажуулах кодыг оруулах шаардлагатай",
@@ -140,16 +161,19 @@ const createWallet = asyncHandler(async (req, res) => {
               wallets.LoginLimitter = wallets.LoginLimitter + 1;
               await wallets.save();
               const message = {
-                channel: "sms",
-                title: "SHOE GALLERY",
-                body: `Sain baina uu? Point Plus ruu ${ppp} codiig oruulj nevterne uu. Herev ta oroldoogui bol 80409000 dugaart medegdene uu. - SHOE GALLERY`,
-                receivers: [`${wallets.phone}`],
-                shop_id: "2706",
+                website_id: 59,
+                sms: {
+                  to: `${wallets.phone}`,
+                  content: `Sain baina uu? Point Plus ruu ${ppp} codiig oruulj nevterne uu. Herev ta oroldoogui bol 86218721 dugaart medegdene uu. - POINT PLUS`,
+                  price: 55,
+                  operator: "unitel",
+                  status: "loading",
+                },
               };
               // await sendMessage({
               //   message,
               // });
-              console.log(message)
+              console.log(message);
 
               return res.status(482).json({
                 success: false,
@@ -182,16 +206,20 @@ const createWallet = asyncHandler(async (req, res) => {
     });
 
     const message = {
-      channel: "sms",
-      title: "SHOE GALLERY",
-      body: `Sain baina uu? Point Plus hetevch amjilttai uuslee. Daraah ${pp} codiig oruulj nevterne uu. - SHOE GALLERY`,
-      receivers: [`${result.phone}`],
-      shop_id: "2706",
+      website_id: 59,
+      sms: {
+        to: `${result.phone}`,
+        content: `Sain baina uu? Point Plus hetevch amjilttai uuslee. Daraah ${pp} codiig oruulj nevterne uu. - POINT PLUS`,
+        price: 55,
+        operator: "unitel",
+        status: "loading",
+      },
     };
+
     // await sendMessage({
     //   message,
     // });
-    console.log(message)
+    console.log(message);
 
     return res.status(499).json({
       success: true,
@@ -255,8 +283,6 @@ const login = asyncHandler(async (req, res, next) => {
 
   // Тухайн хэрэглэгчийн хайна
   const walletsLogin = await Wallets.findOne({ phone }).select("+password");
-
-
 
   const ppp = Math.floor(100000 + Math.random() * 900000);
   const encrypted = crypto
@@ -389,7 +415,6 @@ const testcheck = asyncHandler(async (req, res, next) => {
     message: "yes",
   });
 });
-
 
 const checkLogged = asyncHandler(async (req, res, next) => {
   res.status(200).json({

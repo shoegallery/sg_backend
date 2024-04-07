@@ -2,7 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const sendMessage = require("./utils/sendMessage");
-const os = require('os');
+const os = require("os");
 
 const helmet = require("helmet");
 
@@ -37,7 +37,7 @@ cron.schedule("* * * * *", () => {
   });
   let config = {
     method: "post",
-    url: "http://192.168.19.117:8080/api/v1/transactions/ecosystem",
+    url: "http://192.168.1.2:8080/api/v1/transactions/ecosystem",
     headers: {
       "Content-Type": "application/json",
     },
@@ -48,7 +48,6 @@ cron.schedule("* * * * *", () => {
     .then((response) => {
       if (response.data.success === true) {
         if (response.data.data === "warning") {
-
           console.log("Хэвийн бус");
           process.kill(process.pid, "SIGTERM");
         } else if (response.data.data === "success") {
@@ -68,8 +67,6 @@ connectDB();
 app.disable("x-powered-by");
 app.use(express.json());
 
-
-
 var whitelist = [
   "http://localhost:3000",
   "http://localhost:19006",
@@ -81,17 +78,17 @@ var whitelist = [
   "http://192.168.1.5",
   "http://192.168.19.117",
   "http://192.168.1.5",
+  "http://192.168.1.2",
   "http://192.168.235.117",
   "http://10.0.9.200",
   "http://172.17.240.1",
   "http://192.168.235.117",
   "http://172.21.176.1",
-  
 ];
 
 // Өөр домэйн дээр байрлах клиент вэб аппуудаас шаардах шаардлагуудыг энд тодорхойлно
 var corsOptions = {
-// Ямар ямар домэйнээс манай рест апиг дуудаж болохыг заана
+  // Ямар ямар домэйнээс манай рест апиг дуудаж болохыг заана
   origin: function (origin, callback) {
     if (origin === undefined || whitelist.indexOf(origin) !== -1) {
       // Энэ домэйнээс манай рест рүү хандахыг зөвшөөрнө
@@ -134,7 +131,6 @@ var accessLogStream = rfs.createStream("access.log", {
 });
 app.use(morgan("combined", { stream: accessLogStream }));
 
-
 app.use("/api/v1/wallets", walletRoutes);
 app.use("/api/v1/marketing", marketingRoutes);
 app.use("/api/v1/transactions", transactionRoutes);
@@ -151,7 +147,7 @@ const server = app.listen(process.env.PORT, () => {
     // Iterate over addresses of the current interface
     for (const { address, family, internal } of iface) {
       // Check for IPv4 address that is not internal
-      if (family === 'IPv4' && !internal) {
+      if (family === "IPv4" && !internal) {
         ipAddress = address;
         break;
       }
@@ -162,7 +158,7 @@ const server = app.listen(process.env.PORT, () => {
   if (ipAddress) {
     console.log(`Server started at http://${ipAddress}:${process.env.PORT}`);
   } else {
-    console.error('Unable to determine server IP address');
+    console.error("Unable to determine server IP address");
   }
 });
 
@@ -175,13 +171,16 @@ process.on("unhandledRejection", (err, promise) => {
 });
 process.on("SIGTERM", async () => {
   const message = {
-    channel: "sms",
-    title: "",
-    body: `Server untarsan baina.`,
-    receivers: ["86218721"],
-    shop_id: "2706",
+    website_id: 59,
+    sms: {
+      to: "86218721",
+      content: "Server untarsan baina.",
+      price: 55,
+      operator: "unitel",
+      status: "loading",
+    },
   };
-  console.log(message.body)
+  console.log(message.body);
   // await sendMessage({
   //   message,
   // });

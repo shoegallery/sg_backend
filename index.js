@@ -37,7 +37,7 @@ cron.schedule("* * * * *", () => {
   });
   let config = {
     method: "post",
-    url: "http://192.168.1.2:8080/api/v1/transactions/ecosystem",
+    url: "http://172.17.224.1:8080/api/v1/transactions/ecosystem",
     headers: {
       "Content-Type": "application/json",
     },
@@ -68,21 +68,18 @@ app.disable("x-powered-by");
 app.use(express.json());
 
 var whitelist = [
-  "http://localhost:3000",
+  "http://172.17.224.1",
   "http://localhost:19006",
   "http://172.26.96.1:3000",
   "http://192.168.21.117",
   "http://192.168.1.16",
   "http://192.168.235.117",
   "http://172.20.10.6",
-  "http://192.168.1.5",
   "http://192.168.19.117",
-  "http://192.168.1.5",
   "http://192.168.1.2",
-  "http://192.168.235.117",
+  
   "http://10.0.9.200",
   "http://172.17.240.1",
-  "http://192.168.235.117",
   "http://172.21.176.1",
 ];
 
@@ -180,10 +177,10 @@ process.on("SIGTERM", async () => {
       status: "loading",
     },
   };
-  console.log(message.body);
-  // await sendMessage({
-  //   message,
-  // });
+
+  await sendMessage({
+    message,
+  });
   server.close(() => {
     console.log("Process terminated");
   });

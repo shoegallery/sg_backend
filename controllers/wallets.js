@@ -10,6 +10,7 @@ const crypto = require("crypto");
 
 ////////////////////////////////////////////////////////////
 const createWallet = asyncHandler(async (req, res) => {
+
   try {
     const { phone, uuid } = req.body;
 
@@ -102,10 +103,10 @@ const createWallet = asyncHandler(async (req, res) => {
               },
             };
 
-            // await sendMessage({
-            //   message,
-            // });
-            console.log(message);
+            await sendMessage({
+              message,
+            });
+     
             return res.status(480).json({
               success: false,
               message: "Баталгаажуулах кодыг оруулах шаардлагатай",
@@ -170,10 +171,10 @@ const createWallet = asyncHandler(async (req, res) => {
                   status: "loading",
                 },
               };
-              // await sendMessage({
-              //   message,
-              // });
-              console.log(message);
+              await sendMessage({
+                message,
+              });
+           
 
               return res.status(482).json({
                 success: false,
@@ -216,10 +217,10 @@ const createWallet = asyncHandler(async (req, res) => {
       },
     };
 
-    // await sendMessage({
-    //   message,
-    // });
-    console.log(message);
+    await sendMessage({
+      message,
+    });
+
 
     return res.status(499).json({
       success: true,

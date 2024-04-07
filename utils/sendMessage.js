@@ -3,11 +3,8 @@ var axios = require("axios");
 // async..await is not allowed in global scope, must use a wrapper
 
 const sendMessage = async (options) => {
-  console.log("---------" + options);
-  var zochil_data = {
-    phone: process.env.ZOCHIL_USERNAME,
-    password: process.env.ZOCHIL_PASSWORD,
-  };
+  console.log(options);
+
 
   // await axios({
   //   method: "post",
@@ -32,7 +29,7 @@ const sendMessage = async (options) => {
   //   data: options.message,
   // })
   //   .then(function (send_sms) {
-  //     console.log(send_sms);
+  //     console.log(send_sms.data);
   //   })
   //   .catch(function (error) {
   //     console.log("Sent алдаа");

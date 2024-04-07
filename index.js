@@ -30,37 +30,37 @@ const connectDB = require("./config/db");
 
 const app = express();
 
-// cron.schedule("* * * * *", () => {
-//   let data = JSON.stringify({
-//     walletSuperId:
-//       "FUcE7fv87has1tigQs6HKzQ4R8qcBwLz5IbnZ96vi3c1xNIRKHrLwwmykQggsEme",
-//   });
-//   let config = {
-//     method: "post",
-//     url: "http://172.21.176.1:8080/api/v1/transactions/ecosystem",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     maxRedirects: 0,
-//     data: data,
-//   };
-//   axios(config)
-//     .then((response) => {
-//       if (response.data.success === true) {
-//         if (response.data.data === "warning") {
+cron.schedule("* * * * *", () => {
+  let data = JSON.stringify({
+    walletSuperId:
+      "FUcE7fv87has1tigQs6HKzQ4R8qcBwLz5IbnZ96vi3c1xNIRKHrLwwmykQggsEme",
+  });
+  let config = {
+    method: "post",
+    url: "http://192.168.19.117:8080/api/v1/transactions/ecosystem",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    maxRedirects: 0,
+    data: data,
+  };
+  axios(config)
+    .then((response) => {
+      if (response.data.success === true) {
+        if (response.data.data === "warning") {
 
-//           console.log("Хэвийн бус");
-//           process.kill(process.pid, "SIGTERM");
-//         } else if (response.data.data === "success") {
-//           console.log("систем хэвийн");
-//         }
-//       }
-//     })
-//     .catch((error) => {
-//       process.kill(process.pid, "SIGTERM");
-//       console.log("system шалгах боломжгүй");
-//     });
-// });
+          console.log("Хэвийн бус");
+          process.kill(process.pid, "SIGTERM");
+        } else if (response.data.data === "success") {
+          console.log("систем хэвийн");
+        }
+      }
+    })
+    .catch((error) => {
+      process.kill(process.pid, "SIGTERM");
+      console.log("system шалгах боломжгүй");
+    });
+});
 
 app.use(helmet());
 // MongoDB өгөгдлийн сантай холбогдох
@@ -79,31 +79,32 @@ var whitelist = [
   "http://192.168.235.117",
   "http://172.20.10.6",
   "http://192.168.1.5",
+  "http://192.168.19.117",
   "http://192.168.1.5",
   "http://192.168.235.117",
   "http://10.0.9.200",
   "http://172.17.240.1",
   "http://192.168.235.117",
   "http://172.21.176.1",
-
+  
 ];
 
 // Өөр домэйн дээр байрлах клиент вэб аппуудаас шаардах шаардлагуудыг энд тодорхойлно
 var corsOptions = {
-  // Ямар ямар домэйнээс манай рест апиг дуудаж болохыг заана
+// Ямар ямар домэйнээс манай рест апиг дуудаж болохыг заана
   origin: function (origin, callback) {
     if (origin === undefined || whitelist.indexOf(origin) !== -1) {
       // Энэ домэйнээс манай рест рүү хандахыг зөвшөөрнө
       callback(null, true);
     } else {
       // Энэ домэйнд хандахыг хориглоно.
-      callback(new Error("Horigloj baina.."));
+      callback(new Error("Энэ домайн хандахыг хориглоно"));
     }
   },
   // Клиент талаас эдгээр http header-үүдийг бичиж илгээхийг зөвшөөрнө
   allowedHeaders: "Authorization, Set-Cookie, Content-Type",
   // Клиент талаас эдгээр мэссэжүүдийг илгээхийг зөвшөөрнө
-  methods: "GET, POST, PUT, DELETE",
+  methods: "GET, POST",
   // Клиент тал authorization юмуу cookie мэдээллүүдээ илгээхийг зөвшөөрнө
   credentials: true,
 };
@@ -115,11 +116,10 @@ const limiter = rateLimit({
   message: "15 минутанд 200 удаа л хандаж болно! ",
 });
 app.use(limiter);
-// http parameter pollution халдлагын эсрэг books?name=aaa&name=bbb  ---> name="bbb"
+// http parameter pollution халдлагын эсрэг
 app.use(hpp());
-// Cookie байвал req.cookie рүү оруулж өгнө0
+// Cookie-г  req.cookie рүү оруулж өгнө
 app.use(cookieParser());
-// логгер
 
 // Клиент вэб аппуудыг мөрдөх ёстой нууцлал хамгаалалтыг http header ашиглан зааж өгнө
 app.use(cors(corsOptions));
@@ -135,15 +135,14 @@ var accessLogStream = rfs.createStream("access.log", {
 app.use(morgan("combined", { stream: accessLogStream }));
 
 
-
-
 app.use("/api/v1/wallets", walletRoutes);
 app.use("/api/v1/marketing", marketingRoutes);
 app.use("/api/v1/transactions", transactionRoutes);
 app.use("/api/v1/adminpanel", adminPanelRoutes);
+
 app.use(errorHandler);
 
-// express сэрвэрийг асаана.
+// express сэрвэрийг асна.
 const server = app.listen(process.env.PORT, () => {
   const interfaces = os.networkInterfaces();
   let ipAddress;

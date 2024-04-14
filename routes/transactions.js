@@ -4,11 +4,9 @@ const { protect, authorize } = require("../middleware/protect");
 const Transactions = require("../controllers/transactions");
 const CouponCode = require("../controllers/couponcode");
 
-
 router.post("/ecosystem", Transactions.ecoSystem);
 
 router.use(protect);
-
 
 //Хэрэглэгчийн хийх шилжүүлэг
 router.route("/purchase").post(authorize("user"), Transactions.userPurchase);
@@ -37,22 +35,17 @@ router
   .route("/bonus")
   .post(authorize("admin", "operator"), Transactions.userChargeBonus);
 
-
 //Админы хийх шилжүүлэг
 router
   .route("/operatorcharge")
   .post(authorize("admin"), Transactions.operatorCharge);
 
-router
-  .route("/get_odoo_coupon")
-  .post(authorize("admin"), CouponCode.odooData);
+router.route("/get_odoo_coupon").post(authorize("admin"), CouponCode.odooData);
 
 router
   .route("/generate_coupon")
   .post(authorize("admin"), CouponCode.generate_coupon);
-router
-  .route("/test")
-  .post(authorize("admin"), CouponCode.test);
+router.route("/test").post(authorize("admin"), CouponCode.test);
 //Админы харах Charge шилжүүлгүүд
 router
   .route("/statistic")
@@ -62,14 +55,8 @@ router
   .route("/bosschecklist")
   .post(authorize("admin"), Transactions.bossUnchecked);
 
-router
-  .route("/bosscheckit")
-  .post(authorize("admin"), Transactions.bossChecked);
-router
-  .route("/coupon_list")
-  .post(authorize("admin"), Transactions.couponList);
-
-
+router.route("/bosscheckit").post(authorize("admin"), Transactions.bossChecked);
+router.route("/coupon_list").post(authorize("admin"), Transactions.couponList);
 
 /*Админы харах GiftCard шилжүүлгүүд*/
 router
@@ -78,8 +65,5 @@ router
 router
   .route("/bonus/salary")
   .post(authorize("admin", "operator"), Transactions.bonusSalary);
-
-
-
 
 module.exports = router;

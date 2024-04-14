@@ -117,49 +117,47 @@ const odooData = asyncHandler(async (req, res) => {
     });
 });
 const generate_coupon = asyncHandler(async (req, res) => {
-  const { walletSuperId, data } = req.body;
+  const { walletSuperId, phone, amount } = req.body;
+
   const wallets = await Wallets.findOne({ walletSuperId: walletSuperId });
+
   const session = await mongoose.startSession();
   session.startTransaction();
-  var result;
+  let result;
   if (!wallets) {
     throw new MyError("Хүчингүй " + walletSuperId + " алга", 401);
   } else {
-    data.map(async (lu) => {
-      console.log(lu);
-      const duplicate = await CouponCode.findOne({ so_order: lu.SO });
-      if (!duplicate) {
-        if (lu.phone_number > 10000000) {
-          result = await CouponCode.create({
-            amount: 30000,
-            coupon_phone: lu.phone_number,
-            usedIt: false,
-            coupon_code: voucher_codes.generate({
-              length: 5,
-              count: 1,
-              charset: voucher_codes.charset("alphabetic"),
-            })[0],
-            so_order: lu.SO,
-            WhoDoIt: wallets.phone,
-          });
-          if (result) {
-            const message = {
-              website_id: 59,
-              sms: {
-                to: `${result.coupon_phone}`,
-                content: `Sain baina uu? Ta daraah coupon codiig (${result.coupon_code}) Point Plus app-d ashiglan hudaldan avaltaasaa 30000MNT hunguluuleerei. POINT PLUS | 86218721`,
-                price: 55,
-                operator: "unitel",
-                status: "loading",
-              },
-            };
-            await sendMessage({
-              message,
-            });
-          }
-        }
+    if (phone > 70000000) {
+      let code = voucher_codes.generate({
+        length: 5,
+        count: 1,
+        charset: voucher_codes.charset("alphabetic"),
+      })[0];
+      result = await CouponCode.create({
+        amount: amount,
+        coupon_phone: phone,
+        usedIt: false,
+        coupon_code: code,
+        so_order: code,
+        WhoDoIt: wallets.phone,
+      });
+      if (result) {
+        const message = {
+          website_id: 59,
+          sms: {
+            to: `${result.coupon_phone}`,
+            content: `Sain baina uu? Ta daraah coupon codiig (${result.coupon_code}) Point Plus-d ashiglan ${amount}MNT hetevchee tsenegleerei. POINT PLUS | 86218721`,
+            price: 55,
+            operator: "unitel",
+            status: "loading",
+          },
+        };
+        await sendMessage({
+          message,
+        });
       }
-    });
+    }
+
     await session.abortTransaction();
     session.endSession();
     return res.status(200).json({
@@ -177,10 +175,6 @@ const test = asyncHandler(async (req, res, next) => {
       },
     },
   ]);
-  console.log(couponUsed[0]);
-  couponUsed[0]._id[0].usedIt === true
-    ? console.log(couponUsed[0].sum)
-    : console.log(couponUsed[1].sum);
 
   res.status(200).json({
     success: true,

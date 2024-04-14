@@ -743,8 +743,11 @@ const userCouponBonus = asyncHandler(async (req, res) => {
 
   try {
     const { coupon_code, walletSuperId } = req.body;
+
     if (!coupon_code && !walletSuperId) {
-      return res.status(403).json({
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(402).json({
         success: false,
         message: "Дараах утгуудыг оруулна уу: coupon_code, walletSuperId",
       });
@@ -752,12 +755,16 @@ const userCouponBonus = asyncHandler(async (req, res) => {
     const UserData = await Wallets.find({ walletSuperId: walletSuperId });
     const CoupenData = await CouponCode.find({ coupon_code: coupon_code });
     if (!CoupenData) {
+      await session.abortTransaction();
+      session.endSession();
       return res.status(403).json({
         success: false,
         message: "Байхгүй код байна.",
       });
     } else {
       if (CoupenData[0].usedIt === true) {
+        await session.abortTransaction();
+        session.endSession();
         return res.status(405).json({
           success: false,
           message: "Хүчингүй код байна.",

@@ -37,7 +37,7 @@ cron.schedule("* * * * *", () => {
   });
   let config = {
     method: "post",
-    url: "http://172.17.224.1:8080/api/v1/transactions/ecosystem",
+    url: "http://192.168.1.2:8080/api/v1/transactions/ecosystem",
     headers: {
       "Content-Type": "application/json",
     },
@@ -77,7 +77,7 @@ var whitelist = [
   "http://172.20.10.6",
   "http://192.168.19.117",
   "http://192.168.1.2",
-  
+
   "http://10.0.9.200",
   "http://172.17.240.1",
   "http://172.21.176.1",

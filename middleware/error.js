@@ -1,41 +1,70 @@
 const errorHandler = (err, req, res, next) => {
+  let error = { ...err };
 
+  // Handle specific errors with custom messages
+  switch (error.name) {
+    case "CastError":
+      error = {
+        statusCode: 400,
+        message: "Invalid ID format!",
+      };
+      break;
 
-  const error = { ...err };
+    case "JsonWebTokenError":
+      error = {
+        statusCode: 401,
+        message: "Invalid token!",
+      };
+      break;
 
-  error.message = err.message;
+    case "TokenExpiredError":
+      error = {
+        statusCode: 401,
+        message: "Token has expired!",
+      };
+      break;
 
-  // if (error.name === "CastError") {
-  //   error.message = "Энэ ID буруу бүтэцтэй ID байна!";
-  //   error.statusCode = 400;
-  // }
+    case "ValidationError":
+      error = {
+        statusCode: 400,
+        message: Object.values(error.errors)
+          .map((value) => value.message)
+          .join(", "),
+      };
+      break;
 
-  // jwt malformed
+    case "MongoServerError":
+      error = {
+        statusCode: err.code,
+        message: err.message,
+      };
+      break;
 
-  if (error.message === "jwt malformed") {
-    error.message = "Та логин хийж байж энэ үйлдлийг хийх боломжтой...";
-    error.statusCode = 401;
-  }
+    case "MongooseError":
+      error = {
+        statusCode: 400,
+        message: err.message,
+      };
+      break;
 
-  if (error.name === "JsonWebTokenError" && error.message === "invalid token") {
-    error.message = "Буруу токен дамжуулсан байна!";
-    error.statusCode = 400;
-  }
-
-  if (error.code === "E11000") {
-    error.message = "Энэ талбарын утгыг давхардуулж өгч болохгүй!";
-    error.statusCode = 400;
-  }
-  if (error.code === "ERR_HTTP_HEADERS_SENT") {
-    error.message = "Хэвийн";
-    error.statusCode = 200;
+    default:
+      if (error.message === "jwt malformed") {
+        error = {
+          statusCode: 401,
+          message: "You need to be logged in to perform this action!",
+        };
+      } else {
+        error = {
+          statusCode: 500,
+          message: "Internal Server Error",
+        };
+      }
   }
 
   res.status(error.statusCode || 500).json({
     success: false,
-    message: error.message
+    message: error.message,
   });
-
 };
 
 module.exports = errorHandler;

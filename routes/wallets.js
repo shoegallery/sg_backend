@@ -20,9 +20,7 @@ router
 router
   .route("/my/:id")
   .post(authorize("user", "admin", "operator", "saler"), Wallets.getMyWallet);
-router
-  .route("/info")
-  .post(authorize("user"), Wallets.myInfo);
+router.route("/info").post(authorize("user"), Wallets.myInfo);
 
 router
   .route("/list")
@@ -39,6 +37,7 @@ router
 router
   .route("/list-users")
   .get(authorize("admin", "operator"), Wallets.getAllWalletsUser); //ok
+router.route("/unblock").post(authorize("admin"), Wallets.unBlock); //ok
 
 router
   .route("/:id")

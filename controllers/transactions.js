@@ -851,15 +851,8 @@ const getMyWalletTransfers = asyncHandler(async (req, res, next) => {
 });
 
 const getAllUniversalStatement = asyncHandler(async (req, res, next) => {
-  const { beginDate, endDate, purpose, trnxType } = req.body;
-  const allWallets = await Transactions.find({
-    purpose: purpose,
-    trnxType: trnxType,
-    createdAt: {
-      $gte: new Date(beginDate + "T00:00:00.000Z"),
-      $lt: new Date(endDate + "T23:59:59.999Z"),
-    },
-  }).sort({ createdAt: -1 });
+  const { purpose, trnxType } = req.body;
+  const allWallets = await Transactions.find({}).sort({ createdAt: -1 });
   res.status(200).json({
     success: true,
     data: allWallets,

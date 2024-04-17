@@ -10,7 +10,6 @@ const crypto = require("crypto");
 
 ////////////////////////////////////////////////////////////
 const createWallet = asyncHandler(async (req, res) => {
-
   try {
     const { phone, uuid } = req.body;
 
@@ -106,7 +105,7 @@ const createWallet = asyncHandler(async (req, res) => {
             await sendMessage({
               message,
             });
-     
+
             return res.status(480).json({
               success: false,
               message: "Баталгаажуулах кодыг оруулах шаардлагатай",
@@ -174,7 +173,6 @@ const createWallet = asyncHandler(async (req, res) => {
               await sendMessage({
                 message,
               });
-           
 
               return res.status(482).json({
                 success: false,
@@ -220,7 +218,6 @@ const createWallet = asyncHandler(async (req, res) => {
     await sendMessage({
       message,
     });
-
 
     return res.status(499).json({
       success: true,
@@ -427,7 +424,10 @@ const getAllWallets = asyncHandler(async (req, res, next) => {
   ["select", "sort", "page", "limit"].forEach((el) => delete req.query[el]);
 
   const allWallets = await Wallets.find(req.query, select).sort({
-    updatedAt: -1,
+    authLock: -1,
+    Blocked: -1,
+    role: -1,
+    phone: -1,
   });
 
   res.status(200).json({
@@ -553,7 +553,6 @@ const updatewallets = asyncHandler(async (req, res, next) => {
     },
   });
 });
-
 const deletewallets = asyncHandler(async (req, res, next) => {
   const wallets = await Wallets.findById(req.params.id);
 
@@ -566,6 +565,30 @@ const deletewallets = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     status: true,
     data: wallets,
+  });
+});
+
+const unBlock = asyncHandler(async (req, res, next) => {
+  const { phone } = req.body;
+  console.log(phone);
+  if (!phone) {
+    throw new MyError("Хэтэвчний ID" + walletSuperId, 400);
+  }
+  // Тухайн хэрэглэгчийн хайна
+  const wallets = await Wallets.findOne({ phone: phone });
+
+  if (!wallets) {
+    throw new MyError(req.params.id + " ID-тэй хэрэглэгч байхгүйээээ.", 400);
+  }
+  wallets.LoginLock = false;
+  wallets.authLock = false;
+  wallets.Blocked = false;
+  wallets.LoginLimitter = 0;
+  wallets.authLimitter = 0;
+  await wallets.save();
+  res.status(200).json({
+    status: true,
+    data: "Болсон",
   });
 });
 
@@ -586,4 +609,5 @@ module.exports = {
   getAllWalletsVariance,
   getAllWalletsStore,
   getAllWalletsUser,
+  unBlock,
 };

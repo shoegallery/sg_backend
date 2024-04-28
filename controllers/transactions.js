@@ -1060,7 +1060,7 @@ const ecoSystem = asyncHandler(async (req, res, next) => {
 
       resp = null;
       if (
-        problemStack - 1000000000 === 0 &&
+        problemStack - 10000000000 === 0 &&
         membercardValue === 0 &&
         operatorChargeValue === 0 &&
         bonusValue === 0 &&

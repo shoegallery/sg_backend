@@ -3,7 +3,7 @@ const router = express.Router();
 const { protect, authorize } = require("../middleware/protect");
 const Transactions = require("../controllers/transactions");
 const CouponCode = require("../controllers/couponcode");
-
+const generateLoan = require("../controllers/loan");
 router.post("/ecosystem", Transactions.ecoSystem);
 
 router.use(protect);

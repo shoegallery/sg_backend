@@ -20,7 +20,7 @@ const transactionSchema = new mongoose.Schema(
         "giftcard",
         "operatorCharge",
         "coupon",
-
+        "loan",
       ],
       required: true,
     },
@@ -50,7 +50,7 @@ const transactionSchema = new mongoose.Schema(
     trnxSummary: { type: String, required: true },
     whoSelledCard: { type: Number, required: true, default: 9913410734 },
     bossCheck: { type: Boolean, default: false },
-    orderNumber: { type: String }
+    orderNumber: { type: String },
   },
   { timestamps: true }
 );

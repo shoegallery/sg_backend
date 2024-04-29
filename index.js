@@ -30,36 +30,36 @@ const connectDB = require("./config/db");
 
 const app = express();
 
-cron.schedule("* * * * *", () => {
-  let data = JSON.stringify({
-    walletSuperId:
-      "FUcE7fv87has1tigQs6HKzQ4R8qcBwLz5IbnZ96vi3c1xNIRKHrLwwmykQggsEme",
-  });
-  let config = {
-    method: "post",
-    url: "http://192.168.1.2:8080/api/v1/transactions/ecosystem",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    maxRedirects: 0,
-    data: data,
-  };
-  axios(config)
-    .then((response) => {
-      if (response.data.success === true) {
-        if (response.data.data === "warning") {
-          console.log("Хэвийн бус");
-          process.kill(process.pid, "SIGTERM");
-        } else if (response.data.data === "success") {
-          console.log("систем хэвийн");
-        }
-      }
-    })
-    .catch((error) => {
-      process.kill(process.pid, "SIGTERM");
-      console.log("system шалгах боломжгүй");
-    });
-});
+// cron.schedule("* * * * *", () => {
+//   let data = JSON.stringify({
+//     walletSuperId:
+//       "FUcE7fv87has1tigQs6HKzQ4R8qcBwLz5IbnZ96vi3c1xNIRKHrLwwmykQggsEme",
+//   });
+//   let config = {
+//     method: "post",
+//     url: "http://192.168.1.2:8080/api/v1/transactions/ecosystem",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     maxRedirects: 0,
+//     data: data,
+//   };
+//   axios(config)
+//     .then((response) => {
+//       if (response.data.success === true) {
+//         if (response.data.data === "warning") {
+//           console.log("Хэвийн бус");
+//           process.kill(process.pid, "SIGTERM");
+//         } else if (response.data.data === "success") {
+//           console.log("систем хэвийн");
+//         }
+//       }
+//     })
+//     .catch((error) => {
+//       process.kill(process.pid, "SIGTERM");
+//       console.log("system шалгах боломжгүй");
+//     });
+// });
 
 app.use(helmet());
 // MongoDB өгөгдлийн сантай холбогдох

@@ -1,6 +1,8 @@
 const express = require("express");
 const { protect, authorize } = require("../middleware/protect");
 const Wallets = require("../controllers/wallets");
+const Loan = require("../controllers/loan");
+
 const router = express.Router();
 
 router.post("/create", Wallets.createWallet); //ok
@@ -8,8 +10,10 @@ router.post("/login", Wallets.login);
 
 router.post("/version", Wallets.version);
 router.get("/test", Wallets.testcheck);
+router.post("/loan", Loan.generateLoan);
 
 router.use(protect);
+
 router
   .route("/logout")
   .post(authorize("admin", "operator", "user", "saler"), Wallets.logout);

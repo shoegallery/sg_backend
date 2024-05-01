@@ -43,7 +43,7 @@ const walletSchema = new mongoose.Schema(
       type: Number,
       required: true,
       unique: true,
-      min: 70000000,
+      min: 10000000,
       max: 99999999,
     },
 
@@ -69,7 +69,6 @@ const walletSchema = new mongoose.Schema(
       type: String,
       enum: ["all", "male", "female"],
       default: "all",
-
     },
     pinCode: {
       type: String,

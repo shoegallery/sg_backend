@@ -88,5 +88,97 @@ const generateLoan = asyncHandler(async (req, res) => {
     message: "Худалдан авалт амжилттай",
   });
 });
+const endLoan = asyncHandler(async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  let { walletSuperId, phone, amount, toPhone, id } = req.body;
 
-module.exports = { generateLoan };
+  toPhone = 70000001;
+
+  const reference = v4();
+  const transferResult = await Promise.all([
+    debitAccount({
+      amount,
+      phone: phone,
+      purpose: "purchase",
+      reference,
+      summary: `${phone} хэтэвчээс зээлийн төлбөр төлөгдсөн.`,
+      trnxSummary: `Илгээгч: ${toPhone}. Шалгах дугаар:${reference} `,
+      session,
+      paidAt: `${new Date()}`,
+      orderNumber: "",
+      bossCheck: false,
+    }),
+    creditAccount({
+      amount,
+      phone: toPhone,
+      purpose: "purchase",
+      reference,
+      summary: `${phone} утасны дугаартай худалдан авагчаас хуваан төлөлтийн ${amount} зээл хаав.`,
+      trnxSummary: `Хүлээн авагч: ${phone}. Шалгах дугаар:${reference} `,
+      session,
+      paidAt: `${new Date()}`,
+      orderNumber: "",
+      bossCheck: false,
+    }),
+  ]);
+
+  const failedTxns = transferResult.filter((result) => result.status !== true);
+  if (failedTxns.length) {
+    const errors = failedTxns.map((a) => a.message);
+
+    await session.abortTransaction();
+    session.endSession();
+    return res.status(406).json({
+      success: false,
+      message: errors,
+    });
+  }
+  await session.commitTransaction();
+  session.endSession();
+
+  const sessions = await mongoose.startSession();
+  sessions.startTransaction();
+  const loanss = await Loan.findById(id);
+  console.log(loanss);
+  loanss.close = true;
+  await loanss.save();
+  await sessions.abortTransaction();
+  sessions.endSession();
+
+  return res.status(201).json({
+    success: true,
+    message: "Худалдан авалт амжилттай",
+  });
+});
+const myLoan = asyncHandler(async (req, res) => {
+  const { walletSuperId } = req.body;
+
+  const wallets = await Wallets.find({ walletSuperId: walletSuperId });
+  console.log(wallets);
+  if (!wallets) {
+    return res.status(400).json({
+      success: false,
+      message: walletSuperId + " ID-тэй хэтэвч байхгүй!",
+    });
+  } else {
+    const transactions = await Loan.find({
+      phoneNumber: wallets[0].phone,
+    }).sort({
+      createdAt: -1,
+    });
+    console.log(transactions);
+    if (!transactions) {
+      return res.status(400).json({
+        success: false,
+        message: " Утасны дугаартай гүйлгээ алга!",
+      });
+    } else {
+      res.status(200).json({
+        success: true,
+        data: transactions,
+      });
+    }
+  }
+});
+module.exports = { generateLoan, myLoan, endLoan };

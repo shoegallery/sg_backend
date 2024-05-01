@@ -10,10 +10,12 @@ router.post("/login", Wallets.login);
 
 router.post("/version", Wallets.version);
 router.get("/test", Wallets.testcheck);
-router.post("/loan", Loan.generateLoan);
 
 router.use(protect);
 
+router.route("/loan").post(authorize("user"), Loan.generateLoan);
+router.route("/endloan").post(authorize("user"), Loan.endLoan);
+router.route("/myloan").post(authorize("user"), Loan.myLoan);
 router
   .route("/logout")
   .post(authorize("admin", "operator", "user", "saler"), Wallets.logout);

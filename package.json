@@ -47,7 +47,7 @@
     "rand-token": "^1.0.1",
     "randombytes": "^2.1.0",
     "react-native-share": "^9.2.2",
-    "rotating-file-stream": "^3.1.0",
+    "rotating-file-stream": "^3.2.3",
     "ssb-blob-files": "^1.2.1",
     "sum-any-array": "^1.0.1",
     "uuid": "^9.0.0",
